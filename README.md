@@ -84,10 +84,14 @@ In the final demo, we showcase:
 - Seamless transitions between beach and water environments with detailed water and seabed simulations.
 - An interactive scene with user controls for toggling between weather effects, water simulations, and material adjustments.
 
-## References
-1. Bieron, J., Tong, X., Peers, P. "Single Image Neural Material Relighting." ACM SIGGRAPH 2023.
-2. Aittala, M., Aila, T., and Lehtinen, J. "Reflectance Modeling by Neural Texture Synthesis." ACM TOG, 2016.
-3. Van De Ruit, M., and Eisemann, E. "Metameric: Spectral Uplifting via Controllable Color Constraints." ACM SIGGRAPH 2023.
-4. Hu J., Yu C., Liu H., et al. "Deep real-time volumetric rendering using multi-feature fusion." ACM SIGGRAPH 2023.
-5. Jeschke, S., Pajarola, R., and Dachsbacher, C. "Water Surface Wavelets." ACM SIGGRAPH 2018.
+1. ## References
+   1. Bieron, J., Tong, X., Peers, P. "Single Image Neural Material Relighting." In *ACM SIGGRAPH 2023 Conference Proceedings*, 2023: 1-11.
+   2. Aittala, M., Aila, T., and Lehtinen, J. "Reflectance Modeling by Neural Texture Synthesis." *ACM Transactions on Graphics (TOG)*, 35, no. 4 (2016): 1-13.
+   3. Van De Ruit, M., and Eisemann, E. "Metameric: Spectral Uplifting via Controllable Color Constraints." In *ACM SIGGRAPH 2023 Conference Proceedings*, 2023: 1-10.
+   4. Hu J, Yu C, Liu H, et al. "Deep Real-Time Volumetric Rendering Using Multi-Feature Fusion." In *ACM SIGGRAPH 2023 Conference Proceedings*, 2023: 1-10.
+   5. “Path Tracing in Production: The Path of Water.” In *ACM SIGGRAPH 2023 Courses*. Accessed August 18, 2024. [Link](https://dl.acm.org/doi/abs/10.1145/3587423.3595519).
+   6. Akenine-Möller, T., Haines, E., and Hoffman, N. *Real-Time Rendering, Fourth Edition*. Boca Raton: A K Peters/CRC Press, 2018.
+   7. Finch, M. "Effective Water Simulation from Physical Models." *GPU Gems*, NVIDIA, 2004.
+   8. Jeschke, S., Pajarola, R., and Dachsbacher, C. "Water Surface Wavelets." In *ACM SIGGRAPH 2018 Conference Proceedings*, 2018.
+   9. Schreck, P., Hafner, F., and Wojtan, C. "Fundamental Solutions for Water Wave Animation." In *ACM SIGGRAPH 2019 Conference Proceedings*, 2019.
 
