@@ -71,6 +71,7 @@ void Window::createWindow()
     int num_channels;
     // load image from file
     images[0].pixels = ImageIO::loadImage("CGRA350_logo/CGRA350_Icon_Small_Sticker_Plain.png", images[0].width, images[0].height, num_channels, false);
+    //images[0].pixels = ImageIO::loadImage("examples/CGRA350_sticke.png", images[0].width, images[0].height, num_channels, false);
     // set icon
     glfwSetWindowIcon(m_window, 1, images);
     // free img data
