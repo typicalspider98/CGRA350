@@ -3,12 +3,12 @@
 #include "../graphics/window.h"
 #include "../main/constants.h"
 
-Nereus::AppContext *UI::m_app_context = nullptr;
+CGRA350::AppContext *UI::m_app_context = nullptr;
 
 // Set up Dear ImGui context, backends/platforms & style
-void UI::init(Nereus::AppContext *app_context)
+void UI::init(CGRA350::AppContext *app_context)
 {
-	// set nereus app context
+	// set finalproject app context
 	UI::m_app_context = app_context;
 	 
 	// setup Dear ImGui context
@@ -33,7 +33,7 @@ void UI::render()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
-	ImGui::Begin("Nereus", nullptr, window_flags);
+	ImGui::Begin("CGRA350", nullptr, window_flags);
 
 	// --- set up widgets ---
 		

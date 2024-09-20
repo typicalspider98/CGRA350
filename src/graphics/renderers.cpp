@@ -158,12 +158,14 @@ void OceanRenderer::prepare()
     // --- set parameters arrays in shader
     m_shader_prog.use();
     m_shader_prog.setVec2Array("sim_wavevecs", wavevecs, NUM_WAVES);
+    // 默认设置 some_scale 为 0.05f
+    m_shader_prog.setFloat("some_scale", 1);
     m_shader_prog.setFloatArray("sim_freqs", freqs, NUM_WAVES);
     m_shader_prog.setFloatArray("sim_amplitudes", amplitudes, NUM_WAVES);
     m_shader_prog.setFloatArray("sim_phases", phases, NUM_WAVES);
 
     // --- set water base colour params to default
-    m_shader_prog.setVec3("water_base_colour", NereusConstants::DEFAULT_WATER_BASE_COLOUR);
+    m_shader_prog.setVec3("water_base_colour", CGRA350Constants::DEFAULT_WATER_BASE_COLOUR);
 }
 
 void OceanRenderer::render(const Camera &render_cam)
@@ -240,7 +242,7 @@ void ReflectiveOceanRenderer::prepare()
     m_shader_prog.setInt("env_map", 0);  // at tex unit 0
 
     // set water base colour params to default
-    m_shader_prog.setFloat("water_base_colour_amt", NereusConstants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
+    m_shader_prog.setFloat("water_base_colour_amt", CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
 }
 
 void ReflectiveOceanRenderer::render(const Camera &render_cam)
@@ -248,6 +250,11 @@ void ReflectiveOceanRenderer::render(const Camera &render_cam)
     // bind skybox texture
     glActiveTexture(GL_TEXTURE0);
     m_cubemap_texture.bind();
+
+    // 绑定法线贴图到纹理单元1
+    glActiveTexture(GL_TEXTURE1);
+    m_normal_map_texture.bind();  // 确保 `m_normal_map_texture` 是加载的法线贴图
+    m_shader_prog.setInt("normalMap", 1);  // 将法线贴图绑定到第1号纹理单元
 
     // render using base renderer
     OceanRenderer::render(render_cam);
@@ -284,11 +291,11 @@ void RefractiveOceanRenderer::prepare()
     m_shader_prog.setInt("tex_S", 0);  // at tex unit 0
 
     // set water base colour params to default
-    m_shader_prog.setFloat("water_base_colour_amt", NereusConstants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
+    m_shader_prog.setFloat("water_base_colour_amt", CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
 
     // set viewport dimensions
     m_shader_prog.setVec2("viewport_dimensions", 
-        glm::vec2(NereusConstants::DEFAULT_WINDOW_WIDTH, NereusConstants::DEFAULT_WINDOW_HEIGHT)
+        glm::vec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT)
     );
 }
 
@@ -297,6 +304,11 @@ void RefractiveOceanRenderer::render(const Camera &render_cam)
     // bind texture S
     glActiveTexture(GL_TEXTURE0);
     m_texture_S.bind();
+
+     // 绑定法线贴图到纹理单元1
+    glActiveTexture(GL_TEXTURE1);
+    m_normal_map_texture.bind();  // 确保 `m_normal_map_texture` 是加载的法线贴图
+    m_shader_prog.setInt("normalMap", 1);  // 将法线贴图绑定到第1号纹理单元
 
     // render using base renderer
     OceanRenderer::render(render_cam);
@@ -355,11 +367,11 @@ void FullOceanRenderer::prepare()
     m_shader_prog.use();
     m_shader_prog.setInt("tex_S", 1);  // at tex unit 1
     // set water base colour params to default
-    m_shader_prog.setFloat("water_base_colour_amt", NereusConstants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
+    m_shader_prog.setFloat("water_base_colour_amt", CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT);
 
     // set viewport dimensions
     m_shader_prog.setVec2("viewport_dimensions", 
-        glm::vec2(NereusConstants::DEFAULT_WINDOW_WIDTH, NereusConstants::DEFAULT_WINDOW_HEIGHT)
+        glm::vec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT)
     );
 
     // --- for fresnel effect ---
@@ -415,7 +427,7 @@ void FullOceanRenderer::setWaterBaseColourAmount(float new_amt)
 SeabedRenderer::SeabedRenderer(ShaderProgram &shader_prog, Texture2D &perlin_tex)
     : Renderer(shader_prog), m_perlin_texture(perlin_tex), 
     m_seabed_texture(), m_use_seabed_texture(false),
-    m_seabed_mesh(NereusConstants::DEFAULT_SEABED_GRID_WIDTH, NereusConstants::DEFAULT_SEABED_GRID_LENGTH)
+    m_seabed_mesh(CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH, CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH)
 {
     m_seabed_mesh.initialise();
     this->prepare();
@@ -424,7 +436,7 @@ SeabedRenderer::SeabedRenderer(ShaderProgram &shader_prog, Texture2D &perlin_tex
 SeabedRenderer::SeabedRenderer(ShaderProgram &shader_prog, Texture2D &perlin_tex, Texture2D &seabed_tex)
     : Renderer(shader_prog), m_perlin_texture(perlin_tex), 
     m_seabed_texture(seabed_tex), m_use_seabed_texture(true),
-    m_seabed_mesh(NereusConstants::DEFAULT_SEABED_GRID_WIDTH, NereusConstants::DEFAULT_SEABED_GRID_LENGTH)
+    m_seabed_mesh(CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH, CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH)
 {
     m_seabed_mesh.initialise();
     this->prepare();
@@ -455,9 +467,9 @@ void SeabedRenderer::render(const Camera &render_cam)
     // transformation matrices
     glm::mat4 model_matrix = glm::mat4(1.0f);
     model_matrix = glm::translate(model_matrix, glm::vec3(
-        -m_seabed_width + NereusConstants::SEABED_EXTENSION_FROM_OCEAN, 
-        -10.0f - NereusConstants::SEABED_DEPTH_BELOW_OCEAN,
-        -m_seabed_length + NereusConstants::SEABED_EXTENSION_FROM_OCEAN
+        -m_seabed_width + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN, 
+        -10.0f - CGRA350Constants::SEABED_DEPTH_BELOW_OCEAN,
+        -m_seabed_length + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN
     ));
     model_matrix = glm::scale(model_matrix, glm::vec3(
         m_seabed_width / (float)m_seabed_mesh.getGridWidth(),

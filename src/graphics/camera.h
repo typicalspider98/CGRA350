@@ -25,9 +25,9 @@ private:
 	float m_polar_angle;
 	
 	float m_fov = 45.0f;
-	float m_aspect_ratio = NereusConstants::DEFAULT_WINDOW_WIDTH / NereusConstants::DEFAULT_WINDOW_HEIGHT;
-	const float m_SPEED = NereusConstants::DEFAULT_CAMERA_SPEED;
-	const float m_SENSITIVITY = NereusConstants::DEFAULT_CAMERA_SENSITIVITY;
+	float m_aspect_ratio = CGRA350Constants::DEFAULT_WINDOW_WIDTH / CGRA350Constants::DEFAULT_WINDOW_HEIGHT;
+	const float m_SPEED = CGRA350Constants::DEFAULT_CAMERA_SPEED;
+	const float m_SENSITIVITY = CGRA350Constants::DEFAULT_CAMERA_SENSITIVITY;
 
 public:
 	Camera();

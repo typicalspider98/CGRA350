@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(Nereus)
+project(CGRA350)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -36,7 +36,7 @@ set(VENDORS_SOURCES libs/vendor/glad/src/glad.c
                     libs/vendor/imgui/backends/imgui_impl_opengl3.h
                     libs/vendor/imgui/backends/imgui_impl_opengl3.cpp)
 
-set(PROJECT_HEADERS src/main/nereus.h
+set(PROJECT_HEADERS src/main/cgra350final.h
                     src/main/constants.h
                     src/main/app_context.h
                     src/utils/image_io.h
@@ -49,7 +49,7 @@ set(PROJECT_HEADERS src/main/nereus.h
                     src/graphics/meshes.h
                     src/graphics/renderers.h)
 
-set(PROJECT_SOURCES src/main/nereus.cpp
+set(PROJECT_SOURCES src/main/cgra350final.cpp
                     src/main/app_context.cpp
                     src/utils/image_io.cpp
                     src/ui/ui.cpp
@@ -67,17 +67,21 @@ set(PROJECT_SHADERS #resources/shaders/test.frag
 
 set(PROJECT_CONFIGS CMakeLists.txt
                     .gitattributes
-                    .gitignore
-                    .gitmodules)
+                    .gitignore)
+                    # .gitmodules)
 
 source_group("Headers" FILES ${PROJECT_HEADERS})
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Vendors" FILES ${VENDORS_SOURCES})
 source_group("Shaders" FILES ${PROJECT_SHADERS})
 
+message("PROJECT_SOURCES = ${PROJECT_SOURCES}")
+message("VENDORS_SOURCES = ${VENDORS_SOURCES}")
+
+
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}  # ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES})
 target_link_libraries(${PROJECT_NAME} glfw

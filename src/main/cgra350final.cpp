@@ -1,5 +1,5 @@
 // Local Headers
-#include "nereus.h"
+#include "cgra350final.h"
 #include "constants.h"
 #include "../graphics/shaders.h"
 #include "../graphics/renderers.h"
@@ -12,16 +12,16 @@
 
 int main()
 {
-    Nereus::NereusApp::initGLFW();
-    Nereus::NereusApp nereus; // load glfw & create window
-    nereus.renderLoop();   // render geom to window
+    CGRA350::CGRA350App::initGLFW();
+    CGRA350::CGRA350App finalProject; // load glfw & create window
+    finalProject.renderLoop();   // render geom to window
 
     return EXIT_SUCCESS;
 }
 
-namespace Nereus
+namespace CGRA350
 {
-    NereusApp::NereusApp() : m_window(Window::getInstance()), m_context()
+    CGRA350App::CGRA350App() : m_window(Window::getInstance()), m_context()
     {
         // set window user pointer to the app context
         m_window.setWindowUserPointer(&m_context);
@@ -33,7 +33,7 @@ namespace Nereus
         UI::init(&m_context);
     }
 
-    NereusApp::~NereusApp()
+    CGRA350App::~CGRA350App()
     {
         // note: will call Window destructor & correctly destroy the window
 
@@ -44,13 +44,13 @@ namespace Nereus
         glfwTerminate();
     }
 
-    // Init GLFW. MUST be called BEFORE creating a NereusApp instance.
-    void NereusApp::initGLFW()
+    // Init GLFW. MUST be called BEFORE creating a CGRA350App instance.
+    void CGRA350App::initGLFW()
     {
         glfwInit();
     }
 
-    void NereusApp::renderLoop()
+    void CGRA350App::renderLoop()
     {
         // ------------------------------
         // Skybox
@@ -80,7 +80,7 @@ namespace Nereus
         }
 
         // Track last env map used
-        int last_env_map = NereusConstants::DEFAULT_ENV_MAP;
+        int last_env_map = CGRA350Constants::DEFAULT_ENV_MAP;
 
         // Create Skybox renderer
         SkyBoxRenderer skybox_renderer(skybox_shader_prog, *env_maps[last_env_map]);
@@ -90,7 +90,7 @@ namespace Nereus
         // Ocean
 
         // --- Create Mesh
-        std::shared_ptr<GridMesh> ocean_mesh_ptr = std::make_shared<GridMesh>(NereusConstants::DEFAULT_OCEAN_GRID_WIDTH, NereusConstants::DEFAULT_OCEAN_GRID_LENGTH);
+        std::shared_ptr<GridMesh> ocean_mesh_ptr = std::make_shared<GridMesh>(CGRA350Constants::DEFAULT_OCEAN_GRID_WIDTH, CGRA350Constants::DEFAULT_OCEAN_GRID_LENGTH);
         ocean_mesh_ptr->initialise();
 
         // --- Fresnel
@@ -126,14 +126,22 @@ namespace Nereus
 
         // --- Other params
         // Track last ocean size values
-        int last_ocean_width = NereusConstants::DEFAULT_OCEAN_WIDTH;
-        int last_ocean_length = NereusConstants::DEFAULT_OCEAN_LENGTH;
-        int last_ocean_mesh_grid_width = NereusConstants::DEFAULT_OCEAN_GRID_WIDTH;
-        int last_ocean_mesh_grid_length = NereusConstants::DEFAULT_OCEAN_GRID_LENGTH;
+        int last_ocean_width = CGRA350Constants::DEFAULT_OCEAN_WIDTH;
+        int last_ocean_length = CGRA350Constants::DEFAULT_OCEAN_LENGTH;
+        int last_ocean_mesh_grid_width = CGRA350Constants::DEFAULT_OCEAN_GRID_WIDTH;
+        int last_ocean_mesh_grid_length = CGRA350Constants::DEFAULT_OCEAN_GRID_LENGTH;
 
         // Track last water base colour params
-        glm::vec3 last_water_base_colour = NereusConstants::DEFAULT_WATER_BASE_COLOUR;
-        float last_water_base_colour_amt = NereusConstants::DEFAULT_WATER_BASE_COLOUR_AMOUNT;
+        glm::vec3 last_water_base_colour = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR;
+        float last_water_base_colour_amt = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT;
+
+        // 加载法线贴图
+        Texture2D normal_map_texture = Texture2D("./water_normal1.jpg");  //Add: 水面波纹
+        // 将法线贴图传递给反射渲染器
+        ocean_renderer_refl.setNormalMapTexture(normal_map_texture);
+
+        // 将法线贴图传递给折射渲染器
+        ocean_renderer_refr.setNormalMapTexture(normal_map_texture);
 
 
         // ------------------------------
@@ -161,8 +169,8 @@ namespace Nereus
         SeabedRenderer seabed_renderer(seabed_shader_prog, perlin_tex);
 
         // Track last SEABED size values
-        int last_seabed_mesh_grid_width = NereusConstants::DEFAULT_SEABED_GRID_WIDTH;
-        int last_seabed_mesh_grid_length = NereusConstants::DEFAULT_SEABED_GRID_LENGTH;
+        int last_seabed_mesh_grid_width = CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH;
+        int last_seabed_mesh_grid_length = CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
         // Track last seabed texture used
         int last_seabed_tex = 0; // none
@@ -230,7 +238,7 @@ namespace Nereus
                 ocean_renderer_refl.setOceanWidth(m_context.m_ocean_width);
                 ocean_renderer_refr.setOceanWidth(m_context.m_ocean_width);
                 ocean_renderer_phong.setOceanWidth(m_context.m_ocean_width);
-                seabed_renderer.setSeabedWidth(m_context.m_ocean_width + NereusConstants::SEABED_EXTENSION_FROM_OCEAN);
+                seabed_renderer.setSeabedWidth(m_context.m_ocean_width + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN);
                 last_ocean_width = m_context.m_ocean_width;
             }
             if (last_ocean_length != m_context.m_ocean_length)
@@ -239,7 +247,7 @@ namespace Nereus
                 ocean_renderer_refl.setOceanLength(m_context.m_ocean_length);
                 ocean_renderer_refr.setOceanLength(m_context.m_ocean_length);
                 ocean_renderer_phong.setOceanLength(m_context.m_ocean_length);
-                seabed_renderer.setSeabedLength(m_context.m_ocean_length + NereusConstants::SEABED_EXTENSION_FROM_OCEAN);
+                seabed_renderer.setSeabedLength(m_context.m_ocean_length + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN);
                 last_ocean_length = m_context.m_ocean_length;
             }
 

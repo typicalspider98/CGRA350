@@ -3,27 +3,6 @@
 layout (location = 0) in vec3 oc_pos;
 layout (location = 1) in vec2 tex_coords;
 
-uniform float some_scale;  // 定义缩放因子
-// A basic 2D Perlin noise implementation
-vec2 hash(vec2 p)
-{
-    p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-    return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-}
-
-float perlin_noise(vec2 p)
-{
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-
-    vec2 u = f * f * (3.0 - 2.0 * f);
-
-    return mix(mix(dot(hash(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0)),
-                   dot(hash(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0)), u.x),
-               mix(dot(hash(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0)),
-                   dot(hash(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
-}
-
 out VS_OUT
 {
 	vec3 wc_pos;
@@ -82,7 +61,6 @@ void main()
 
 float heightmap(vec2 p)
 {
-#if 0
 	float res = 0;
 	for (int i = 0; i < NUM_WAVES; i++)
 	{
@@ -90,18 +68,6 @@ float heightmap(vec2 p)
 	}
 
 	return res; 
-#endif
-	float res = 0;
-    for (int i = 0; i < NUM_WAVES; i++)
-    {
-        // 使用更复杂的波谱模型替代正弦波
-        res += sim_amplitudes[i] * cos(dot(sim_wavevecs[i], p) - sim_freqs[i] * time + sim_phases[i]);
-    }
-
-    // 叠加一个噪声函数来增加细节
-    res += 0.1 * perlin_noise(p * some_scale + time);
-    
-    return res; 
 }
 
 float heightmap_dx(vec2 p)

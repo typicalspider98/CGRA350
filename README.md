@@ -1,73 +1,93 @@
+# Team 9 - Dynamic 3D Environment Simulation
 
-# :ocean: Nereus: A Real-time Realistic Ocean Renderer
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Technologies Used](#technologies-used)
+- [Project Structure](#project-structure)
+- [Installation and Setup](#installation-and-setup)
+- [Features](#features)
+  - [Lighting and Material Modeling](#lighting-and-material-modeling)
+  - [Real-Time Weather System](#real-time-weather-system)
+  - [Real-Time Water and Seabed Simulation](#real-time-water-and-seabed-simulation)
+- [Individual Contributions](#individual-contributions)
+- [Integration Plan](#integration-plan)
+- [Demo Scenario](#demo-scenario)
+- [References](#references)
 
-Nereus is a modern C++ OpenGL rendering engine for rendering realistic oceans in real-time, developed as my third-year dissertation project for the University of Cambridge Computer Science Tripos. The aim was to create an open-source application that could serve as a framework and a starting point for other students, researchers or artists to explore new wave simulation techniques and water illumination models.
+## Project Overview
+This project aims to create a dynamic 3D environment with realistic lighting, weather effects, and water simulation. The key tasks are divided into three main sections:
+1. **Lighting and material modeling** for environmental objects
+2. **Real-time weather system** implementation
+3. **Real-time water surface and seabed simulation**
 
-![Banner](examples/banner.jpg "Nereus Banner")
+## Technologies Used
+- **C++**: Core programming language.
+- **OpenGL**: Used for real-time rendering.
+- **GLFW**: Window management.
+- **GLM**: Mathematical operations (vector/matrix).
+- **GLAD**: OpenGL function loading.
+- **ImGui**: User interface.
+- **CUDA**: GPU-based computation for volumetric rendering.
+- **stb**: Image loading.
 
-Contents of `README`:
-  - :clipboard: [Project Description](#project-description)
-    - [What is Nereus?](#What-is-Nereus?)
-    - [Why was Nereus created?](#Why-was-Nereus-created?)
-    - [What can you use Nereus for?](#What-can-you-use-Nereus-for?)
-  - :beginner: [Usage](#beginner-usage)
-    - [Getting Started](#getting-started)
-    - [Interface and Controls](#interface-and-controls)
-  - :camera: [Example Renders](#camera-example-renders)
-  - :page_facing_up: [Dissertation](#page_facing_up-dissertation) (useful as a wiki at the moment)
+## Project Structure
+- `src/`: Source code files for the 3D environment, weather system, water simulation, and more.
+- `include/`: Header files for reusable components like lighting, materials, and rendering techniques.
+- `shaders/`: GLSL shader files for lighting, water effects, and weather system rendering.
+- `assets/`: Textures, models (lighthouse, rocks, plants), and other resources used in the scene.
 
+## Features
 
-## :clipboard: Project Description
+### Lighting and Material Modeling
+This feature includes:
+- Realistic lighting effects on both water surfaces and environmental objects.
+- Dynamic lighting adjustments based on time of day.
+- Material transitions that adapt lighting effects on objects like the lighthouse and rocks.
 
-### What is Nereus?
+### Real-Time Weather System
+Implemented features include:
+- Volumetric rendering for cloud simulation.
+- Particle system to simulate rain.
+- Real-time dynamic shaders for wet ground after rain.
+- Weather-based scene adjustments, including color grading and light scattering.
 
-Nereus is a real-time render engine for rendering realistic oceans. That is, it is an application capable of rendering an ocean scene under real-time constraints, in which the water surface is animated with waves and has a realistic visual look. It is implemented in C++ and uses the OpenGL graphics API.
+### Real-Time Water and Seabed Simulation
+This system incorporates:
+- **Gerstner Waves** for real-time water surface dynamics.
+- **Perlin Noise** for random ripples and natural surface variations.
+- **Normal Mapping** for enhancing water surface details.
+- Procedural generation of the seabed with **Perlin Noise** for realistic sand textures and variations.
 
-It has a flexible and modular architecture, which provides they key set-up and OpenGL components required to render an ocean scene. For example, there are separate modules for managing GLFW windowing, providing an UI and, most importantly, a rendering framework with classes encapsulating useful OpenGL constructs. 
+## Individual Contributions
 
-Its clear structure allows you to focus on the key aspects of rendering ocean scenes, without having to deal with all the additional overhead of features provided by fully-fledged game engines. This makes Nereus a good starting point for anyone interested in experimenting with and developing new illumination models and wave simulation techniques. Moreover, thanks to its careful architecture design, Nereus can be easily extended to add any new features and components that you may require.
+- **Hao Peng**: Lighting and material modeling for environmental objects. Focus on realistic light interactions with water surfaces and object modeling.
+- **Jun Zheng**: Real-time weather system implementation, including volumetric rendering for clouds and particle systems for precipitation.
+- **Ye Li**: Real-time water surface and seabed simulation, including dynamic water waves using Gerstner Waves and enhanced detail with Perlin Noise.
 
-At the moment, a simple scene is provided: there is an ocean surface, a seabed beneath it and a sky skybox. A Gerstner Waves simulation has been implemented to animate the ocean surface with waves. The program also provides code for rendering the ocean surface using three illumination models: reflection of the skybox, refraction and a combination of them both using the Fresnel effect. Feel free to modify this program and extend it with your own ideas! You can find some potential ideas in the ["What can you use Nereus for?"](#What-can-you-use-Nereus-for?) section of this Readme.
+## Integration Plan
+1. **Environment and Water Setup (19th August - 15th September)**:  
+   Hao Peng focuses on environmental object modeling, Ye Li on water surface waves, and Jun Zheng on cloud simulation.
+   
+2. **Lighting, Materials, and Weather System (26th August - 22nd September)**:  
+   Integration of lighting, material transitions, and weather system dynamics.
+   
+3. **Real-Time Rendering and Debugging (23rd September - 1st October)**:  
+   Optimizations, color grading, and dynamic scene adjustments.
+   
+4. **Final Testing and Presentation Preparation (2nd October - 9th October)**:  
+   System integration and demo preparation.
 
+## Demo Scenario
+In the final demo, we showcase:
+- Real-time environmental interactions including lighting changes based on time of day.
+- Dynamic weather effects such as rain, clouds, and ground wetness.
+- Seamless transitions between beach and water environments with detailed water and seabed simulations.
+- An interactive scene with user controls for toggling between weather effects, water simulations, and material adjustments.
 
-### Why was Nereus created?
-
-I developed Nereus as my third-year dissertation project for the University of Cambridge Computer Science Tripos. This involved planning, implementation and evaluation of the software, culminating in a written dissertation. 
-
-When deciding upon a dissertation topic, I noticed that projects in the field of computer graphics with an interest in ocean rendering generally consider the following topics:
-  1. Designing and creating a flexible, modular renderer architecture that can be easily extended by future users.
-  2. Exploring wave simulation techniques for animating an ocean surface.
-  3. Exploring different illumination models for achieving a realistic water look.
-
-Existing projects usually look at one or two of these points in isolation, rather than all three combined. I decided to carry out a project that aimed to integrate all three goals together, producing as an end-product an open source application that could serve as a framework and a starting point for other students, researchers or artists to explore new wave simulation techniques and water illumination models. That application is Nereus.
-
-### What can you use Nereus for?
-
-Nereus can be an useful tool for exploring new techniques used for rendering oceans in real-time. This could include experimenting with new wave simulation techniques, or creating novel water illumination models. 
-
-Some potential ideas—suggested as possible continuations to my dissertation project—include:
-  - Implementing other wave simulations than the given Gerstner Waves one. e.g. a wave simulation based on Statistical Models and FFT calulations. It would be interesting to see how the performance and visual realism of these other wave simulation methods compare with each other and to that of the Gerstner Waves simulation. This could give further insight into how the different methods trade-off performance and visual realism, potentially pointing towards a new direction for developing a novel wave simulation method.
-  - Implementing other water illumination models, or further visual effects like caustics on the seabed. This could include implementing existing, more complex water illumination models for a realistic water look, or even developing a novel model. An evaluation similar to the Visual Quality evaluation carried out in my dissertation project could be conducted, to see whether using these more complex models result in a perceivable improvement in the visual realism of the ocean scene or not.
-  - Adding the possibility to add more elements to the ocean scene, by providing a flexible entity system and scene graph. As a result, the scenes rendered in Nereus could now have items floating on the water surface, or have some objects underwater, for example. This way, the scenes would be closer to what can be experienced in the real-world, rather than just considering the ocean in isolation.
-
-
-## :beginner: Usage
-
-### Getting Started
-
-```COMING SOON```
-
-### Interface and Controls
-
-```COMING SOON```
-
-
-## :camera: Example Renders
-
-```COMING SOON```
-
-
-## :page_facing_up: Dissertation
-
-```COMING SOON```
+## References
+1. Bieron, J., Tong, X., Peers, P. "Single Image Neural Material Relighting." ACM SIGGRAPH 2023.
+2. Aittala, M., Aila, T., and Lehtinen, J. "Reflectance Modeling by Neural Texture Synthesis." ACM TOG, 2016.
+3. Van De Ruit, M., and Eisemann, E. "Metameric: Spectral Uplifting via Controllable Color Constraints." ACM SIGGRAPH 2023.
+4. Hu J., Yu C., Liu H., et al. "Deep real-time volumetric rendering using multi-feature fusion." ACM SIGGRAPH 2023.
+5. Jeschke, S., Pajarola, R., and Dachsbacher, C. "Water Surface Wavelets." ACM SIGGRAPH 2018.
 

@@ -56,8 +56,8 @@ class OceanRenderer : public Renderer
 private:
 	std::shared_ptr<GridMesh> m_ocean_mesh_ptr;
 
-	int m_ocean_width = NereusConstants::DEFAULT_OCEAN_WIDTH;
-	int m_ocean_length = NereusConstants::DEFAULT_OCEAN_LENGTH;
+	int m_ocean_width = CGRA350Constants::DEFAULT_OCEAN_WIDTH;
+	int m_ocean_length = CGRA350Constants::DEFAULT_OCEAN_LENGTH;
 
 	const float m_median_wavelength = 20.0f;
 	const glm::vec2 m_wind_dir = glm::normalize(glm::vec2(2.0f, 3.0f));
@@ -83,17 +83,25 @@ class ReflectiveOceanRenderer : public OceanRenderer
 {
 private:
 	CubeMapTexture m_cubemap_texture;
+	Texture2D m_normal_map_texture;  //Add: 水面波纹法线贴图
 
 	void prepare();
 
 public:
 	ReflectiveOceanRenderer(ShaderProgram &shader_prog, std::shared_ptr<GridMesh> ocean_mesh_ptr);
 	ReflectiveOceanRenderer(ShaderProgram &shader_prog, std::shared_ptr<GridMesh> ocean_mesh_ptr, CubeMapTexture &skybox);
-
+	
 	void render(const Camera &render_cam);
 
 	void setSkyboxTexture(CubeMapTexture &skybox);
 	void setWaterBaseColourAmount(float new_amt);
+
+	//Add: 设置法线贴图
+	void setNormalMapTexture(Texture2D &normal_map)
+	{
+		m_normal_map_texture = normal_map;
+	}
+
 };
 
 // --- Refractive Ocean renderer ---
@@ -102,6 +110,7 @@ class RefractiveOceanRenderer : public OceanRenderer
 private:
 	Texture2D m_texture_S;
 	FBO m_fbo;
+	Texture2D m_normal_map_texture;  //Add: 水面波纹法线贴图
 
 	void prepare();
 
@@ -116,6 +125,13 @@ public:
 	Texture2D &getTextureS();
 
 	void setWaterBaseColourAmount(float new_amt);
+
+	//Add: 设置法线贴图
+	void setNormalMapTexture(Texture2D &normal_map)
+	{
+		m_normal_map_texture = normal_map;
+	}
+
 };
 
 
@@ -130,8 +146,8 @@ private:
 	FBO m_fbo;
 	// for fresnel effect
 	const float m_FRESNEL_F0 = glm::pow((
-		(NereusConstants::WATER_REFRACTIVE_INDEX - NereusConstants::AIR_REFRACTIVE_INDEX)
-		/ (NereusConstants::WATER_REFRACTIVE_INDEX + NereusConstants::AIR_REFRACTIVE_INDEX)
+		(CGRA350Constants::WATER_REFRACTIVE_INDEX - CGRA350Constants::AIR_REFRACTIVE_INDEX)
+		/ (CGRA350Constants::WATER_REFRACTIVE_INDEX + CGRA350Constants::AIR_REFRACTIVE_INDEX)
 	), 2);
 
 	void prepare();
@@ -159,8 +175,8 @@ class SeabedRenderer : public Renderer
 private:
 	GridMesh m_seabed_mesh;
 
-	int m_seabed_width = NereusConstants::DEFAULT_OCEAN_WIDTH + NereusConstants::SEABED_EXTENSION_FROM_OCEAN;
-	int m_seabed_length = NereusConstants::DEFAULT_OCEAN_LENGTH + NereusConstants::SEABED_EXTENSION_FROM_OCEAN;
+	int m_seabed_width = CGRA350Constants::DEFAULT_OCEAN_WIDTH + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN;
+	int m_seabed_length = CGRA350Constants::DEFAULT_OCEAN_LENGTH + CGRA350Constants::SEABED_EXTENSION_FROM_OCEAN;
 
 	Texture2D m_perlin_texture;
 	bool m_use_seabed_texture;

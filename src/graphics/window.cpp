@@ -29,15 +29,15 @@ void Window::createWindow()
     if (m_window != nullptr) return;
 
     // --- glfw window context ---
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, NereusConstants::OPENGL_VERSION_MAJOR);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, NereusConstants::OPENGL_VERSION_MINOR);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, CGRA350Constants::OPENGL_VERSION_MAJOR);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, CGRA350Constants::OPENGL_VERSION_MINOR);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // --- glfw window creation ---
-    m_window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Nereus", nullptr, nullptr);
+    m_window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "CGRA350 Final Project", nullptr, nullptr);
 
     // check for correct context creation
     if(m_window == nullptr)
@@ -70,7 +70,7 @@ void Window::createWindow()
     GLFWimage images[1];
     int num_channels;
     // load image from file
-    images[0].pixels = ImageIO::loadImage("nereus_logo/Nereus_Icon_Small_Sticker_Plain.png", images[0].width, images[0].height, num_channels, false);
+    images[0].pixels = ImageIO::loadImage("CGRA350_logo/CGRA350_Icon_Small_Sticker_Plain.png", images[0].width, images[0].height, num_channels, false);
     // set icon
     glfwSetWindowIcon(m_window, 1, images);
     // free img data
@@ -128,7 +128,7 @@ void Window::setCallbacks()
         m_window,
         [](GLFWwindow *window, int key, int scancode, int action, int mods) 
         {
-            Nereus::AppContext *context = reinterpret_cast<Nereus::AppContext *>(glfwGetWindowUserPointer(window));
+            CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
 
             // ESC released --> close window 
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
@@ -151,7 +151,7 @@ void Window::setCallbacks()
     glfwSetCursorPosCallback(m_window,
         [](GLFWwindow *window, double xpos, double ypos)
         {
-            Nereus::AppContext *context = reinterpret_cast<Nereus::AppContext *>(glfwGetWindowUserPointer(window));
+            CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
             
             // click & drag --> move camera view
             bool dragging = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
@@ -170,7 +170,7 @@ void Window::setCallbacks()
     glfwSetScrollCallback(m_window,
         [](GLFWwindow *window, double xoffset, double yoffset)
         {
-            Nereus::AppContext *context = reinterpret_cast<Nereus::AppContext *>(glfwGetWindowUserPointer(window));
+            CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
 
             // scroll --> zoom in/out
             context->m_render_camera.processMouseScroll(yoffset);

@@ -11,6 +11,7 @@ out vec4 frag_colour;
 
 uniform vec3 wc_camera_pos;
 uniform samplerCube env_map;
+uniform sampler2D normalMap;  // ²¨ÎÆ·¨ÏßÌùÍ¼
 
 uniform vec3 water_base_colour;
 uniform float water_base_colour_amt;
@@ -30,6 +31,14 @@ void main()
 
 	// calculate normal and view vectors
 	vec3 N = normalize(fs_in.wc_normal);
+
+	// Add: Sample normal map and adjust the normal
+	vec3 normalFromMap = texture(normalMap, fs_in.tex_coords).rgb;
+	normalFromMap = normalize(normalFromMap * 2.0 - 1.0);  // Convert from [0,1] to [-1,1]
+
+	// Add: Combine the normal from the map with the original normal
+	N = normalize(N + normalFromMap);
+
     vec3 V = normalize(wc_camera_pos - fs_in.wc_pos);
     vec3 R_V = reflect(-V, N);
 

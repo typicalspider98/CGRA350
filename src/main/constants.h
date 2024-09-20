@@ -1,11 +1,11 @@
-#ifndef NEREUS_CONSTANTS
-#define NEREUS_CONSTANTS
+#ifndef CGRA350_CONSTANTS
+#define CGRA350_CONSTANTS
 #pragma once
 
 #include <glm/glm.hpp>
 
 
-namespace NereusConstants
+namespace CGRA350Constants
 {
 	const float DEFAULT_WINDOW_WIDTH = 1200.0f;
 	const float DEFAULT_WINDOW_HEIGHT = 800.0f;

@@ -53,7 +53,7 @@ Texture2D::Texture2D(string filename)
 }
 
 Texture2D::Texture2D()
-    : Texture2D(NereusConstants::DEFAULT_WINDOW_WIDTH, NereusConstants::DEFAULT_WINDOW_HEIGHT)
+    : Texture2D(CGRA350Constants::DEFAULT_WINDOW_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT)
 {
 }
 

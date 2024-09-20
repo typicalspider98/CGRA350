@@ -158,5 +158,5 @@ glm::mat4 Camera::getProjMatrix() const
 
 void Camera::getProjMatrix(glm::mat4 &dest) const
 {
-	dest = glm::perspective(glm::radians(m_fov), m_aspect_ratio, NereusConstants::CAMERA_NEAR_PLANE, NereusConstants::CAMERA_FAR_PLANE);
+	dest = glm::perspective(glm::radians(m_fov), m_aspect_ratio, CGRA350Constants::CAMERA_NEAR_PLANE, CGRA350Constants::CAMERA_FAR_PLANE);
 }

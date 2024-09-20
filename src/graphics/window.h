@@ -18,8 +18,8 @@ class Window
 private:
 	static Window *s_instance;
 
-	const unsigned int SCREEN_WIDTH = NereusConstants::DEFAULT_WINDOW_WIDTH;
-	const unsigned int SCREEN_HEIGHT = NereusConstants::DEFAULT_WINDOW_HEIGHT;
+	const unsigned int SCREEN_WIDTH = CGRA350Constants::DEFAULT_WINDOW_WIDTH;
+	const unsigned int SCREEN_HEIGHT = CGRA350Constants::DEFAULT_WINDOW_HEIGHT;
 	glm::vec3 m_bgColour = glm::vec3(0.2f, 0.2f, 0.25f);
 	GLFWwindow *m_window = nullptr;
 

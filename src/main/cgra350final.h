@@ -1,5 +1,5 @@
-#ifndef NEREUS_MAIN
-#define NEREUS_MAIN
+#ifndef CGRA350_MAIN
+#define CGRA350_MAIN
 #pragma once
 
 #include "../graphics/window.h"
@@ -7,9 +7,9 @@
 #include "../ui/ui.h"
 
 
-namespace Nereus
+namespace CGRA350
 {
-	class NereusApp
+	class CGRA350App
 	{
 	private:
 		Window m_window;
@@ -17,8 +17,8 @@ namespace Nereus
 
 	public:
 
-		NereusApp();	// init
-		~NereusApp();	// terminate
+		CGRA350App();	// init
+		~CGRA350App();	// terminate
 
 		static void initGLFW();
 		void renderLoop();

@@ -13,6 +13,7 @@ out vec4 frag_colour;
 
 uniform vec3 wc_camera_pos;
 uniform sampler2D tex_S;
+uniform sampler2D normalMap;  // ²¨ÎÆ·¨ÏßÌùÍ¼
 uniform vec2 viewport_dimensions;
 
 uniform vec3 water_base_colour;
@@ -35,6 +36,13 @@ void main()
 
 	// calculate normal vectors
 	vec3 N = normalize(fs_in.wc_normal);
+
+	// Add: Sample normal map and adjust the normal
+	vec3 normalFromMap = texture(normalMap, fs_in.tex_coords).rgb;
+	normalFromMap = normalize(normalFromMap * 2.0 - 1.0);  // Convert from [0,1] to [-1,1]
+
+	// Add: Combine the normal from the map with the original normal
+	N = normalize(N + normalFromMap);
 
 	// calculate projected texture coordinates (screen/vieewport space)
 	vec2 projected_tex_coords = gl_FragCoord.xy / viewport_dimensions;
