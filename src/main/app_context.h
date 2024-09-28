@@ -21,10 +21,11 @@ namespace CGRA350
 		int m_seabed_grid_width = CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH;
 		int m_seabed_grid_length = CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
-		bool m_do_render_seabed = true;
-		bool m_do_render_ocean = true;
-		bool m_do_render_ui = true;
-
+		bool m_do_render_cloud = true;
+		bool m_do_render_seabed = false;
+		bool m_do_render_ocean = false;
+		bool m_do_render_ui = false;
+		
 		int m_illumin_model = 0; // 0: Fresnel, 1: Reflection, 2: Refraction, 3: Phong
 
 		glm::vec3 m_water_base_colour = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR;

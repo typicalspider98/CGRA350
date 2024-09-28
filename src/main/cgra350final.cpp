@@ -5,6 +5,9 @@
 #include "../graphics/renderers.h"
 #include "../graphics/textures.h"
 
+#include <cuda_runtime.h>
+#include <vector_types.h>
+//#include "../volumerendering/GUI.hpp"
 
 // System Headers
 #include <glm/glm.hpp>
@@ -14,6 +17,7 @@ int main()
 {
     CGRA350::CGRA350App::initGLFW();
     CGRA350::CGRA350App finalProject; // load glfw & create window
+    finalProject.initVolumeRendering();
     finalProject.renderLoop();   // render geom to window
 
     return EXIT_SUCCESS;
@@ -48,6 +52,28 @@ namespace CGRA350
     void CGRA350App::initGLFW()
     {
         glfwInit();
+    }
+
+    void CGRA350App::initVolumeRendering()
+    {
+        if (m_context.m_do_render_cloud)
+        {
+            string cloud_path = "../../data/MODEL1";
+            m_volumerender = new VolumeRender(cloud_path);
+            float3 lightColor = { 1.0, 1.0, 1.0 };
+            float alpha = 1.0;
+            float3 CamPos = { 0.67085, -0.03808, -0.04856 };
+
+            Camera_VR cam(*m_volumerender, "test camera");
+            cam.resolution = 512;
+            cam.SetPosition(CamPos);
+            float g = 0.857;
+            float3 scatter = float3{ 1, 1, 1 };
+            m_volumerender->SetScatterRate(scatter);
+            float3 lightDir = normalize(float3{ 0.34281, 0.70711, 0.61845 });
+
+            //RunGUI(cam, *m_volumerender, lightDir, lightColor, scatter, alpha, 512, g);
+        }
     }
 
     void CGRA350App::renderLoop()
@@ -327,6 +353,13 @@ namespace CGRA350
                 }
             }
             
+            
+            // --- render cloud ---
+            if (m_context.m_do_render_cloud)
+            {
+
+            }
+
 
             // --- render ocean ---
             if (m_context.m_do_render_ocean)

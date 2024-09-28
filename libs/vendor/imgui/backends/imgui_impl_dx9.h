@@ -17,6 +17,10 @@
 #include "imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d9.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+
 struct IDirect3DDevice9;
 
 // Follow "Getting Started" link and check examples/ folder to learn about using backends!
