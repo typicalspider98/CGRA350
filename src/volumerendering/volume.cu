@@ -16,7 +16,7 @@
 
 using namespace std;
 
-#define CheckError { auto error = cudaGetLastError(); if (error != 0) cout << cudaGetErrorString(error); }
+#define CheckError { auto error = cudaGetLastError(); if (error != 0) cout << cudaGetErrorString(error) << endl; }
 
 template<int type>
 __global__ void CalculateRadianceMulti(volatile int* record, float3* result, float3* ori, float3* dir, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int sampleNum = 1) {
@@ -86,7 +86,7 @@ __global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size,
     bool sky = res_dis.w < 0;
     float dis = max(0.001f, res_dis.w < 0 ? 10.0f : res_dis.w);
 
-    res = max_float3(float3{ 0 }, res);
+    res = max(float3{ 0 }, res);
 
 
     // show Lut
@@ -115,7 +115,7 @@ __global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size,
 
         histo_buffer[idx].totalSampleNum += 1;
 
-        int3 bin_idx = floor(min_float3(res, float3{ 0.999f, 0.999f, 0.999f }) * HISTO_SIZE);
+        int3 bin_idx = floor(min(res, float3{ 0.999f, 0.999f, 0.999f }) * HISTO_SIZE);
 
         histo_buffer[idx].bin[bin_idx.x] += 1;
         histo_buffer[idx].bin[bin_idx.y + HISTO_SIZE] += 1;
@@ -174,7 +174,7 @@ __global__ void RenderCamera(float3* result, int2 size, float3 ori, float3 up, f
     float3 res = make_float3(res_dis);
     float dis = max(0.001f, res_dis.w < 0 ? 10.0f : res_dis.w);
 
-    res = max_float3(float3{ 0 }, res);
+    res = max(float3{ 0 }, res);
 
     if (i >= size.x || j >= size.y) return;
 

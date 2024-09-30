@@ -23,6 +23,7 @@ namespace CGRA350
 
 		bool m_do_render_cloud = true;
 		bool m_do_render_seabed = false;
+		bool m_do_render_skybox = false;
 		bool m_do_render_ocean = false;
 		bool m_do_render_ui = false;
 		

@@ -2,6 +2,8 @@
 #define CGRA350_MAIN
 #pragma once
 
+#include "../volumerendering/volume_gui.hpp"
+
 #include "../graphics/window.h"
 #include "app_context.h"
 #include "../ui/ui.h"
@@ -17,6 +19,7 @@ namespace CGRA350
 		Window m_window;
 		AppContext m_context;
 		VolumeRender* m_volumerender;
+		Camera_VR* m_cam;
 
 	public:
 

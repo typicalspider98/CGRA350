@@ -482,7 +482,7 @@ __device__ float3 RadiancePredict(curandState* seed, bool active, float3 pos, fl
     else if (scatterrate.z == scatterrate.y) Z = Y;
     else  SC(z, Z);
 
-    return max_float3((exp(float3{ X,Y,Z })) - 1.0, float3{ 0 }) * srp;
+    return max((exp(float3{ X,Y,Z })) - 1.0, float3{ 0 }) * srp;
 }
 
 

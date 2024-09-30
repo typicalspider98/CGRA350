@@ -203,3 +203,8 @@ unsigned int Window::getScreenHeight()
 {
     return SCREEN_HEIGHT;
 }
+
+GLFWwindow* Window::getWindow()
+{
+    return m_window;
+}
