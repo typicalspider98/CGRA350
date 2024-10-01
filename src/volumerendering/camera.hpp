@@ -38,5 +38,5 @@ public:
 
     void RenderToFile(string path, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int sampleNum = 1, ToneMapFunction tone = ACES, VolumeRender::RenderType rt = VolumeRender::RenderType::PT, float exp = 1.0);
 
-    void Render(float3* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int frame, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int tone = 2, VolumeRender::RenderType rt = VolumeRender::RenderType::PT, bool denoise = false);
+    void Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int frame, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int tone = 2, VolumeRender::RenderType rt = VolumeRender::RenderType::PT, bool denoise = false);
 }; 

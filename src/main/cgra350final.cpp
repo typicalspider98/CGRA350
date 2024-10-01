@@ -335,13 +335,17 @@ namespace CGRA350
 
                 m_window.clear();
 
+                // render skybox
+                if (m_context.m_do_render_skybox)
+                {
+                    skybox_renderer.render(m_context.m_render_camera);
+                }
+
                 // render seabed
                 if (m_context.m_do_render_seabed)
                 {
                     seabed_renderer.render(m_context.m_render_camera);
                 }
-                // render skybox
-                skybox_renderer.render(m_context.m_render_camera);
 
                 // go back to default fbo
                 if (m_context.m_illumin_model == 0)
@@ -353,14 +357,12 @@ namespace CGRA350
                     ocean_renderer_refr.unbindFBO();
                 }
             }
-            
-            
-            // --- render cloud ---
-            if (m_context.m_do_render_cloud)
-            {
-                RenderVR(*m_cam, *m_volumerender, m_window.getWindow());
-            }
 
+            // --- render skybox ---
+            if (m_context.m_do_render_skybox)
+            {
+                skybox_renderer.render(m_context.m_render_camera);
+            }
 
             // --- render ocean ---
             if (m_context.m_do_render_ocean)
@@ -388,10 +390,10 @@ namespace CGRA350
                 seabed_renderer.render(m_context.m_render_camera);
             }
 
-            // --- render skybox ---
-            if (m_context.m_do_render_skybox)
+            // --- render cloud ---
+            if (m_context.m_do_render_cloud)
             {
-                skybox_renderer.render(m_context.m_render_camera);
+                RenderVR(*m_cam, *m_volumerender, m_window.getWindow());
             }
 
             // --- render UI ---

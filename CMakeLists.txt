@@ -93,9 +93,8 @@ set(PROJECT_SOURCES src/main/cgra350final.cpp
                     src/graphics/meshes.cpp
                     src/graphics/renderers.cpp)
 
-set(PROJECT_SHADERS #resources/shaders/test.frag
-                    #resources/shaders/test.vert)
-                    )
+file(GLOB PROJECT_SHADERS ${PROJECT_SOURCE_DIR}/resources/shaders/*.frag
+                          ${PROJECT_SOURCE_DIR}/resources/shaders/*.vert)
 
 set(PROJECT_CONFIGS CMakeLists.txt
                     .gitattributes

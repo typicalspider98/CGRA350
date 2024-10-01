@@ -31,6 +31,7 @@ __device__ __host__ const float3 min(const float3 a, const float3 b);
 __device__ __host__ const float3 normalize(const float3 v);
 __device__ __host__ float lerp(const float a, const float b, const float v);
 __device__ __host__ const float3 lerp(const float3 a, const float3 b, const float v);
+__device__ __host__ const float4 lerp(const float4 a, const float4 b, const float v);
 __device__ __host__ const float3 cross(const float3 a, const float3 b);
 __device__ __host__ const float3 pow(const float3 a, const float b); 
 __device__ __host__ const float3 exp(const float3 a);

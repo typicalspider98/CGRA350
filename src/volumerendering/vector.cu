@@ -28,6 +28,7 @@ __device__ __host__ const float3 min(const float3 a, const float3 b) { return { 
 __device__ __host__ const float3 normalize(const float3 v) { float len = sqrt(dot(v, v)); return { v.x / len, v.y / len, v.z / len }; }
 __device__ __host__ float lerp(const float a, const float b, const float v) { return a * (float(1) - v) + b * v; }
 __device__ __host__ const float3 lerp(const float3 a, const float3 b, const float v){ return { lerp(a.x,b.x, v) ,lerp(a.y,b.y, v) ,lerp(a.z,b.z, v) }; }
+__device__ __host__ const float4 lerp(const float4 a, const float4 b, const float v) { return { lerp(a.x,b.x, v) ,lerp(a.y,b.y, v) ,lerp(a.z,b.z, v), lerp(a.w, b.w, v) }; }
 __device__ __host__ const float3 cross(const float3 a, const float3 b) { return { a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x }; }
 __device__ __host__ const float3 pow(const float3 a, const float b) { return { pow(a.x, b),pow(a.y, b) ,pow(a.z, b) }; }
 __device__ __host__ const float3 exp(const float3 a) { return { exp(a.x),exp(a.y) ,exp(a.z) }; };

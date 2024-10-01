@@ -59,11 +59,13 @@ __device__ float3 lori;
 __device__ float3 lup;
 __device__ float3 lright;
 template<bool predict, int type = Type::MRPNN>
-__global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g) {
+__global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j;
     if (dev_checkboard) j = (blockIdx.y * blockDim.y + threadIdx.y) * 2 + ((i + flip) % 2);
     else j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (i >= size.x || j >= size.y) return;
 
     int idx = i * size.x + j;
 
@@ -88,7 +90,11 @@ __global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size,
 
     res = max(float3{ 0 }, res);
 
-
+    //float avg_rgb = (res.x + res.y + res.z) / 3.0f;
+    //float fade_alpha = avg_rgb < 0.15f ? avg_rgb * 6.6f : 1;
+    float alpha_value = sky ? 0.0f : 1;
+    //res = avg_rgb res / 0.78f * 0.5f + float3{ 0.5f, 0.5f, 0.5f };
+        
     // show Lut
     {
         //float aaa = tex2D<float>(_HGLut, 1.2 * u - 0.1, 1.2 * v - 0.1);
@@ -99,17 +105,16 @@ __global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size,
         //}
     }
 
-    if (i >= size.x || j >= size.y) return;
-
-
     int fNum = dev_checkboard ? frameNum / 2 : frameNum;
     if (!predict) {
 
         if (fNum == 0)
             histo_buffer[idx] = { 0 };
+            
 
         float lerp_rate = 1.0f / (1 + (fNum));
-        target[idx] = lerp(target[idx], res, lerp_rate);
+        target[idx] = lerp(target[idx], make_float4(res, alpha_value), lerp_rate);
+        //target[idx] = lerp(target[idx], make_float4(res, target[idx].w * (1.0f - lerp_rate) + alpha_value * lerp_rate), lerp_rate);
 
         res = res / (res + 1);
 
@@ -143,9 +148,13 @@ __global__ void RenderCamera(float3* target, Histogram* histo_buffer, int2 size,
 
         float lerp_rate = 1.0f / (1 + fNum);
         if (!sky && !dev_checkboard) lerp_rate = min(0.2f, lerp_rate);
-        float3 his = float3{ histo_buffer[lidx].totalSampleNum,histo_buffer[lidx].x, histo_buffer[lidx].x2 };
-        target[idx] = lerp(his, res, lerp_rate);
+        float3 his = float3{ histo_buffer[lidx].totalSampleNum, histo_buffer[lidx].x, histo_buffer[lidx].x2 };
+        target[idx] = make_float4(lerp(his, res, lerp_rate), alpha_value);
     }
+#ifdef IRIS_DEBUG
+    if (i >= 260 && i < 500 && j == 520)
+        printf("%d: (%d,%d) predict: %s, R: %f, G: %f, B: %f, A: %f, res_dis.w: %f, dis: %f, sky: %s\n", frameNum, i, j, predict ? "true" : "false", target[idx].x, target[idx].y, target[idx].z, target[idx].w, res_dis.w, dis, sky ? "true" : "false");
+#endif
 }
 
 template<bool predict, int type = Type::MRPNN>
@@ -210,7 +219,7 @@ __device__ float Compare(Histogram x, Histogram y) {
 }
 
 template<bool denoise>
-__global__ void Denoise(float3* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int toneType) {
+__global__ void Denoise(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int toneType) {
     int id = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (id >= size.x * size.y) return;
@@ -218,14 +227,15 @@ __global__ void Denoise(float3* target, Histogram* histo_buffer, unsigned int* t
     int2 idx = int2{ id / size.x, id % size.x };
 
     float3 res;
+    float alpha = target[id].w;
 
     if (frameNum == 0) {
         if ((((idx.x + flip) % 2) + idx.y) % 2 == 0) {
-            res = target[id];
+            res = make_float3(target[id]);
         }
         else {
-            res = target[UnRoll({ idx.x - 1, idx.y }, size)] + target[UnRoll({ idx.x + 1, idx.y }, size)]
-                    + target[UnRoll({ idx.x, idx.y - 1 }, size)] + target[UnRoll({ idx.x, idx.y + 1 }, size)];
+            res = make_float3(target[UnRoll({ idx.x - 1, idx.y }, size)]) + make_float3(target[UnRoll({ idx.x + 1, idx.y }, size)])
+                + make_float3(target[UnRoll({ idx.x, idx.y - 1 }, size)]) + make_float3(target[UnRoll({ idx.x, idx.y + 1 }, size)]);
             res = res / 4;
         }
     }
@@ -243,14 +253,14 @@ __global__ void Denoise(float3* target, Histogram* histo_buffer, unsigned int* t
                     int2 pairId = { idx.x + i, idx.y + j };
                     int t = UnRoll(pairId, size);
                     float w = max(0.0f, 1.0f - 1.2 * Compare(center, histo_buffer[t]));
-                    res = res + target[t] * w;
+                    res = res + make_float3(target[t]) * w;
                     ws += w;
                 }
             }
             res = res / ws;
         }
         else {
-            res = target[id];
+            res = make_float3(target[id]);
         }
     }
 
@@ -264,18 +274,22 @@ __global__ void Denoise(float3* target, Histogram* histo_buffer, unsigned int* t
     const unsigned int red = (unsigned int)(255.0f * saturate_(val.x));
     const unsigned int gre = (unsigned int)(255.0f * saturate_(val.y));
     const unsigned int blu = (unsigned int)(255.0f * saturate_(val.z));
-    target2[id] = 0xff000000 | (red << 16) | (gre << 8) | blu;
+    const unsigned int alpha_int = (unsigned int)(255.0f * saturate_(alpha));
+
+    //target2[id] = 0xff000000 | (red << 16) | (gre << 8) | blu;
+    target2[id] = (alpha_int << 24) | (red << 16) | (gre << 8) | blu;
 }
 
-__global__ void ReprojectionDenoise(float3* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int toneType) {
+__global__ void ReprojectionDenoise(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, int toneType) {
     int id = blockIdx.x * blockDim.x + threadIdx.x;
 
     if (id >= size.x * size.y) return;
 
     histo_buffer[id].totalSampleNum = target[id].x;
     histo_buffer[id].x = target[id].y;
-    histo_buffer[id].x2 = target[id].z;
-    float3 res = target[id];
+    histo_buffer[id].x2 = target[id].z;    
+    float3 res = make_float3(target[id]);
+    float alpha = target[id].w;
 
     float3 val = res * exposure;
 
@@ -287,7 +301,10 @@ __global__ void ReprojectionDenoise(float3* target, Histogram* histo_buffer, uns
     const unsigned int red = (unsigned int)(255.0f * saturate_(val.x));
     const unsigned int gre = (unsigned int)(255.0f * saturate_(val.y));
     const unsigned int blu = (unsigned int)(255.0f * saturate_(val.z));
-    target2[id] = 0xff000000 | (red << 16) | (gre << 8) | blu;
+    const unsigned int alpha_int = (unsigned int)(255.0f * saturate_(alpha));
+
+    //target2[id] = 0xff000000 | (red << 16) | (gre << 8) | blu;
+    target2[id] = (alpha_int << 24) | (red << 16) | (gre << 8) | blu;
 }
 
 __global__ void ClearHis(Histogram* histo_buffer, int2 size) {
@@ -470,7 +487,7 @@ vector<float3> VolumeRender::Render(int2 size, float3 ori, float3 up, float3 rig
     return res_cpu;
 }
 
-void VolumeRender::Render(float3* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise) {
+void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise) {
 
     if (env_tex_dev != NULL && (rt != RenderType::PT)) {
 

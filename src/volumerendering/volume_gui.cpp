@@ -1,4 +1,5 @@
 #include "volume_gui.hpp"
+#include "../graphics/shaders.h"
 
 using namespace std;
 
@@ -6,9 +7,10 @@ HWND GL_Window;
 HWND DX_Window;
 int actual_frame = 0;
 GUIs* gui = NULL;
-float3* accum_buffer = NULL;
+float4* accum_buffer = NULL;
 Histogram* histo_buffer_cuda = NULL;
 cudaGraphicsResource_t display_buffer_cuda = NULL;
+ShaderProgram* fsr_shader_prog = NULL;
 GLuint tempBuffer = 0;
 GLuint tempTex = 0;
 GLuint display_buffer = 0;
@@ -19,6 +21,7 @@ GLuint quad_vao = 0;
 
 #define CheckError { auto error = cudaGetLastError(); if (error != 0) cout << cudaGetErrorString(error) << endl; }
 
+#pragma region Cuda
 static void init_cuda()
 {
     int cuda_devices[1];
@@ -30,129 +33,6 @@ static void init_cuda()
     }
     cudaSetDevice(cuda_devices[0]);
 }
-
-#pragma region Shader
-static GLint add_shader(GLenum shader_type, const char* source_code, GLuint program)
-{
-    GLuint shader = glCreateShader(shader_type);
-    glShaderSource(shader, 1, &source_code, NULL);
-    glCompileShader(shader);
-
-    GLint success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-
-    glAttachShader(program, shader);
-
-    return shader;
-}
-
-static GLuint create_shader_program()
-{
-    GLint success;
-    GLuint program = glCreateProgram();
-
-    const char* vert =
-        "#version 330\n"
-        "in vec3 Position;"
-        "out vec2 TexCoord;"
-        "void main() {"
-        "    gl_Position = vec4(Position, 1.0);"
-        "    TexCoord = 0.5 * Position.xy + vec2(0.5);"
-        "}";
-    add_shader(GL_VERTEX_SHADER, vert, program);
-
-    const char* frag =
-        "#version 330\n"
-        "in vec2 TexCoord;"
-        "out vec4 FragColor;"
-        "uniform sampler2D TexSampler;"
-        "uniform int Size;"
-        "uniform int FSR;"
-        "uniform float sharp;"
-        "void FsrEASU(out vec4 fragColor){    vec2 fragCoord = TexCoord * Size * 2;    vec4 scale = vec4(        1. / vec2(Size),        vec2(0.5f)    );    vec2 src_pos = scale.zw * fragCoord;    vec2 src_centre = floor(src_pos - .5) + .5;    vec4 f; f.zw = 1. - (f.xy = src_pos - src_centre);    vec4 l2_w0_o3 = ((1.5672 * f - 2.6445) * f + 0.0837) * f + 0.9976;    vec4 l2_w1_o3 = ((-0.7389 * f + 1.3652) * f - 0.6295) * f - 0.0004;    vec4 w1_2 = l2_w0_o3;    vec2 w12 = w1_2.xy + w1_2.zw;    vec4 wedge = l2_w1_o3.xyzw * w12.yxyx;    vec2 tc12 = scale.xy * (src_centre + w1_2.zw / w12);    vec2 tc0 = scale.xy * (src_centre - 1.);    vec2 tc3 = scale.xy * (src_centre + 2.);    vec3 col = vec3(        texture(TexSampler, vec2(tc12.x, tc0.y)).rgb * wedge.y +        texture(TexSampler, vec2(tc0.x, tc12.y)).rgb * wedge.x +        texture(TexSampler, tc12.xy).rgb * (w12.x * w12.y) +        texture(TexSampler, vec2(tc3.x, tc12.y)).rgb * wedge.z +        texture(TexSampler, vec2(tc12.x, tc3.y)).rgb * wedge.w    );    fragColor = vec4(col,1);}void FsrRCAS(float sharp, out vec4 fragColor){    vec2 uv = TexCoord;    vec3 col = texture(TexSampler, uv).xyz;    float max_g = col.y;    float min_g = col.y;    vec4 uvoff = vec4(1,0,1,-1)/Size;    vec3 colw;    vec3 col1 = texture(TexSampler, uv+uvoff.yw).xyz;    max_g = max(max_g, col1.y);    min_g = min(min_g, col1.y);    colw = col1;    col1 = texture(TexSampler, uv+uvoff.xy).xyz;    max_g = max(max_g, col1.y);    min_g = min(min_g, col1.y);    colw += col1;    col1 = texture(TexSampler, uv+uvoff.yz).xyz;    max_g = max(max_g, col1.y);    min_g = min(min_g, col1.y);    colw += col1;    col1 = texture(TexSampler, uv-uvoff.xy).xyz;    max_g = max(max_g, col1.y);    min_g = min(min_g, col1.y);    colw += col1;    float d_min_g = min_g;    float d_max_g = 1.-max_g;    float A;    max_g = max(0., max_g);    if (d_max_g < d_min_g) {        A = d_max_g / max_g;    } else {        A = d_min_g / max_g;    }    A = sqrt(max(0., A));    A *= mix(-.125, -.2, sharp);    vec3 col_out = (col + colw * A) / (1.+4.*A);    fragColor = vec4(col_out,1);}"
-        "void main() {"
-        "    if (FSR == 1) FsrEASU(FragColor);"
-        "    else if (FSR == 2) FsrRCAS(sharp, FragColor);"
-        "    else FragColor = texture(TexSampler, TexCoord);"
-        "}";
-    GLint fs = add_shader(GL_FRAGMENT_SHADER, frag, program);
-
-    glLinkProgram(program);
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        fprintf(stderr, "Error linking shadering program\n");
-        char info[10240];
-        int len;
-        glGetShaderInfoLog(fs, 10240, &len, info);
-        fprintf(stderr, info);
-        glfwTerminate();
-    }
-
-    glUseProgram(program);
-
-    return program;
-}
-
-// Create a quad filling the whole screen.
-static GLuint create_quad(GLuint program, GLuint* vertex_buffer)
-{
-    static const float3 vertices[6] = {
-        { -1.f, -1.f, 0.0f },
-        {  1.f, -1.f, 0.0f },
-        { -1.f,  1.f, 0.0f },
-        {  1.f, -1.f, 0.0f },
-        {  1.f,  1.f, 0.0f },
-        { -1.f,  1.f, 0.0f }
-    };
-
-    glGenBuffers(1, vertex_buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, *vertex_buffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    GLuint vertex_array;
-    glGenVertexArrays(1, &vertex_array);
-    glBindVertexArray(vertex_array);
-
-    const GLint pos_index = glGetAttribLocation(program, "Position");
-    glEnableVertexAttribArray(pos_index);
-    glVertexAttribPointer(
-        pos_index, 3, GL_FLOAT, GL_FALSE, sizeof(float3), 0);
-
-    return vertex_array;
-}
-
-static void resize_buffers(float3** accum_buffer_cuda, Histogram** histo_buffer_cuda, cudaGraphicsResource_t* display_buffer_cuda, GLuint tempFB, GLuint* tempTex, int width, int width2, GLuint display_buffer)
-{
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, display_buffer);
-    glBufferData(GL_PIXEL_UNPACK_BUFFER, width * width * 4, NULL, GL_DYNAMIC_COPY);
-    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-    if (*display_buffer_cuda)
-        cudaGraphicsUnregisterResource(*display_buffer_cuda);
-    cudaGraphicsGLRegisterBuffer(
-        display_buffer_cuda, display_buffer, cudaGraphicsRegisterFlagsWriteDiscard);
-
-    if (*accum_buffer_cuda)
-        cudaFree(*accum_buffer_cuda);
-    cudaMalloc(accum_buffer_cuda, width * width * sizeof(float3));
-
-    if (*histo_buffer_cuda)
-        cudaFree(*histo_buffer_cuda);
-    cudaMalloc(histo_buffer_cuda, width * width * sizeof(Histogram));
-
-    glDeleteTextures(1, tempTex);
-    glBindFramebuffer(GL_FRAMEBUFFER, tempFB);
-    glGenTextures(1, tempTex);
-    glBindTexture(GL_TEXTURE_2D, *tempTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, width2, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, *tempTex, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-}
-#pragma endregion
-
 
 void CheckCuda()
 {
@@ -196,7 +76,70 @@ void CheckCuda()
         cudaFree(0);
     CheckError;
 }
+#pragma endregion
 
+#pragma region Buffer
+// Create a quad filling the whole screen.
+static GLuint create_quad(GLuint program, GLuint* vertex_buffer)
+{
+    static const float3 vertices[6] = {
+        { -1.f, -1.f, 0.0f },
+        {  1.f, -1.f, 0.0f },
+        { -1.f,  1.f, 0.0f },
+        {  1.f, -1.f, 0.0f },
+        {  1.f,  1.f, 0.0f },
+        { -1.f,  1.f, 0.0f }
+    };
+
+    glGenBuffers(1, vertex_buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, *vertex_buffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint vertex_array;
+    glGenVertexArrays(1, &vertex_array);
+    glBindVertexArray(vertex_array);
+
+    const GLint pos_index = glGetAttribLocation(program, "Position");
+    glEnableVertexAttribArray(pos_index);
+    glVertexAttribPointer(
+        pos_index, 3, GL_FLOAT, GL_FALSE, sizeof(float3), 0);
+
+    return vertex_array;
+}
+
+static void resize_buffers(float4** accum_buffer_cuda, Histogram** histo_buffer_cuda, cudaGraphicsResource_t* display_buffer_cuda, GLuint tempFB, GLuint* tempTex, int width, int width2, GLuint display_buffer)
+{
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, display_buffer);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, width * width * 4, NULL, GL_DYNAMIC_COPY);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+    if (*display_buffer_cuda)
+        cudaGraphicsUnregisterResource(*display_buffer_cuda);
+    cudaGraphicsGLRegisterBuffer(
+        display_buffer_cuda, display_buffer, cudaGraphicsRegisterFlagsWriteDiscard);
+
+    if (*accum_buffer_cuda)
+        cudaFree(*accum_buffer_cuda);
+    cudaMalloc(accum_buffer_cuda, width * width * sizeof(float4));
+
+    if (*histo_buffer_cuda)
+        cudaFree(*histo_buffer_cuda);
+    cudaMalloc(histo_buffer_cuda, width * width * sizeof(Histogram));
+
+    glDeleteTextures(1, tempTex);
+    glBindFramebuffer(GL_FRAMEBUFFER, tempFB);
+    glGenTextures(1, tempTex);
+    glBindTexture(GL_TEXTURE_2D, *tempTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width2, width2, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, *tempTex, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+#pragma endregion
+
+#pragma region Render
 void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightColor, float3 scatter_rate, float alpha, float multiScatterNum, float g) {
 #ifdef GUI
     gui = new GUIs();
@@ -219,13 +162,20 @@ void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightC
     glGenTextures(1, &tempTex);
 
     glBindTexture(GL_TEXTURE_2D, tempTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cam.resolution, cam.resolution, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cam.resolution, cam.resolution, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tempTex, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    program = create_shader_program();
+    // Create fsr shaders
+    std::vector<Shader> fsr_shaders;
+    fsr_shaders.emplace_back("volumerender.vert");
+    fsr_shaders.emplace_back("volumerender.frag");
+    fsr_shader_prog = new ShaderProgram(fsr_shaders);
+
+    //program = create_shader_program();
+    program = fsr_shader_prog->getHandle();
     quad_vao = create_quad(program, &quad_vertex_buffer);
 
     init_cuda();
@@ -236,6 +186,19 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
 {
     if (gui == NULL)
         return;
+
+    // Save current OpenGL state
+    GLboolean isCullFaceEnabled = glIsEnabled(GL_CULL_FACE);
+    GLboolean isDepthWriteEnabled;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &isDepthWriteEnabled);
+    GLboolean isBlendEnabled = glIsEnabled(GL_BLEND);
+
+    // Setup OpenGL state
+    glDisable(GL_CULL_FACE);
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthFunc(GL_LESS);
 
     // Reallocate buffers if window size changed.
     int nwidth, nheight;
@@ -311,6 +274,17 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
         actual_frame++;
     }
 
+#ifdef IRIS_DEBUG
+    size_t bufferSize = gui->width * gui->width * sizeof(float4);
+    float4* host_buffer = (float4*)malloc(bufferSize);
+    cudaMemcpy(host_buffer, accum_buffer, bufferSize, cudaMemcpyDeviceToHost);
+    for (int i = 260; i < 300; i++) {
+        int j = 520;
+        int idx = i * gui->width + j;
+        printf("CUDA Pixel (%d, %d): R=%f, G=%f, B=%f, A=%f\n", i, j, host_buffer[idx].x, host_buffer[idx].y, host_buffer[idx].z, host_buffer[idx].w);
+    }
+#endif
+
     // Unmap GL buffer.
     cudaGraphicsUnmapResources(1, &display_buffer_cuda, /*stream=*/0);
 
@@ -320,8 +294,20 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, gui->width, gui->height, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
+#ifdef IRIS_DEBUG
+    GLubyte* textureData = new GLubyte[gui->width * gui->height * 4];
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
+    for (int i = 260; i < 300; i++) {
+        int j = 520;
+        int idx = i * gui->width + j;
+        printf("Tex Pixel (%d, %d): R=%d, G=%d, B=%d, A=%d\n", i, j, textureData[idx * 4], textureData[idx * 4 + 1], textureData[idx * 4 + 2], textureData[idx * 4 + 3]);
+    }
+    delete[] textureData;
+#endif
+
     // Render the quad.
-    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(program);
+    //glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(quad_vao);
 
     glUniform1i(glGetUniformLocation(program, "Size"), gui->width);
@@ -340,6 +326,12 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
         glUniform1i(glGetUniformLocation(program, "FSR"), 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
+
+    // Reset OpenGL state
+    if (isCullFaceEnabled) glEnable(GL_CULL_FACE);
+    if (isDepthWriteEnabled) glDepthMask(true);
+    if (!isBlendEnabled) glDisable(GL_BLEND);
+
 }
 
 void CleanupVR()
@@ -349,6 +341,11 @@ void CleanupVR()
     // Cleanup OpenGL.
     glDeleteVertexArrays(1, &quad_vao);
     glDeleteBuffers(1, &quad_vertex_buffer);
-    glDeleteProgram(program);
+    //glDeleteProgram(program);
+    if (fsr_shader_prog != NULL)
+    {
+        delete fsr_shader_prog;
+        fsr_shader_prog = NULL;
+    }
 }
-
+#pragma endregion
