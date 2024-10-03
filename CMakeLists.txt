@@ -31,9 +31,9 @@ Option(CompileRPNN OFF)
 
 if (GUI)
 	add_definitions(-DGUI)
-    set(GLEW_VERBOSE ON)
+    #set(GLEW_VERBOSE ON)
     #set(glfw3_DIR ${PROJECT_SOURCE_DIR}/ext/glfw-3.4/build/lib/cmake/glfw3)
-    find_package(GLEW REQUIRED HINTS ${PROJECT_SOURCE_DIR}/libs/vendor/glew-2.1.0/build/lib/cmake/glew)
+    #find_package(GLEW REQUIRED HINTS ${PROJECT_SOURCE_DIR}/libs/vendor/glew-2.1.0/build/lib/cmake/glew)
     #find_package(glfw3)
     #add_subdirectory(Imgui)
 	#INCLUDE_DIRECTORIES(Imgui_INCLUDE_DIR)
@@ -118,7 +118,7 @@ add_definitions(-DGLFW_INCLUDE_NONE
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}  # ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
                                ${VENDORS_SOURCES} ${VR_SOURCES} src/main/cgra350final.cpp)
-target_link_libraries(${PROJECT_NAME} GLEW::GLEW glfw
+target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME}
