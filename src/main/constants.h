@@ -7,18 +7,20 @@
 
 namespace CGRA350Constants
 {
-	const float DEFAULT_WINDOW_WIDTH = 1200.0f;
+	const float DEFAULT_WINDOW_WIDTH = 800.0f;
 	const float DEFAULT_WINDOW_HEIGHT = 800.0f;
 
 	const unsigned int OPENGL_VERSION_MAJOR = 4;
 	const unsigned int OPENGL_VERSION_MINOR = 3;
 
-	const float CAMERA_DISTANCE_FROM_ORIGIN = 50.0f;
-	const glm::vec3 CAMERA_POSITION = glm::vec3(
-		CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::cos(glm::radians(45.0f)), // x
-		CAMERA_DISTANCE_FROM_ORIGIN * glm::cos(glm::radians(45.0f)), // y
-		CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::sin(glm::radians(45.0f)) // z
-	);
+	const float CAMERA_RESOLUTION = 800.0f;
+	//const float CAMERA_DISTANCE_FROM_ORIGIN = 50.0f;
+	//const glm::vec3 CAMERA_POSITION = glm::vec3(
+	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::cos(glm::radians(45.0f)), // x
+	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::cos(glm::radians(45.0f)), // y
+	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::sin(glm::radians(45.0f)) // z
+	//);
+	const glm::vec3 CAMERA_POSITION = glm::vec3(0.67085, -0.03808, -0.04856);
 	const float DEFAULT_CAMERA_SPEED = 3.0f;
 	const float DEFAULT_CAMERA_SENSITIVITY = 0.1f;
 	const float CAMERA_NEAR_PLANE = 0.1f;
@@ -41,6 +43,7 @@ namespace CGRA350Constants
 	const float DEFAULT_WATER_BASE_COLOUR_AMOUNT = 0.65f;
 
 	const int DEFAULT_ENV_MAP = 0;  // 0: sky_skybox_1, 1: sky_skybox_2, 3: sunset_skybox_1, 4: sunset_skybox_2, 5: sunset_skybox_3
+	const std::string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
 }
 
 #endif

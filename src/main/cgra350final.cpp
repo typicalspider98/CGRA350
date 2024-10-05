@@ -59,14 +59,14 @@ namespace CGRA350
         {
             CheckCuda();
 
-            string cloud_path = "./../data/MODEL0";
+            string cloud_path = "./../data/CLOUD0";
             m_volumerender = new VolumeRender(cloud_path);
             float3 lightColor = { 1.0, 1.0, 1.0 };
             float alpha = 1.0;
             float3 CamPos = { 0.67085, -0.03808, -0.04856 };
 
             m_cam = new Camera_VR(*m_volumerender, "test camera");
-            m_cam->resolution = 512;
+            m_cam->resolution = CGRA350Constants::CAMERA_RESOLUTION;
             m_cam->SetPosition(CamPos);
             float g = 0.857;
             float3 scatter = float3{ 1, 1, 1 };

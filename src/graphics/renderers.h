@@ -22,6 +22,17 @@ protected:
 public:
 	Renderer(ShaderProgram &shader_prog);
 	virtual void render(const Camera &render_cam) = 0;
+	// helper function that draws an empty OpenGL object
+	// can be used for shaders that do all the work
+	static inline void draw_dummy(unsigned instances = 1) {
+		static GLuint vao = 0;
+		if (vao == 0) {
+			glGenVertexArrays(1, &vao);
+		}
+		glBindVertexArray(vao);
+		glDrawArraysInstanced(GL_POINTS, 0, 1, instances);
+		glBindVertexArray(0);
+	}
 };
 
 

@@ -22,9 +22,11 @@ namespace CGRA350
 		int m_seabed_grid_length = CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
 		bool m_do_render_cloud = true;
-		bool m_do_render_seabed = false;
-		bool m_do_render_skybox = false;
-		bool m_do_render_ocean = false;
+		bool m_do_render_seabed = true;
+		bool m_do_render_skybox = true;
+		bool m_do_render_ocean = true;
+		bool m_do_render_axis = false;
+		bool m_do_render_grid = false;
 		bool m_do_render_ui = false;
 		
 		int m_illumin_model = 0; // 0: Fresnel, 1: Reflection, 2: Refraction, 3: Phong

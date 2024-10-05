@@ -1,5 +1,6 @@
 #include "volume_gui.hpp"
 #include "../graphics/shaders.h"
+#include "../main/constants.h"
 
 using namespace std;
 
@@ -153,6 +154,7 @@ void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightC
     gui->scatter_rate = scatter_rate;
 
     volume.UpdateHGLut(g);
+    volume.SetHDRI(CGRA350Constants::TEXTURES_FOLDER_PATH + "sky_skybox_1/bottom.hdr");
 
     glGenBuffers(1, &display_buffer);
     glGenTextures(1, &display_tex);
