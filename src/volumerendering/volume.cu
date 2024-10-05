@@ -56,16 +56,15 @@ __device__ int flip = 0;
 __device__ float exposure = 1;
 
 __device__ float3 lori;
+__device__ float3 lforward;
 __device__ float3 lup;
 __device__ float3 lright;
 template<bool predict, int type = Type::MRPNN>
-__global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g) {
+__global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j;
     if (dev_checkboard) j = (blockIdx.y * blockDim.y + threadIdx.y) * 2 + ((i + flip) % 2);
     else j = blockIdx.y * blockDim.y + threadIdx.y;
-
-    if (i >= size.x || j >= size.y) return;
 
     int idx = i * size.x + j;
 
@@ -75,7 +74,7 @@ __global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size,
     float u = 1 - (j + Rand(&seed)) / size.x;
     float v = (i + Rand(&seed)) / size.y;
 
-    float3 forward = normalize(-ori);
+    //float3 forward = normalize(-ori);
     float3 dir = forward + (right * (u * 2 - 1)) + (up * (v * 2 - 1));
     dir = normalize(dir);
 
@@ -104,6 +103,10 @@ __global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size,
         //    res = { 1, 0, 1 };
         //}
     }
+
+
+    if (i >= size.x || j >= size.y) return;
+
 
     int fNum = dev_checkboard ? frameNum / 2 : frameNum;
     if (!predict) {
@@ -134,23 +137,38 @@ __global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size,
     else {
 
         int lidx;
-        {   // reprojection
+        //{   // reprojection
             float3 motion_pos = ori + dir * dis;
             float3 ldir = motion_pos - lori;
-            float3 lforward = normalize(lori);
-            ldir = ldir / dot(ldir, lforward);
-            ldir = ldir - lforward;
+            float3 mforward = -lforward;// normalize(ori - lori);
+            ldir = ldir / dot(ldir, mforward);
+            ldir = ldir - mforward;
             float lu = dot(ldir, lright) * 0.5 + 0.5;
             float lv = dot(ldir, lup) * -0.5 + 0.5;
             int2 lxy = int2{ min(size.x - 1, max(0, int(lu * size.x))), min(size.y - 1, max(0, int(lv * size.y))) };
             lidx = lxy.y * size.x + lxy.x;
-        }
+        //}
 
         float lerp_rate = 1.0f / (1 + fNum);
         if (!sky && !dev_checkboard) lerp_rate = min(0.2f, lerp_rate);
         float3 his = float3{ histo_buffer[lidx].totalSampleNum, histo_buffer[lidx].x, histo_buffer[lidx].x2 };
         target[idx] = make_float4(lerp(his, res, lerp_rate), alpha_value);
+
+        //if (i >= 414 && j == 520)
+        //    printf("%d: (%d,%d) predict: %s, ori: (%f, %f, %f), lori: (%f, %f, %f), forward: (%f, %f, %f), mforward: (%f, %f, %f), res_dis.w: %f, dis: %f, dir: (%f, %f, %f), ldir: (%f, %f, %f), lxy: (%d, %d), idx: %d, lidx: %d, his: (%f, %f, %f), sky: %s\n",
+        //        frameNum, i, j, predict ? "true" : "false",
+        //        ori.x, ori.y, ori.z,
+        //        lori.x, lori.y, lori.z,
+        //        forward.x, forward.y, forward.z,
+        //        mforward.x, mforward.y, mforward.z,
+        //        res_dis.w, dis, 
+        //        dir.x, dir.y, dir.z,
+        //        ldir.x, ldir.y, ldir.z,
+        //        lxy.x, lxy.y, idx, lidx,
+        //        his.x, his.y, his.z,                
+        //        sky ? "true" : "false");
     }
+
 #ifdef IRIS_DEBUG
     if (i >= 260 && i < 500 && j == 520)
         printf("%d: (%d,%d) predict: %s, R: %f, G: %f, B: %f, A: %f, res_dis.w: %f, dis: %f, sky: %s\n", frameNum, i, j, predict ? "true" : "false", target[idx].x, target[idx].y, target[idx].z, target[idx].w, res_dis.w, dis, sky ? "true" : "false");
@@ -425,7 +443,7 @@ vector<float3> VolumeRender::GetRadiances(vector<float3> ori, vector<float3> dir
 int flip_cpu = 0;
 int rand_cpu = 0;
 
-float3 last_ori, last_up, last_right;
+float3 last_ori, last_forward, last_up, last_right;
 
 
 vector<float3> VolumeRender::Render(int2 size, float3 ori, float3 up, float3 right, float3 lightDir, RenderType rt, float g, float alpha, float3 lightColor, int multiScatter, int sampleNum) {
@@ -487,7 +505,7 @@ vector<float3> VolumeRender::Render(int2 size, float3 ori, float3 up, float3 rig
     return res_cpu;
 }
 
-void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise) {
+void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise) {
 
     if (env_tex_dev != NULL && (rt != RenderType::PT)) {
 
@@ -538,11 +556,11 @@ void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int*
     last_predict = predict;
 
     if (rt == RenderType::PT)
-        RenderCamera<false><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<false><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
     else if (rt == RenderType::RPNN)
-        RenderCamera<true, Type::RPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<true, Type::RPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
     else
-        RenderCamera<true, Type::MRPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<true, Type::MRPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
 
     if (!predict) {
         if (denoise)
@@ -554,6 +572,7 @@ void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int*
         ReprojectionDenoise<<<group_num, group>>>(target, histo_buffer, target2, size, toneType);
 
     cudaMemcpyToSymbol(lori, &ori, sizeof(float3), 0, cudaMemcpyHostToDevice);
+    cudaMemcpyToSymbol(lforward, &forward, sizeof(float3), 0, cudaMemcpyHostToDevice);
     cudaMemcpyToSymbol(lup, &up, sizeof(float3), 0, cudaMemcpyHostToDevice);
     cudaMemcpyToSymbol(lright, &right, sizeof(float3), 0, cudaMemcpyHostToDevice);
 
@@ -562,6 +581,7 @@ void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int*
     CheckError;
 
     last_ori = ori;
+    last_forward = forward;
     last_up = up;
     last_right = right;
     return;

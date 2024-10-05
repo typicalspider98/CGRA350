@@ -3,6 +3,7 @@
 
 #include <vector_types.h>
 #include <algorithm>
+#include <glm/glm.hpp>
 
 __device__ __host__ const float3 operator*(const float3 a, const float b);
 __device__ __host__ const float3 operator*(const float3 a, const float3 b);
@@ -76,3 +77,5 @@ struct Offset_Layer_
 	}
 };
 __device__ __host__ const Offset_Layer_ GetSamples23_(int index);
+
+__device__ __host__ float3 glmVec3ToFloat3(const glm::vec3& v);

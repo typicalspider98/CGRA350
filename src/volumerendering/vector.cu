@@ -489,3 +489,9 @@ __device__ float3 TileableCurlNoise(float3 p, float numCells, int octaves)
     const float divisor = 1.0 / (2.0 * e);
     return normalize(float3{ x, y, z } *divisor);
 }
+
+__device__ __host__ float3 glmVec3ToFloat3(const glm::vec3& v)
+{
+    float3 result = { v.x, v.y, v.z };
+    return result;
+}

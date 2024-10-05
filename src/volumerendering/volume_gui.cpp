@@ -1,6 +1,11 @@
 #include "volume_gui.hpp"
+#include "vector.cuh"
 #include "../graphics/shaders.h"
 #include "../main/constants.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 using namespace std;
 
@@ -141,7 +146,7 @@ static void resize_buffers(float4** accum_buffer_cuda, Histogram** histo_buffer_
 #pragma endregion
 
 #pragma region Render
-void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightColor, float3 scatter_rate, float alpha, float multiScatterNum, float g) {
+void InitCloud(Camera& cam, VolumeRender& volume, float3 lightDir, float3 lightColor, float3 scatter_rate, float alpha, float multiScatterNum, float g) {
 #ifdef GUI
     gui = new GUIs();
 
@@ -164,7 +169,7 @@ void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightC
     glGenTextures(1, &tempTex);
 
     glBindTexture(GL_TEXTURE_2D, tempTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cam.resolution, cam.resolution, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cam.GetResolution(), cam.GetResolution(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tempTex, 0);
@@ -184,7 +189,7 @@ void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir, float3 lightC
 #endif
 }
 
-void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
+void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const glm::vec3& cloudPosition)
 {
     if (gui == NULL)
         return;
@@ -255,18 +260,32 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
             gui->frame = 0;
         }
 
-        float3 l;
+        if (cam.GetIsMoving())
+        {
+            gui->frame = 0;
+            cam.SetIsMoving(false);
+        }
+
+        float3 lightDir;
         float altiangle = gui->lighty;
-        l.y = sin(altiangle);
+        lightDir.y = sin(altiangle);
         float aziangle = gui->lighta;
-        l.x = cos(aziangle) * cos(altiangle);
-        l.z = sin(aziangle) * cos(altiangle);
+        lightDir.x = cos(aziangle) * cos(altiangle);
+        lightDir.z = sin(aziangle) * cos(altiangle);
+
+        float3 cameraPosition = glmVec3ToFloat3(cam.getPosition() - cloudPosition);
+        float3 cameraForward = glmVec3ToFloat3(cam.getFrontVector());
+        float3 cameraRight = glmVec3ToFloat3(cam.getRightVector());
+        float3 cameraUp = glmVec3ToFloat3(cam.getUpVector());
 
         auto start_time = std::chrono::system_clock::now();
-
-        cam.Render(accum_buffer, histo_buffer_cuda, reinterpret_cast<unsigned int*>(p), int2{ gui->width , gui->height }, gui->frame, l, gui->lightColor, gui->alpha, gui->ms, gui->G, gui->toneType,
-                   gui->predict ? (gui->mrpnn ? VolumeRender::RenderType::MRPNN : VolumeRender::RenderType::RPNN) : VolumeRender::RenderType::PT,
-                   gui->denoise);
+        
+        volume.Render(accum_buffer, histo_buffer_cuda, reinterpret_cast<unsigned int*>(p), int2{ gui->width , gui->height },
+            //cameraPosition, cameraUp, cameraRight,
+            cameraPosition, cameraForward, cameraUp, cameraRight,
+            lightDir, gui->lightColor, gui->alpha, gui->ms, gui->G, gui->frame,
+            gui->predict ? (gui->mrpnn ? VolumeRender::RenderType::MRPNN : VolumeRender::RenderType::RPNN) : VolumeRender::RenderType::PT,
+            gui->toneType, gui->denoise);
 
         auto finish_time = std::chrono::system_clock::now();
         float new_fps = 10000000.0f / (finish_time - start_time).count();
@@ -309,6 +328,18 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
 
     // Render the quad.
     glUseProgram(program);
+
+    // Caculate and apply the MVP matrix
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), cloudPosition);
+    glm::mat4 view = cam.getViewMatrix();
+    //glm::vec3 up(0.0f, 1.0f, 0.0f);
+    //glm::vec3 camPos = cam.getPosition() / glm::vec3(200, 200, 200);
+    //glm::vec3 target = camPos + cam.getFrontVector();
+    //glm::mat4 view = glm::lookAt(camPos, target, up);
+    glm::mat4 projection = cam.getProjMatrix();
+    glm::mat4 MVP = projection* view* model;
+    glUniformMatrix4fv(glGetUniformLocation(program, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
+
     //glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(quad_vao);
 
@@ -336,7 +367,7 @@ void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window)
 
 }
 
-void CleanupVR()
+void CleanupCloud()
 {
     cudaFree(accum_buffer);
 

@@ -7,7 +7,8 @@
 
 #ifdef GUI
 
-#include "camera.hpp"
+#include "../graphics/camera.h"
+#include "volume.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -19,6 +20,7 @@
 
 #include <cuda_runtime.h>
 #include <cuda_gl_interop.h>
+#include <vector_types.h>
 #include <vector_functions.h>
 #include <windows.h>
 
@@ -94,8 +96,8 @@ static void resize_buffers(float3** accum_buffer_cuda, Histogram** histo_buffer_
 
 #endif
 
-void InitVR(Camera_VR& cam, VolumeRender& volume, float3 lightDir = normalize({ 1,1,1 }), float3 lightColor = { 1,1,1 }, float3 scatter_rate = { 1, 1, 1 }, float alpha = 1, float multiScatterNum = 10, float g = 0);
+void InitCloud(Camera& cam, VolumeRender& volume, float3 lightDir = normalize({ 1,1,1 }), float3 lightColor = { 1,1,1 }, float3 scatter_rate = { 1, 1, 1 }, float alpha = 1, float multiScatterNum = 10, float g = 0);
 
-void RenderVR(Camera_VR& cam, VolumeRender& volume, GLFWwindow* window);
+void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const glm::vec3& cloudPosition);
 
-void CleanupVR();
+void CleanupCloud();
