@@ -3,6 +3,7 @@
 #include "../graphics/window.h"
 #include "../main/constants.h"
 #include "../main/app_context.h"
+#include <glm/gtc/type_ptr.hpp>
 
 //#include "../volumerendering/vector.cuh"
 
@@ -45,8 +46,8 @@ void UI::render()
 	ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	// display number of primitives rendered
-	ImGui::Text("Ocean primitives: %i", m_app_context->m_num_ocean_primitives);
-	ImGui::Text("Seabed primitives: %i", m_app_context->m_num_seabed_primitives);
+	//ImGui::Text("Ocean primitives: %i", m_app_context->m_num_ocean_primitives);
+	//ImGui::Text("Seabed primitives: %i", m_app_context->m_num_seabed_primitives);
 	ImGui::Separator();
 
 	// --- render options
@@ -54,7 +55,7 @@ void UI::render()
 
 	// wireframe mode toggle (on/off)
 	static bool wireframe_on = false;
-	ImGui::Checkbox("Wireframe mode", &wireframe_on);
+	ImGui::Checkbox("Wireframe", &wireframe_on);
 	if (wireframe_on)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -63,6 +64,10 @@ void UI::render()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+	ImGui::SameLine();
+	ImGui::Checkbox("Axis", &m_app_context->m_do_render_axis);
+	ImGui::SameLine();
+	ImGui::Checkbox("Grid", &m_app_context->m_do_render_grid);
 
 	// render seabed mesh toggle (on/off)
 	ImGui::Checkbox("Render Seabed", &(m_app_context->m_do_render_seabed));
@@ -74,12 +79,15 @@ void UI::render()
 
 	// --- camera options
 	ImGui::Text("Camera:");
-	// polar angle
+	// direction
 	float polar = m_app_context->m_render_camera.getPolarAngle();
+	float azimuthal = m_app_context->m_render_camera.getAzimuthalAngle();
+	float3 cameradir{ sin(polar) * cos(azimuthal), sin(polar) * sin(azimuthal), cos(polar) };
+	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", cameradir.x, cameradir.y, cameradir.z);
+	// polar angle	
 	ImGui::InputFloat("Polar", &polar);
 	m_app_context->m_render_camera.setPolarAngle(polar);
-	// azimuthal angle
-	float azimuthal = m_app_context->m_render_camera.getAzimuthalAngle();
+	// azimuthal angle	
 	ImGui::InputFloat("Azimuthal", &azimuthal);
 	m_app_context->m_render_camera.setAzimuthalAngle(azimuthal);
 	// position
@@ -109,12 +117,19 @@ void UI::render()
 	float aziangle = m_app_context->m_gui_param.lighta;
 	float altiangle = m_app_context->m_gui_param.lighty;
 	float3 lightdir{ cos(aziangle) * cos(altiangle), sin(altiangle), sin(aziangle) * cos(altiangle) };
-	ImGui::Text("Dir: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
+	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
 	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.lighta, -180, 180);
 	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.lighty, -90, 90);
 	changed |= ImGui::ColorPicker3("Color", (float*)&m_app_context->m_gui_param.lightColor, ImGuiColorEditFlags_::ImGuiColorEditFlags_Float | ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_::ImGuiColorEditFlags_HDR);
 	if (changed)
 		UI::SetIsChanging(true);
+	ImGui::Separator();
+
+	// --- cloud
+	ImGui::Text("Volume Rendering:");
+	glm::vec3 cloud_pos = m_app_context->m_gui_param.cloud_position;
+	if (ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f"))
+		m_app_context->m_gui_param.frame = 0;
 	ImGui::Separator();
 
 	// --- seabed 
@@ -206,7 +221,7 @@ GUIParam::GUIParam()
 	this->lightColor = lightColor;
 
 	// --- Volume Rendering
-	this->cloud_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->cloud_position = glm::vec3(-1.56288, 0.47835073, -1.2548155);
 	this->G = 0.857f;
 	this->alpha = 1.0f;
 	this->ms = 10.0f;
