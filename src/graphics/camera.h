@@ -29,7 +29,7 @@ private:
 
 	float m_fov = 45.0f;
 	float m_aspect_ratio = CGRA350Constants::DEFAULT_WINDOW_WIDTH / CGRA350Constants::DEFAULT_WINDOW_HEIGHT;
-	const float m_SPEED = CGRA350Constants::DEFAULT_CAMERA_SPEED;
+	float m_speed = 1;
 	const float m_SENSITIVITY = CGRA350Constants::DEFAULT_CAMERA_SENSITIVITY;
 
 public:
@@ -45,12 +45,15 @@ public:
 	void setAzimuthalAngle(float new_azimuthal);
 	void setPolarAngle(float new_polar);
 	void setFOV(float new_fov);
+	void setSpeed(float new_speed);
 	void setAspectRatio(float new_ar);
 
 	glm::vec3 getPosition() const;
 	float getAzimuthalAngle() const;
 	float getPolarAngle() const;
 	float getFOV() const;
+	float getSpeed() const;
+
 	glm::vec3 Camera::getFrontVector() const;
 	glm::vec3 Camera::getRightVector() const;
 	glm::vec3 Camera::getUpVector() const;

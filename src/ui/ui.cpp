@@ -2,8 +2,12 @@
 #include "ui.h"
 #include "../graphics/window.h"
 #include "../main/constants.h"
+#include "../main/app_context.h"
+
+//#include "../volumerendering/vector.cuh"
 
 CGRA350::AppContext *UI::m_app_context = nullptr;
+bool UI::m_isChanging = false;
 
 // Set up Dear ImGui context, backends/platforms & style
 void UI::init(CGRA350::AppContext *app_context)
@@ -30,8 +34,8 @@ void UI::render()
 	ImGui::NewFrame();
 
 	// --- set up window  & location to top-left corner---
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-
+	ImGui::SetNextWindowPos(ImVec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH - CGRA350Constants::DEFAULT_IMGUI_WIDTH, 0));
+	ImGui::SetNextWindowSize(ImVec2(CGRA350Constants::DEFAULT_IMGUI_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT));
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
 	ImGui::Begin("CGRA350", nullptr, window_flags);
 
@@ -87,11 +91,30 @@ void UI::render()
 		cam_pos_a[1],
 		cam_pos_a[2]
 	));
+	// speed
+	float speed = m_app_context->m_render_camera.getSpeed();
+	ImGui::SliderFloat("Speed", &speed, 0, CGRA350Constants::DEFAULT_CAMERA_SPEED);
+	m_app_context->m_render_camera.setSpeed(speed);
 	// fov
-	float fov = m_app_context->m_render_camera.getFOV();
-	ImGui::InputFloat("FOV", &fov);
-	m_app_context->m_render_camera.setFOV(fov);
+	//float fov = m_app_context->m_render_camera.getFOV();
+	//ImGui::InputFloat("FOV", &fov);
+	//m_app_context->m_render_camera.setFOV(fov);
 
+	ImGui::Separator();
+
+	// --- light options
+	bool changed = false;
+	ImGui::Text("Directional Light");
+	// direction	
+	float aziangle = m_app_context->m_gui_param.lighta;
+	float altiangle = m_app_context->m_gui_param.lighty;
+	float3 lightdir{ cos(aziangle) * cos(altiangle), sin(altiangle), sin(aziangle) * cos(altiangle) };
+	ImGui::Text("Dir: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
+	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.lighta, -180, 180);
+	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.lighty, -90, 90);
+	changed |= ImGui::ColorPicker3("Color", (float*)&m_app_context->m_gui_param.lightColor, ImGuiColorEditFlags_::ImGuiColorEditFlags_Float | ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_::ImGuiColorEditFlags_HDR);
+	if (changed)
+		UI::SetIsChanging(true);
 	ImGui::Separator();
 
 	// --- seabed 
@@ -161,4 +184,31 @@ void UI::destroy()
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+}
+
+void UI::SetIsChanging(bool isChanging)
+{
+	UI::m_isChanging = isChanging;
+}
+
+bool UI::GetIsChanging()
+{
+	return UI::m_isChanging;
+}
+
+GUIParam::GUIParam()
+{
+	// --- Common Settings
+	float3 lightColor = { 1.0, 1.0, 1.0 };
+	float3 lightDir = float3{ 0.34281, 0.70711, 0.61845 };
+	this->lighta = atan2(lightDir.z, lightDir.x);
+	this->lighty = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
+	this->lightColor = lightColor;
+
+	// --- Volume Rendering
+	this->cloud_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->G = 0.857f;
+	this->alpha = 1.0f;
+	this->ms = 10.0f;
+	this->scatter_rate = float3{ 1, 1, 1 };
 }

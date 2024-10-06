@@ -3,6 +3,7 @@
 #include "../main/app_context.h"
 #include "../utils/image_io.h"
 
+#include <imgui/imgui.h>
 #include <iostream>
 
 Window *Window::s_instance = nullptr;
@@ -152,6 +153,11 @@ void Window::setCallbacks()
     glfwSetCursorPosCallback(m_window,
         [](GLFWwindow *window, double xpos, double ypos)
         {
+            ImGuiIO& io = ImGui::GetIO();
+            if (io.WantCaptureMouse) {
+                return;
+            }
+
             CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
             
             // click & drag --> move camera view
@@ -168,15 +174,20 @@ void Window::setCallbacks()
     );
 
     // Cursor scroll
-    glfwSetScrollCallback(m_window,
-        [](GLFWwindow *window, double xoffset, double yoffset)
-        {
-            CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
+    //glfwSetScrollCallback(m_window,
+    //    [](GLFWwindow *window, double xoffset, double yoffset)
+    //    {
+    //        ImGuiIO& io = ImGui::GetIO();
+    //        if (io.WantCaptureMouse) {
+    //            return;
+    //        }
 
-            // scroll --> zoom in/out
-            context->m_render_camera.processMouseScroll(yoffset);
-        }
-    );
+    //        CGRA350::AppContext *context = reinterpret_cast<CGRA350::AppContext *>(glfwGetWindowUserPointer(window));
+
+    //        // scroll --> zoom in/out
+    //        context->m_render_camera.processMouseScroll(yoffset);
+    //    }
+    //);
 }
 
 // Sets the GLFW window's window user pointer to the given pointer

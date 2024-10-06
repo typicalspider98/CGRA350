@@ -3,12 +3,11 @@
 #pragma once
 
 #include "../volumerendering/volume_gui.hpp"
-
+#include "../volumerendering/volume.hpp"
 #include "../graphics/window.h"
-#include "app_context.h"
 #include "../ui/ui.h"
 
-#include "../volumerendering/volume.hpp"
+#include "app_context.h"
 
 namespace CGRA350
 {

@@ -62,14 +62,7 @@ namespace CGRA350
 
             string cloud_path = "./../data/CLOUD0";
             m_volumerender = new VolumeRender(cloud_path);
-            float3 lightColor = { 1.0, 1.0, 1.0 };
-            float alpha = 1.0;
-            float g = 0.857;
-            float3 scatter = float3{ 1, 1, 1 };
-            m_volumerender->SetScatterRate(scatter);
-            float3 lightDir = normalize(float3{ 0.34281, 0.70711, 0.61845 });
-
-            InitCloud(m_context.m_render_camera, *m_volumerender, lightDir, lightColor, scatter, alpha, 512, g);
+            InitCloud(m_context.m_render_camera, *m_volumerender, m_context.m_gui_param);
         }
     }
 
@@ -404,7 +397,7 @@ namespace CGRA350
             // --- render cloud ---
             if (m_context.m_do_render_cloud)
             {
-                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow(), glm::vec3(0, 0, 0));
+                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow(), m_context.m_gui_param.cloud_position);
             }
 
             // --- render Grid ---

@@ -21,7 +21,7 @@ Camera::Camera(glm::vec3 position, float azimuthal_angle, float polar_angle, int
 // Move camera's position in given direction, based on time taken & cam's velocity.
 void Camera::move(CameraMovement direction, float delta_time)
 {
-	float distance = delta_time;//m_SPEED* delta_time * 10.0f;
+	float distance = delta_time * m_speed;
 
 	switch (direction)
 	{
@@ -119,6 +119,12 @@ void Camera::setFOV(float new_fov)
 {
 	m_fov = new_fov;
 }
+
+void Camera::setSpeed(float new_speed)
+{
+	m_speed = new_speed;
+}
+
 void Camera::setAspectRatio(float new_ar)
 {
 	m_aspect_ratio = new_ar;
@@ -143,6 +149,11 @@ float Camera::getPolarAngle() const
 float Camera::getFOV() const
 {
 	return m_fov;
+}
+
+float Camera::getSpeed() const
+{
+	return m_speed;
 }
 
 glm::vec3 Camera::getFrontVector() const
