@@ -31,17 +31,11 @@ Option(CompileRPNN OFF)
 
 if (GUI)
 	add_definitions(-DGUI)
-    #set(GLEW_VERBOSE ON)
-    #set(glfw3_DIR ${PROJECT_SOURCE_DIR}/ext/glfw-3.4/build/lib/cmake/glfw3)
-    #find_package(GLEW REQUIRED HINTS ${PROJECT_SOURCE_DIR}/libs/vendor/glew-2.1.0/build/lib/cmake/glew)
-    #find_package(glfw3)
-    #add_subdirectory(Imgui)
-	#INCLUDE_DIRECTORIES(Imgui_INCLUDE_DIR)
 endif()
 
-if (CompileRPNN)
-    add_definitions(-DCRPNN)
-endif()
+#if (CompileRPNN)
+#    add_definitions(-DCRPNN)
+#endif()
 
 include_directories(libs/vendor/glad/include/
         libs/vendor/glfw/include/
@@ -95,7 +89,8 @@ set(PROJECT_SOURCES src/main/cgra350final.cpp
 
 file(GLOB PROJECT_SHADERS ${PROJECT_SOURCE_DIR}/resources/shaders/*.frag
                           ${PROJECT_SOURCE_DIR}/resources/shaders/*.vert
-                          ${PROJECT_SOURCE_DIR}/resources/shaders/*.geom)
+                          ${PROJECT_SOURCE_DIR}/resources/shaders/*.geom
+                          ${PROJECT_SOURCE_DIR}/resources/shaders/*.comp)
 
 set(PROJECT_CONFIGS CMakeLists.txt
                     .gitattributes
@@ -111,14 +106,16 @@ message("PROJECT_SOURCES = ${PROJECT_SOURCES}")
 message("VENDORS_SOURCES = ${VENDORS_SOURCES}")
 
 file(GLOB VR_SOURCES src/volumerendering/*)
-
 source_group("VolumeRendering" FILES ${VR_SOURCES}) 
+
+file(GLOB CI_SOURCES src/computeinstancing/*)
+source_group("ComputeInstancing" FILES ${CI_SOURCES})
 
 add_definitions(-DGLFW_INCLUDE_NONE
                 -DPROJECT_SOURCE_DIR=\"${PROJECT_SOURCE_DIR}\")
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES}  # ${PROJECT_HEADERS}
                                ${PROJECT_SHADERS} ${PROJECT_CONFIGS}
-                               ${VENDORS_SOURCES} ${VR_SOURCES} src/main/cgra350final.cpp)
+                               ${VENDORS_SOURCES} ${VR_SOURCES} ${CI_SOURCES})
 target_link_libraries(${PROJECT_NAME} glfw
                       ${GLFW_LIBRARIES} ${GLAD_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -140,10 +137,5 @@ if (RTX30XX)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE $<$<COMPILE_LANGUAGE:CUDA>:-use_fast_math -arch=sm_75 -maxrregcount=168>)
 endif()
-
-#if (GUI)
-#    target_link_libraries(${PROJECT_NAME} GLEW::GLEW glfw Imgui) 
-#    add_dependencies(${PROJECT_NAME} Imgui)
-#endif()
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

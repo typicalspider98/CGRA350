@@ -87,5 +87,12 @@ public:
     bool inspector = false;
 
     std::string hdri_path = "";
+
+    float rain_radius;
+    int rain_drop_num;
+    float rain_min_speed;
+    float rain_max_speed;
+    float rain_sea_level;
+    
 };
 #endif
