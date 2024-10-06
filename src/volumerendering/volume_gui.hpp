@@ -48,4 +48,6 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param);
 
 void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const glm::vec3& cloudPosition);
 
+void ChangeCloudEnv(VolumeRender& volume, GUIParam& param);
+
 void CleanupCloud();

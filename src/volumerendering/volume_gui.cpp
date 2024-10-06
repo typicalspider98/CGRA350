@@ -151,7 +151,7 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
     gui = &param;
     volume.SetScatterRate(param.scatter_rate);
     volume.UpdateHGLut(param.G);
-    volume.SetHDRI(CGRA350Constants::TEXTURES_FOLDER_PATH + "sky_skybox_1/bottom.hdr");
+    ChangeCloudEnv(volume, param);
 
     glGenBuffers(1, &display_buffer);
     glGenTextures(1, &display_tex);
@@ -359,6 +359,13 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
     if (isDepthWriteEnabled) glDepthMask(true);
     if (!isBlendEnabled) glDisable(GL_BLEND);
 
+}
+
+void ChangeCloudEnv(VolumeRender& volume, GUIParam& param)
+{
+    string folder_name = CGRA350Constants::ENV_FORLDER_NAME[param.env_map];
+    volume.SetHDRI(CGRA350Constants::TEXTURES_FOLDER_PATH + folder_name + "/bottom.hdr");
+    param.frame = 0;
 }
 
 void CleanupCloud()

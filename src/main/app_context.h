@@ -35,7 +35,7 @@ namespace CGRA350
 		glm::vec3 m_water_base_colour = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR;
 		float m_water_base_colour_amt = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT;
 
-		int m_env_map = CGRA350Constants::DEFAULT_ENV_MAP; // 0: sky_skybox_1, 1: sky_skybox_2, 3: sunset_skybox_1, 4: sunset_skybox_2, 5: sunset_skybox_3
+		//int m_env_map = CGRA350Constants::DEFAULT_ENV_MAP; // 0: sky_skybox_1, 1: sky_skybox_2, 3: sunset_skybox_1, 4: sunset_skybox_2, 5: sunset_skybox_3
 		int m_seabed_tex = 0; // 0: none, 1: sand_seabed_1, 2: sand_seabed_2, 3: pretrified_seabed
 
 		unsigned int m_num_ocean_primitives = 2 * CGRA350Constants::DEFAULT_OCEAN_GRID_WIDTH * CGRA350Constants::DEFAULT_OCEAN_GRID_LENGTH;

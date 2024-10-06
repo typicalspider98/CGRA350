@@ -53,6 +53,7 @@ public:
 
     float3 scatter_rate = { 1, 1, 1 };
 
+    int env_map = 0;
     float env_exp = 1;
 
     float exposure = 1;

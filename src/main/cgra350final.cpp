@@ -78,11 +78,10 @@ namespace CGRA350
         ShaderProgram skybox_shader_prog(skybox_shaders);
 
         // Create skybox cubemap texture
-        string folder_names[] = { "sky_skybox_1", "sky_skybox_2", "sunset_skybox_1", "sunset_skybox_2", "sunset_skybox_3" };
         std::shared_ptr<CubeMapTexture> env_maps[] = {nullptr, nullptr, nullptr, nullptr, nullptr };
         for (int i = 0; i < 5; i++)
         {
-            string folder_name = folder_names[i];
+            string folder_name = CGRA350Constants::ENV_FORLDER_NAME[i];
             string env_map_imgs[] = {
                 folder_name + "/right.jpg",
                 folder_name + "/left.jpg",
@@ -303,12 +302,15 @@ namespace CGRA350
 
 
             // --- update env map used if changed in UI
-            if (last_env_map != m_context.m_env_map)
+            if (last_env_map != m_context.m_gui_param.env_map)
             {
-                skybox_renderer.setCubeMapTexture(*env_maps[m_context.m_env_map]);
-                ocean_renderer_fresnel.setSkyboxTexture(*env_maps[m_context.m_env_map]);
-                ocean_renderer_refl.setSkyboxTexture(*env_maps[m_context.m_env_map]);
-                last_env_map = m_context.m_env_map;
+                skybox_renderer.setCubeMapTexture(*env_maps[m_context.m_gui_param.env_map]);
+                ocean_renderer_fresnel.setSkyboxTexture(*env_maps[m_context.m_gui_param.env_map]);
+                ocean_renderer_refl.setSkyboxTexture(*env_maps[m_context.m_gui_param.env_map]);
+                last_env_map = m_context.m_gui_param.env_map;
+
+                if (m_context.m_do_render_cloud)
+                    ChangeCloudEnv(*m_volumerender, m_context.m_gui_param);
             }
 
             // --- update seabed texture used if changed in UI

@@ -168,7 +168,7 @@ void UI::render()
 
 	// --- skybox
 	ImGui::Text("Environment Map:");
-	ImGui::Combo("Env.Map", &(m_app_context->m_env_map), "sky_skybox_1\0sky_skybox_2\0sunset_skybox_1\0sunset_skybox_2\0sunset_skybox_3");
+	ImGui::Combo("Env.Map", &(m_app_context->m_gui_param.env_map), "sky_skybox_1\0sky_skybox_2\0sunset_skybox_1\0sunset_skybox_2\0sunset_skybox_3");
 		
 	// --- end window
 	ImGui::End();
@@ -211,4 +211,7 @@ GUIParam::GUIParam()
 	this->alpha = 1.0f;
 	this->ms = 10.0f;
 	this->scatter_rate = float3{ 1, 1, 1 };
+
+	// --- Env
+	this->env_map = CGRA350Constants::DEFAULT_ENV_MAP;
 }

@@ -44,6 +44,7 @@ namespace CGRA350Constants
 	const float DEFAULT_WATER_BASE_COLOUR_AMOUNT = 0.65f;
 
 	const int DEFAULT_ENV_MAP = 0;  // 0: sky_skybox_1, 1: sky_skybox_2, 3: sunset_skybox_1, 4: sunset_skybox_2, 5: sunset_skybox_3
+	const std::string ENV_FORLDER_NAME[] = { "sky_skybox_1", "sky_skybox_2", "sunset_skybox_1", "sunset_skybox_2", "sunset_skybox_3" };
 	const std::string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
 }
 
