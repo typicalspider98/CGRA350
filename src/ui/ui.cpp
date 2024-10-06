@@ -121,15 +121,19 @@ void UI::render()
 	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.lighta, -180, 180);
 	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.lighty, -90, 90);
 	changed |= ImGui::ColorPicker3("Color", (float*)&m_app_context->m_gui_param.lightColor, ImGuiColorEditFlags_::ImGuiColorEditFlags_Float | ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_::ImGuiColorEditFlags_HDR);
-	if (changed)
-		UI::SetIsChanging(true);
 	ImGui::Separator();
 
 	// --- cloud
 	ImGui::Text("Volume Rendering:");
 	glm::vec3 cloud_pos = m_app_context->m_gui_param.cloud_position;
-	if (ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f"))
-		m_app_context->m_gui_param.frame = 0;
+	changed |= ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f");
+	changed |= ImGui::SliderFloat("G", &m_app_context->m_gui_param.G, 0, 0.857);
+	changed |= ImGui::SliderFloat("Alpha", &m_app_context->m_gui_param.alpha, 0.1, 10);
+	changed |= ImGui::SliderInt("Multi Scatter", &m_app_context->m_gui_param.ms, 1, 1000);
+	changed |= ImGui::SliderFloat("Tr scale", &m_app_context->m_gui_param.tr, 1, 10);
+	changed |= ImGui::SliderFloat3("Scatter rate", (float*)&m_app_context->m_gui_param.scatter_rate, 0, 1);
+	if (changed)
+		UI::SetIsChanging(true);
 	ImGui::Separator();
 
 	// --- seabed 

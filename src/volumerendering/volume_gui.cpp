@@ -267,7 +267,9 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
         lightDir.x = cos(aziangle) * cos(altiangle);
         lightDir.z = sin(aziangle) * cos(altiangle);
 
-        float3 cameraPosition = glmVec3ToFloat3(cam.getPosition() - cloudPosition);
+        glm::vec3 offsetPosition = cam.getPosition() - cloudPosition;
+        float3 cameraPosition = glmVec3ToFloat3(offsetPosition);
+        //printf("Cam (%f, %f, %f) Cloud (%f, %f, %f), Offset(%f, %f, %f)\n", cam.getPosition().x, cam.getPosition().y, cam.getPosition().z, cloudPosition.x, cloudPosition.y, cloudPosition.z, offsetPosition.x, offsetPosition.y, offsetPosition.z);
         float3 cameraForward = glmVec3ToFloat3(cam.getFrontVector());
         float3 cameraRight = glmVec3ToFloat3(cam.getRightVector());
         float3 cameraUp = glmVec3ToFloat3(cam.getUpVector());
@@ -322,18 +324,6 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
 
     // Render the quad.
     glUseProgram(program);
-
-    // Caculate and apply the MVP matrix
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), cloudPosition);
-    glm::mat4 view = cam.getViewMatrix();
-    //glm::vec3 up(0.0f, 1.0f, 0.0f);
-    //glm::vec3 camPos = cam.getPosition() / glm::vec3(200, 200, 200);
-    //glm::vec3 target = camPos + cam.getFrontVector();
-    //glm::mat4 view = glm::lookAt(camPos, target, up);
-    glm::mat4 projection = cam.getProjMatrix();
-    glm::mat4 MVP = projection* view* model;
-    glUniformMatrix4fv(glGetUniformLocation(program, "MVP"), 1, GL_FALSE, glm::value_ptr(MVP));
-
     //glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(quad_vao);
 
