@@ -7,8 +7,9 @@
 
 namespace CGRA350Constants
 {
-	const float DEFAULT_WINDOW_WIDTH = 800.0f;
+	const float DEFAULT_WINDOW_WIDTH = 1200.0f;
 	const float DEFAULT_WINDOW_HEIGHT = 800.0f;
+	const float DEFAULT_IMGUI_WIDTH = 400.0f;
 
 	const unsigned int OPENGL_VERSION_MAJOR = 4;
 	const unsigned int OPENGL_VERSION_MINOR = 3;
@@ -21,7 +22,7 @@ namespace CGRA350Constants
 	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::sin(glm::radians(45.0f)) // z
 	//);
 	const glm::vec3 CAMERA_POSITION = glm::vec3(0.67085, -0.03808, -0.04856);
-	const float DEFAULT_CAMERA_SPEED = 3.0f;
+	const float DEFAULT_CAMERA_SPEED = 30.0f;
 	const float DEFAULT_CAMERA_SENSITIVITY = 0.1f;
 	const float CAMERA_NEAR_PLANE = 0.1f;
 	const float CAMERA_FAR_PLANE = 2000.0f;

@@ -12,7 +12,7 @@ using namespace std;
 HWND GL_Window;
 HWND DX_Window;
 int actual_frame = 0;
-GUIs* gui = NULL;
+GUIParam* gui = NULL;
 float4* accum_buffer = NULL;
 Histogram* histo_buffer_cuda = NULL;
 cudaGraphicsResource_t display_buffer_cuda = NULL;
@@ -146,19 +146,11 @@ static void resize_buffers(float4** accum_buffer_cuda, Histogram** histo_buffer_
 #pragma endregion
 
 #pragma region Render
-void InitCloud(Camera& cam, VolumeRender& volume, float3 lightDir, float3 lightColor, float3 scatter_rate, float alpha, float multiScatterNum, float g) {
+void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
 #ifdef GUI
-    gui = new GUIs();
-
-    gui->G = g;
-    gui->alpha = alpha;
-    gui->ms = multiScatterNum;
-    gui->lighta = atan2(lightDir.z, lightDir.x);
-    gui->lighty = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
-    gui->lightColor = lightColor;
-    gui->scatter_rate = scatter_rate;
-
-    volume.UpdateHGLut(g);
+    gui = &param;
+    volume.SetScatterRate(param.scatter_rate);
+    volume.UpdateHGLut(param.G);
     volume.SetHDRI(CGRA350Constants::TEXTURES_FOLDER_PATH + "sky_skybox_1/bottom.hdr");
 
     glGenBuffers(1, &display_buffer);
@@ -229,10 +221,6 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
 
         gui->frame = 0;
 
-        //kernel_params.resolution.x = width;
-        //kernel_params.resolution.y = height;
-        //kernel_params.iteration = 0;
-
         // Allocate texture once
         glBindTexture(GL_TEXTURE_2D, display_tex);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, gui->width, gui->height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
@@ -249,7 +237,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
     if (!gui->pause) {
         volume.SetEnvExp(gui->env_exp);
         volume.SetTrScale(gui->tr);
-        volume.SetScatterRate(gui->scatter_rate * 1.001);
+        volume.SetScatterRate(gui->scatter_rate);
         volume.SetExposure(gui->exposure);
         volume.SetSurfaceIOR(gui->render_surface ? gui->IOR : -1);
         volume.SetCheckboard(gui->checkboard);
@@ -264,6 +252,12 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
         {
             gui->frame = 0;
             cam.SetIsMoving(false);
+        }
+
+        if (UI::GetIsChanging())
+        {
+            gui->frame = 0;
+            UI::SetIsChanging(false);
         }
 
         float3 lightDir;

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "../graphics/camera.h"
+#include "../ui/ui.h"
 #include "constants.h"
 
 
@@ -27,7 +28,7 @@ namespace CGRA350
 		bool m_do_render_ocean = true;
 		bool m_do_render_axis = false;
 		bool m_do_render_grid = false;
-		bool m_do_render_ui = false;
+		bool m_do_render_ui = true;
 		
 		int m_illumin_model = 0; // 0: Fresnel, 1: Reflection, 2: Refraction, 3: Phong
 
@@ -41,6 +42,7 @@ namespace CGRA350
 		unsigned int m_num_seabed_primitives = 2 * CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH * CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
 		Camera m_render_camera;
+		GUIParam m_gui_param;
 
 		AppContext();
 	};
