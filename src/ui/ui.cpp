@@ -112,7 +112,7 @@ void UI::render()
 
 	// --- light options
 	bool changed = false;
-	ImGui::Text("Directional Light");
+	ImGui::Text("Directional Light:");
 	// direction	
 	float aziangle = m_app_context->m_gui_param.lighta;
 	float altiangle = m_app_context->m_gui_param.lighty;
@@ -188,7 +188,15 @@ void UI::render()
 	// --- skybox
 	ImGui::Text("Environment Map:");
 	ImGui::Combo("Env.Map", &(m_app_context->m_gui_param.env_map), "sky_skybox_1\0sky_skybox_2\0sunset_skybox_1\0sunset_skybox_2\0sunset_skybox_3");
-		
+
+	// --- rain
+	ImGui::Text("Rain:");
+	ImGui::SliderFloat("Rain Radius", &m_app_context->m_gui_param.rain_radius, 0.0f, 100.0f, "%.1f");
+	ImGui::InputInt("Rain Drop Number", &m_app_context->m_gui_param.rain_drop_num);
+	ImGui::SliderFloat("Rain Min Speed", &m_app_context->m_gui_param.rain_min_speed, 0.0f, 50.0f, "%.1f");
+	ImGui::SliderFloat("Rain Max Speed", &m_app_context->m_gui_param.rain_max_speed, m_app_context->m_gui_param.rain_min_speed, 100.0f, "%.1f");
+	ImGui::SliderFloat("Sea Level", &m_app_context->m_gui_param.rain_sea_level, -150.0f, 50.0f, "%.1f");
+
 	// --- end window
 	ImGui::End();
 
@@ -233,4 +241,11 @@ GUIParam::GUIParam()
 
 	// --- Env
 	this->env_map = CGRA350Constants::DEFAULT_ENV_MAP;
+
+	// --- Rain
+	this->rain_radius = 22.5f;
+	this->rain_drop_num = 10000;
+	this->rain_min_speed = 2.0f;
+	this->rain_max_speed = 5.0f;
+	this->rain_sea_level = -10.0f;
 }

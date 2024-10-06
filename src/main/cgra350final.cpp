@@ -5,6 +5,7 @@
 #include "../graphics/renderers.h"
 #include "../graphics/textures.h"
 #include "../volumerendering/vector.cuh"
+#include "../computeinstancing/Rain.hpp"
 
 #include <cuda_runtime.h>
 #include <vector_types.h>
@@ -190,6 +191,24 @@ namespace CGRA350
         // Track last seabed texture used
         int last_seabed_tex = 0; // none
 
+        // ------------------------------
+        // Rain
+        std::vector<Shader> rain_compute_shader;
+        rain_compute_shader.emplace_back("rain.comp");
+        ShaderProgram rain_compute_shader_prog(rain_compute_shader);
+        std::vector<Shader> rain_render_shaders;
+        rain_render_shaders.emplace_back("rain.vert");
+        rain_render_shaders.emplace_back("rain.frag");
+        ShaderProgram rain_render_shader_prog(rain_render_shaders);
+        Rain rain(rain_compute_shader_prog.getHandle(), rain_render_shader_prog.getHandle());
+        int last_rain_drop_num = m_context.m_gui_param.rain_drop_num;
+        rain.initializeRain(last_rain_drop_num,
+                            m_context.m_gui_param.cloud_position,
+                            m_context.m_gui_param.rain_radius,
+                            m_context.m_gui_param.rain_min_speed,
+                            m_context.m_gui_param.rain_max_speed);
+
+        // ------------------------------
         // Axis
         std::vector<Shader> axis_shaders;
         axis_shaders.emplace_back("axis.vert");
@@ -402,7 +421,29 @@ namespace CGRA350
                 RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow(), m_context.m_gui_param.cloud_position);
             }
 
-            // --- render Grid ---
+            // --- render Rain ---
+            if (m_context.m_do_render_rain)
+            {
+                if (last_rain_drop_num != m_context.m_gui_param.rain_drop_num)
+                {
+                    last_rain_drop_num = m_context.m_gui_param.rain_drop_num;
+                    rain.clearRain();
+                    rain.initializeRain(last_rain_drop_num, 
+                                        m_context.m_gui_param.cloud_position,
+                                        m_context.m_gui_param.rain_radius,
+                                        m_context.m_gui_param.rain_min_speed,
+                                        m_context.m_gui_param.rain_max_speed);
+                }
+
+                rain.computeRainOnGPU(ImGui::GetIO().DeltaTime, 
+                                m_context.m_gui_param.rain_sea_level,
+                                m_context.m_gui_param.cloud_position,
+                                m_context.m_gui_param.rain_radius,
+                                m_context.m_gui_param.rain_min_speed,
+                                m_context.m_gui_param.rain_max_speed);
+                rain.renderRain(m_context.m_render_camera, ImGui::GetIO().DeltaTime);
+            }
+            // --- render Axis ---
             if (m_context.m_do_render_axis)
             {
                 axis_shader_prog.use();
