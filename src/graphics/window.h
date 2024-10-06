@@ -45,5 +45,7 @@ public:
 
 	unsigned int getScreenWidth();
 	unsigned int getScreenHeight();
+
+	GLFWwindow* getWindow();
 };
 #endif 

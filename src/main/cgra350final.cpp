@@ -4,7 +4,10 @@
 #include "../graphics/shaders.h"
 #include "../graphics/renderers.h"
 #include "../graphics/textures.h"
+#include "../volumerendering/vector.cuh"
 
+#include <cuda_runtime.h>
+#include <vector_types.h>
 
 // System Headers
 #include <glm/glm.hpp>
@@ -14,6 +17,7 @@ int main()
 {
     CGRA350::CGRA350App::initGLFW();
     CGRA350::CGRA350App finalProject; // load glfw & create window
+    finalProject.initVolumeRendering();
     finalProject.renderLoop();   // render geom to window
 
     return EXIT_SUCCESS;
@@ -48,6 +52,25 @@ namespace CGRA350
     void CGRA350App::initGLFW()
     {
         glfwInit();
+    }
+
+    void CGRA350App::initVolumeRendering()
+    {
+        if (m_context.m_do_render_cloud)
+        {
+            CheckCuda();
+
+            string cloud_path = "./../data/CLOUD0";
+            m_volumerender = new VolumeRender(cloud_path);
+            float3 lightColor = { 1.0, 1.0, 1.0 };
+            float alpha = 1.0;
+            float g = 0.857;
+            float3 scatter = float3{ 1, 1, 1 };
+            m_volumerender->SetScatterRate(scatter);
+            float3 lightDir = normalize(float3{ 0.34281, 0.70711, 0.61845 });
+
+            InitCloud(m_context.m_render_camera, *m_volumerender, lightDir, lightColor, scatter, alpha, 512, g);
+        }
     }
 
     void CGRA350App::renderLoop()
@@ -175,7 +198,20 @@ namespace CGRA350
         // Track last seabed texture used
         int last_seabed_tex = 0; // none
 
-        
+        // Axis
+        std::vector<Shader> axis_shaders;
+        axis_shaders.emplace_back("axis.vert");
+        axis_shaders.emplace_back("axis.geom");
+        axis_shaders.emplace_back("axis.frag");
+        ShaderProgram axis_shader_prog(axis_shaders);
+
+        // Grid
+        std::vector<Shader> grid_shaders;
+        grid_shaders.emplace_back("grid.vert");
+        grid_shaders.emplace_back("grid.geom");
+        grid_shaders.emplace_back("grid.frag");
+        ShaderProgram grid_shader_prog(grid_shaders);
+
         // ------------------------------
         // Rendering Loop
         while (!m_window.shouldClose())
@@ -209,6 +245,8 @@ namespace CGRA350
                 m_context.m_render_camera.move(CameraMovement::DOWNWARDS, ImGui::GetIO().DeltaTime);
             }
        
+            const glm::mat proj = m_context.m_render_camera.getProjMatrix();
+            const glm::mat view = m_context.m_render_camera.getViewMatrix();
 
             // --- update mesh data if changed in UI ---
 
@@ -308,13 +346,17 @@ namespace CGRA350
 
                 m_window.clear();
 
+                // render skybox
+                if (m_context.m_do_render_skybox)
+                {
+                    skybox_renderer.render(m_context.m_render_camera);
+                }
+
                 // render seabed
                 if (m_context.m_do_render_seabed)
                 {
                     seabed_renderer.render(m_context.m_render_camera);
                 }
-                // render skybox
-                skybox_renderer.render(m_context.m_render_camera);
 
                 // go back to default fbo
                 if (m_context.m_illumin_model == 0)
@@ -326,7 +368,12 @@ namespace CGRA350
                     ocean_renderer_refr.unbindFBO();
                 }
             }
-            
+
+            // --- render skybox ---
+            if (m_context.m_do_render_skybox)
+            {
+                skybox_renderer.render(m_context.m_render_camera);
+            }
 
             // --- render ocean ---
             if (m_context.m_do_render_ocean)
@@ -354,8 +401,33 @@ namespace CGRA350
                 seabed_renderer.render(m_context.m_render_camera);
             }
 
-            // --- render skybox ---
-            skybox_renderer.render(m_context.m_render_camera);
+            // --- render cloud ---
+            if (m_context.m_do_render_cloud)
+            {
+                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow(), glm::vec3(0, 0, 0));
+            }
+
+            // --- render Grid ---
+            if (m_context.m_do_render_axis)
+            {
+                axis_shader_prog.use();
+                axis_shader_prog.setMat4("uProjectionMatrix", proj);
+                axis_shader_prog.setMat4("uModelViewMatrix", view);
+                Renderer::draw_dummy(6);
+            }
+
+            // --- render Grid ---
+            if (m_context.m_do_render_grid)
+            {
+                const glm::mat4 rot = glm::rotate(glm::mat4(1), glm::pi<float>() / 2.f, glm::vec3(0, 1, 0));
+
+                grid_shader_prog.use();
+                grid_shader_prog.setMat4("uProjectionMatrix", proj);
+                grid_shader_prog.setMat4("uModelViewMatrix", view);
+                Renderer::draw_dummy(1001);
+                grid_shader_prog.setMat4("uModelViewMatrix", view * rot);
+                Renderer::draw_dummy(1001);
+            }
 
             // --- render UI ---
             if (m_context.m_do_render_ui)
@@ -368,6 +440,11 @@ namespace CGRA350
             m_window.update();
 
             glfwPollEvents();
+        }
+
+        if (m_context.m_do_render_cloud)
+        {
+            CleanupCloud();
         }
     }
 }

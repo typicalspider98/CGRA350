@@ -1,16 +1,16 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "image_io.h"
-
+#include "../main/constants.h"
 #include <iostream>
 
-string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
+//string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
 
 
 unsigned char *ImageIO::loadImage(string filename, int &width, int &height, int &num_channels, bool flip_vertically)
 {
 	if (flip_vertically) stbi_set_flip_vertically_on_load(true);
 
-	string filepath = TEXTURES_FOLDER_PATH + filename;
+	string filepath = CGRA350Constants::TEXTURES_FOLDER_PATH + filename;
 	
 	unsigned char *img_data = stbi_load(filepath.c_str(), &width, &height, &num_channels, 0);
 

@@ -293,6 +293,8 @@ struct ImVec2
 #ifdef IM_VEC2_CLASS_EXTRA
     IM_VEC2_CLASS_EXTRA     // Define additional constructors and implicit cast operators in imconfig.h to convert back and forth between your math types and ImVec2.
 #endif
+    // Iris: Overloads the '+' operator to add two ImVec2 vectors
+    ImVec2 operator+(const ImVec2& b) { return ImVec2(x + b.x, y + b.y); }
 };
 
 // ImVec4: 4D vector used to store clipping rectangles, colors etc. [Compile-time configurable type]

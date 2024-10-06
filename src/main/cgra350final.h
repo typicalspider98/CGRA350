@@ -2,10 +2,13 @@
 #define CGRA350_MAIN
 #pragma once
 
+#include "../volumerendering/volume_gui.hpp"
+
 #include "../graphics/window.h"
 #include "app_context.h"
 #include "../ui/ui.h"
 
+#include "../volumerendering/volume.hpp"
 
 namespace CGRA350
 {
@@ -14,6 +17,7 @@ namespace CGRA350
 	private:
 		Window m_window;
 		AppContext m_context;
+		VolumeRender* m_volumerender;
 
 	public:
 
@@ -21,6 +25,7 @@ namespace CGRA350
 		~CGRA350App();	// terminate
 
 		static void initGLFW();
+		void initVolumeRendering();
 		void renderLoop();
 	};
 }

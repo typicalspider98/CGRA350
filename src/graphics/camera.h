@@ -23,7 +23,10 @@ private:
 	glm::vec3 m_position;
 	float m_azimuthal_angle;
 	float m_polar_angle;
-	
+
+	int m_resolution;
+	bool m_isMoving;
+
 	float m_fov = 45.0f;
 	float m_aspect_ratio = CGRA350Constants::DEFAULT_WINDOW_WIDTH / CGRA350Constants::DEFAULT_WINDOW_HEIGHT;
 	const float m_SPEED = CGRA350Constants::DEFAULT_CAMERA_SPEED;
@@ -31,8 +34,8 @@ private:
 
 public:
 	Camera();
-	Camera(glm::vec3 position);
-	Camera(glm::vec3 position, float azimuthal_angle, float polar_angle);
+	Camera(glm::vec3 position, int resolution);
+	Camera(glm::vec3 position, float azimuthal_angle, float polar_angle, int resolution);
 
 	void move(CameraMovement direction, float delta_time);
 	void processMouseMovement(float x_offset, float y_offset);
@@ -49,12 +52,19 @@ public:
 	float getPolarAngle() const;
 	float getFOV() const;
 	glm::vec3 Camera::getFrontVector() const;
+	glm::vec3 Camera::getRightVector() const;
+	glm::vec3 Camera::getUpVector() const;
 
 	glm::mat4 getViewMatrix() const;
 	void getViewMatrix(glm::mat4 &dest) const;
 
 	glm::mat4 getProjMatrix() const;
 	void getProjMatrix(glm::mat4 &dest) const;
+
+	int GetResolution() const;
+	
+	void SetIsMoving(bool isMoving);
+	bool GetIsMoving() const;
 };
 
 #endif
