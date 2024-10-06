@@ -9,7 +9,6 @@
 #include "../ui/ui.h"
 
 #include "../volumerendering/volume.hpp"
-#include "../volumerendering/camera.hpp"
 
 namespace CGRA350
 {
@@ -19,7 +18,6 @@ namespace CGRA350
 		Window m_window;
 		AppContext m_context;
 		VolumeRender* m_volumerender;
-		Camera_VR* m_cam;
 
 	public:
 
