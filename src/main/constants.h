@@ -3,7 +3,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-
+#include <string>
 
 namespace CGRA350Constants
 {
