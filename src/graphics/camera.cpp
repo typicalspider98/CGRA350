@@ -63,7 +63,7 @@ void Camera::move(CameraMovement direction, float delta_time)
 		case CameraMovement::DOWNWARDS:
 		{
 			// move along '-up' direction
-			glm::vec3 up = -getUpVector();
+			glm::vec3 up = getUpVector();
 			m_position -= up * distance;
 			break;
 		}
