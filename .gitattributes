@@ -1,2 +1,0 @@
-* text=auto eol=lf whitespace=tab-in-indent,trailing-space,tabwidth=4
-data/*.rar filter=lfs diff=lfs merge=lfs -text
