@@ -291,7 +291,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
         actual_frame++;
     }
 
-#ifdef IRIS_DEBUG
+#if defined(IRIS_DEBUG) && defined(VolumeRendering_Debug)
     size_t bufferSize = gui->width * gui->width * sizeof(float4);
     float4* host_buffer = (float4*)malloc(bufferSize);
     cudaMemcpy(host_buffer, accum_buffer, bufferSize, cudaMemcpyDeviceToHost);
@@ -311,7 +311,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, gui->width, gui->height, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-#ifdef IRIS_DEBUG
+#if defined(IRIS_DEBUG) && defined(VolumeRendering_Debug)
     GLubyte* textureData = new GLubyte[gui->width * gui->height * 4];
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
     for (int i = 260; i < 300; i++) {

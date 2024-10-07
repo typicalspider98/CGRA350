@@ -193,20 +193,26 @@ namespace CGRA350
 
         // ------------------------------
         // Rain
+        Texture2D splash_texture = Texture2D("raindrop_splash_spritesheet.png");
         std::vector<Shader> rain_compute_shader;
         rain_compute_shader.emplace_back("rain.comp");
         ShaderProgram rain_compute_shader_prog(rain_compute_shader);
-        std::vector<Shader> rain_render_shaders;
-        rain_render_shaders.emplace_back("rain.vert");
-        rain_render_shaders.emplace_back("rain.frag");
-        ShaderProgram rain_render_shader_prog(rain_render_shaders);
-        Rain rain(rain_compute_shader_prog.getHandle(), rain_render_shader_prog.getHandle());
-        int last_rain_drop_num = m_context.m_gui_param.rain_drop_num;
+        std::vector<Shader> raindrop_shaders;
+        raindrop_shaders.emplace_back("raindrop.vert");
+        raindrop_shaders.emplace_back("raindrop.geom");
+        raindrop_shaders.emplace_back("raindrop.frag");
+        ShaderProgram raindrop_shader_prog(raindrop_shaders);
+        std::vector<Shader> splash_shaders;
+        splash_shaders.emplace_back("splash.vert");
+        splash_shaders.emplace_back("splash.frag");
+        ShaderProgram splash_shader_prog(splash_shaders);
+        Rain rain(rain_compute_shader_prog, raindrop_shader_prog, splash_shader_prog, splash_texture);
+        int last_rain_drop_num = m_context.m_gui_param.raindrop_num;
         rain.initializeRain(last_rain_drop_num,
-                            m_context.m_gui_param.cloud_position,
+                            m_context.m_gui_param.rain_position,
                             m_context.m_gui_param.rain_radius,
-                            m_context.m_gui_param.rain_min_speed,
-                            m_context.m_gui_param.rain_max_speed);
+                            m_context.m_gui_param.raindrop_min_speed,
+                            m_context.m_gui_param.raindrop_max_speed);
 
         // ------------------------------
         // Axis
@@ -258,6 +264,8 @@ namespace CGRA350
        
             const glm::mat proj = m_context.m_render_camera.getProjMatrix();
             const glm::mat view = m_context.m_render_camera.getViewMatrix();
+            const glm::vec3 cameraRight = m_context.m_render_camera.getRightVector();
+            const glm::vec3 cameraUp = m_context.m_render_camera.getUpVector();
 
             // --- update mesh data if changed in UI ---
 
@@ -424,24 +432,27 @@ namespace CGRA350
             // --- render Rain ---
             if (m_context.m_do_render_rain)
             {
-                if (last_rain_drop_num != m_context.m_gui_param.rain_drop_num)
+                if (last_rain_drop_num != m_context.m_gui_param.raindrop_num)
                 {
-                    last_rain_drop_num = m_context.m_gui_param.rain_drop_num;
+                    last_rain_drop_num = m_context.m_gui_param.raindrop_num;
                     rain.clearRain();
                     rain.initializeRain(last_rain_drop_num, 
-                                        m_context.m_gui_param.cloud_position,
+                                        m_context.m_gui_param.rain_position,
                                         m_context.m_gui_param.rain_radius,
-                                        m_context.m_gui_param.rain_min_speed,
-                                        m_context.m_gui_param.rain_max_speed);
+                                        m_context.m_gui_param.raindrop_min_speed,
+                                        m_context.m_gui_param.raindrop_max_speed);
                 }
 
                 rain.computeRainOnGPU(ImGui::GetIO().DeltaTime, 
                                 m_context.m_gui_param.rain_sea_level,
-                                m_context.m_gui_param.cloud_position,
+                                m_context.m_gui_param.rain_position,
                                 m_context.m_gui_param.rain_radius,
-                                m_context.m_gui_param.rain_min_speed,
-                                m_context.m_gui_param.rain_max_speed);
-                rain.renderRain(m_context.m_render_camera, ImGui::GetIO().DeltaTime);
+                                m_context.m_gui_param.raindrop_min_speed,
+                                m_context.m_gui_param.raindrop_max_speed);
+                rain.renderRaindrops(proj, view, ImGui::GetIO().DeltaTime,
+                                m_context.m_gui_param.raindrop_length,
+                                m_context.m_gui_param.raindrop_color);
+                rain.renderSplashes(proj, view, cameraRight, cameraUp, ImGui::GetIO().DeltaTime);
             }
             // --- render Axis ---
             if (m_context.m_do_render_axis)

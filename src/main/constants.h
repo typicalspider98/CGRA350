@@ -21,7 +21,7 @@ namespace CGRA350Constants
 	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::cos(glm::radians(45.0f)), // y
 	//	CAMERA_DISTANCE_FROM_ORIGIN * glm::sin(glm::radians(45.0f)) * glm::sin(glm::radians(45.0f)) // z
 	//);
-	const glm::vec3 CAMERA_POSITION = glm::vec3(0.67085, -0.03808, -0.04856);
+	const glm::vec3 CAMERA_POSITION = glm::vec3(-0.206, -6.761, -0.655);
 	const float DEFAULT_CAMERA_SPEED = 30.0f;
 	const float DEFAULT_CAMERA_SENSITIVITY = 0.1f;
 	const float CAMERA_NEAR_PLANE = 0.1f;

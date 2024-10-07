@@ -2,12 +2,22 @@
 
 layout(local_size_x = 256) in;
 
-layout(std430, binding = 0) buffer Raindrops {
-    vec4 positions[];
+struct Raindrop {
+    vec4 position;
+    vec4 velocity;
 };
 
-layout(std430, binding = 1) buffer Velocities {
-    vec4 velocities[];
+struct Splash {
+    vec4 position;
+    vec4 lifetime;  // x-total lifetime; y-left lifetime;
+};
+
+layout(std430, binding = 0) buffer RaindropBuffer {
+    Raindrop raindrops[];
+};
+
+layout(std430, binding = 1) buffer SplashBuffer {
+    Splash splashes[];
 };
 
 layout(std430, binding = 2) buffer DebugBuffer {
@@ -16,21 +26,24 @@ layout(std430, binding = 2) buffer DebugBuffer {
 
 uniform float deltaTime;
 uniform float seaLevel;
-uniform vec3 cloudPosition;
+uniform vec3 rainPosition;
 uniform float cloudRadius;
 uniform float minSpeed;
 uniform float maxSpeed;
+uniform float minLifetime;
+uniform float maxLifetime;
+uniform uint maxSplashes;
 
 float rand(vec2 co) {
     return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
-vec4 generateRainDropPosition(vec3 cloudPosition, float cloudRadius) {
-    float r = cloudRadius * rand(vec2(gl_GlobalInvocationID.x + 1, gl_GlobalInvocationID.y + 1));
-    float theta = rand(vec2(gl_GlobalInvocationID.x + 2, gl_GlobalInvocationID.y + 2)) * 2.0 * 3.1415926f;
-    float x = cloudPosition.x + r * cos(theta);
-    float z = cloudPosition.z + r * sin(theta);
-    return vec4(x, cloudPosition.y, z, 0.0f);
+vec4 generateRainDropPosition(vec3 rainPosition, float cloudRadius) {
+    float r = cloudRadius * rand(vec2(gl_GlobalInvocationID.x * deltaTime + 1, gl_GlobalInvocationID.y * deltaTime + 1));
+    float theta = rand(vec2(gl_GlobalInvocationID.x * deltaTime + 2, gl_GlobalInvocationID.y * deltaTime + 2)) * 2.0 * 3.1415926f;
+    float x = rainPosition.x + r * cos(theta);
+    float z = rainPosition.z + r * sin(theta);
+    return vec4(x, rainPosition.y, z, 1.0f);
 }
 
 vec4 generateRainDropVelocity(float minSpeed, float maxSpeed) {
@@ -38,19 +51,40 @@ vec4 generateRainDropVelocity(float minSpeed, float maxSpeed) {
     return vec4(0.0f, -speed, 0.0f, 0.0f);
 }
 
+float generateSplashLifetime(float minLifetime, float maxLifetime) {
+    return minLifetime + rand(vec2(gl_GlobalInvocationID.x, gl_GlobalInvocationID.y)) * (maxLifetime - minLifetime);
+}
+
 void main() {
     uint index = gl_GlobalInvocationID.x;
 
-    positions[index] += velocities[index] * deltaTime;
-    debugFlags[index].x = positions[index].y;
-    debugFlags[index].y = positions[index].y;
+    // update raindrops
+    raindrops[index].position += raindrops[index].velocity * deltaTime;
+    debugFlags[index].x = raindrops[index].position.y;
+    debugFlags[index].y = raindrops[index].position.y;
     debugFlags[index].z = 0;
     debugFlags[index].w = float(index);
 
-    if (positions[index].y <= seaLevel) {
-        positions[index] = generateRainDropPosition(cloudPosition, cloudRadius);
-        velocities[index] = generateRainDropVelocity(minSpeed, maxSpeed);
-        debugFlags[index].y = positions[index].y;
+    // when raindrops are under the sealevel
+    if (raindrops[index].position.y <= seaLevel) {
+        // generate splash
+        splashes[index].position = raindrops[index].position;
+        splashes[index].lifetime.x = generateSplashLifetime(minLifetime, maxLifetime);
+        splashes[index].lifetime.y = splashes[index].lifetime.x;
+
+        // reset raindrops
+        raindrops[index].position = generateRainDropPosition(rainPosition, cloudRadius);
+        raindrops[index].velocity = generateRainDropVelocity(minSpeed, maxSpeed);
+        debugFlags[index].y = raindrops[index].position.y;
         debugFlags[index].z = 666;
+    }
+
+    // update splashes
+    if (splashes[index].lifetime.y > 0.0) {
+        splashes[index].lifetime.y -= deltaTime;
+
+        if (splashes[index].lifetime.y <= 0.0) {
+            splashes[index].lifetime.y = -1.0;
+        }
     }
 }

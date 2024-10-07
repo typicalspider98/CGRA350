@@ -169,7 +169,7 @@ __global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size,
         //        sky ? "true" : "false");
     }
 
-#ifdef IRIS_DEBUG
+#if defined(IRIS_DEBUG) && defined(VolumeRendering_Debug)
     if (i >= 260 && i < 500 && j == 520)
         printf("%d: (%d,%d) predict: %s, R: %f, G: %f, B: %f, A: %f, res_dis.w: %f, dis: %f, sky: %s\n", frameNum, i, j, predict ? "true" : "false", target[idx].x, target[idx].y, target[idx].z, target[idx].w, res_dis.w, dis, sky ? "true" : "false");
 #endif

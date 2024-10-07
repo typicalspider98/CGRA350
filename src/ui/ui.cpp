@@ -192,9 +192,9 @@ void UI::render()
 	// --- rain
 	ImGui::Text("Rain:");
 	ImGui::SliderFloat("Rain Radius", &m_app_context->m_gui_param.rain_radius, 0.0f, 100.0f, "%.1f");
-	ImGui::InputInt("Rain Drop Number", &m_app_context->m_gui_param.rain_drop_num);
-	ImGui::SliderFloat("Rain Min Speed", &m_app_context->m_gui_param.rain_min_speed, 0.0f, 50.0f, "%.1f");
-	ImGui::SliderFloat("Rain Max Speed", &m_app_context->m_gui_param.rain_max_speed, m_app_context->m_gui_param.rain_min_speed, 100.0f, "%.1f");
+	ImGui::InputInt("Rain Drop Number", &m_app_context->m_gui_param.raindrop_num);
+	ImGui::SliderFloat("Rain Min Speed", &m_app_context->m_gui_param.raindrop_min_speed, 0.0f, 100.0f, "%.1f");
+	ImGui::SliderFloat("Rain Max Speed", &m_app_context->m_gui_param.raindrop_max_speed, 0.0f, 100.0f, "%.1f");
 	ImGui::SliderFloat("Sea Level", &m_app_context->m_gui_param.rain_sea_level, -150.0f, 50.0f, "%.1f");
 
 	// --- end window
@@ -233,7 +233,7 @@ GUIParam::GUIParam()
 	this->lightColor = lightColor;
 
 	// --- Volume Rendering
-	this->cloud_position = glm::vec3(-1.56288, 0.47835073, -1.2548155);
+	this->cloud_position = glm::vec3(-1.56288, 7, -1.2548155);
 	this->G = 0.857f;
 	this->alpha = 1.0f;
 	this->ms = 10.0f;
@@ -243,9 +243,12 @@ GUIParam::GUIParam()
 	this->env_map = CGRA350Constants::DEFAULT_ENV_MAP;
 
 	// --- Rain
-	this->rain_radius = 22.5f;
-	this->rain_drop_num = 10000;
-	this->rain_min_speed = 2.0f;
-	this->rain_max_speed = 5.0f;
-	this->rain_sea_level = -10.0f;
+	this->rain_position = glm::vec3(-60, 100, -60);
+	this->rain_radius = 86.0f;
+	this->rain_sea_level = -2.6f;
+	this->raindrop_num = 1000;
+	this->raindrop_length = 0.8f;
+	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	
+	this->raindrop_min_speed = 11.5f;
+	this->raindrop_max_speed = 17.1f;	
 }
