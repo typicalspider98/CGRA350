@@ -88,11 +88,14 @@ public:
 
     std::string hdri_path = "";
 
+    // --- Rain
+    glm::vec3 rain_position;
     float rain_radius;
-    int rain_drop_num;
-    float rain_min_speed;
-    float rain_max_speed;
     float rain_sea_level;
-    
+    int raindrop_num;
+    float raindrop_length;
+    glm::vec3 raindrop_color;    
+    float raindrop_min_speed;
+    float raindrop_max_speed;
 };
 #endif
