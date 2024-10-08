@@ -42,6 +42,7 @@ public:
     int frame;
 
     glm::vec3 cloud_position;
+    float cloud_scale;
     float G;
     float alpha;
     int ms;

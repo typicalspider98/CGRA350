@@ -39,10 +39,12 @@ __device__ __host__ const float3 sin(const float3 a) { return float3{ sin(a.x),s
 __device__ __host__ const int3 floor(const float3 a) { return { int(a.x), int(a.y), int(a.z) }; }
 __device__ __host__ float length(const float3 a) { return sqrt(dot(a, a)); }
 __device__ __host__ float distance(const float3 a, const float3 b) { return length(a - b); }
-__device__ __host__ float RayBoxOffset(float3 p, float3 dir)
+__device__ __host__ float RayBoxOffset(float3 p, float3 dir, float scaleFactor)
 {
     dir = inv(dir);
-    float3 bmax = { 0.4999f, 0.4999f, 0.4999f };
+    static float offset = 0.001;
+    //float3 bmax = { 0.4999f, 0.4999f, 0.4999f };
+    float3 bmax = { 0.5f * scaleFactor - offset, 0.5f * scaleFactor - offset, 0.5f * scaleFactor - offset };
     float3 to_axil_dis = -p * dir;
     float3 axil_to_face_dis = bmax * dir;
 
@@ -58,10 +60,10 @@ __device__ __host__ float RayBoxOffset(float3 p, float3 dir)
     return tma >= tmi ? max(tmi, 0.0f) : -1;
 }
 
-__device__ __host__ float RayBoxDistance(float3 p, float3 dir)
+__device__ __host__ float RayBoxDistance(float3 p, float3 dir, float scaleFactor)
 {
     dir = inv(dir);
-    float3 bmax = { 0.5f, 0.5f, 0.5f };
+    float3 bmax = { 0.5f * scaleFactor, 0.5f * scaleFactor, 0.5f * scaleFactor };
     float3 to_axil_dis = -p * dir;
     float3 axil_to_face_dis = bmax * dir;
 

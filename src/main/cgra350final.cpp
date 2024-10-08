@@ -946,57 +946,27 @@ namespace CGRA350
                 seabed_renderer.render(m_context.m_render_camera);
             }
 
-            // --- render cloud ---
-            if (m_context.m_do_render_cloud)
-            {
-                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow(), m_context.m_gui_param.cloud_position);
-            }
-
-            // --- render Rain ---
+            // --- compute Rain and render Rain Splashes ---
             if (m_context.m_do_render_rain)
             {
                 if (last_rain_drop_num != m_context.m_gui_param.raindrop_num)
                 {
                     last_rain_drop_num = m_context.m_gui_param.raindrop_num;
                     rain.clearRain();
-                    rain.initializeRain(last_rain_drop_num, 
-                                        m_context.m_gui_param.rain_position,
-                                        m_context.m_gui_param.rain_radius,
-                                        m_context.m_gui_param.raindrop_min_speed,
-                                        m_context.m_gui_param.raindrop_max_speed);
+                    rain.initializeRain(last_rain_drop_num,
+                        m_context.m_gui_param.rain_position,
+                        m_context.m_gui_param.rain_radius,
+                        m_context.m_gui_param.raindrop_min_speed,
+                        m_context.m_gui_param.raindrop_max_speed);
                 }
 
-                rain.computeRainOnGPU(ImGui::GetIO().DeltaTime, 
-                                m_context.m_gui_param.rain_sea_level,
-                                m_context.m_gui_param.rain_position,
-                                m_context.m_gui_param.rain_radius,
-                                m_context.m_gui_param.raindrop_min_speed,
-                                m_context.m_gui_param.raindrop_max_speed);
-                rain.renderRaindrops(proj, view, ImGui::GetIO().DeltaTime,
-                                m_context.m_gui_param.raindrop_length,
-                                m_context.m_gui_param.raindrop_color);
+                rain.computeRainOnGPU(ImGui::GetIO().DeltaTime,
+                    m_context.m_gui_param.rain_sea_level,
+                    m_context.m_gui_param.rain_position,
+                    m_context.m_gui_param.rain_radius,
+                    m_context.m_gui_param.raindrop_min_speed,
+                    m_context.m_gui_param.raindrop_max_speed);
                 rain.renderSplashes(proj, view, cameraRight, cameraUp, ImGui::GetIO().DeltaTime);
-            }
-            // --- render Axis ---
-            if (m_context.m_do_render_axis)
-            {
-                axis_shader_prog.use();
-                axis_shader_prog.setMat4("uProjectionMatrix", proj);
-                axis_shader_prog.setMat4("uModelViewMatrix", view);
-                Renderer::draw_dummy(6);
-            }
-
-            // --- render Grid ---
-            if (m_context.m_do_render_grid)
-            {
-                const glm::mat4 rot = glm::rotate(glm::mat4(1), glm::pi<float>() / 2.f, glm::vec3(0, 1, 0));
-
-                grid_shader_prog.use();
-                grid_shader_prog.setMat4("uProjectionMatrix", proj);
-                grid_shader_prog.setMat4("uModelViewMatrix", view);
-                Renderer::draw_dummy(1001);
-                grid_shader_prog.setMat4("uModelViewMatrix", view * rot);
-                Renderer::draw_dummy(1001);
             }
 
             //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！//
@@ -1301,6 +1271,42 @@ namespace CGRA350
             stone2Mesh.render();
             //*/
             //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！//
+
+            // --- render cloud ---
+            if (m_context.m_do_render_cloud)
+            {
+                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow());
+            }
+
+            // --- render Rain Drops ---
+            if (m_context.m_do_render_rain)
+            {
+                rain.renderRaindrops(proj, view, ImGui::GetIO().DeltaTime,
+                    m_context.m_gui_param.raindrop_length,
+                    m_context.m_gui_param.raindrop_color);
+            }
+
+            // --- render Axis ---
+            if (m_context.m_do_render_axis)
+            {
+                axis_shader_prog.use();
+                axis_shader_prog.setMat4("uProjectionMatrix", proj);
+                axis_shader_prog.setMat4("uModelViewMatrix", view);
+                Renderer::draw_dummy(6);
+            }
+
+            // --- render Grid ---
+            if (m_context.m_do_render_grid)
+            {
+                const glm::mat4 rot = glm::rotate(glm::mat4(1), glm::pi<float>() / 2.f, glm::vec3(0, 1, 0));
+
+                grid_shader_prog.use();
+                grid_shader_prog.setMat4("uProjectionMatrix", proj);
+                grid_shader_prog.setMat4("uModelViewMatrix", view);
+                Renderer::draw_dummy(1001);
+                grid_shader_prog.setMat4("uModelViewMatrix", view * rot);
+                Renderer::draw_dummy(1001);
+            }
 
             // --- render UI ---
             if (m_context.m_do_render_ui)

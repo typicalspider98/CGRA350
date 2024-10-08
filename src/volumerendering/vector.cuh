@@ -43,8 +43,8 @@ __device__ __host__ const float3 sin(const float3 a);
 __device__ __host__ const int3 floor(const float3 a);
 __device__ __host__ float length(const float3 a);
 __device__ __host__ float distance(const float3 a, const float3 b);
-__device__ __host__ float RayBoxOffset(float3 p, float3 dir);
-__device__ __host__ float RayBoxDistance(float3 p, float3 dir);
+__device__ __host__ float RayBoxOffset(float3 p, float3 dir, float scaleFactor = 1);
+__device__ __host__ float RayBoxDistance(float3 p, float3 dir, float scaleFactor = 1);
 
 __device__ __host__ const float3 Roberts2(const int n);
 __device__ __host__ const float3 UniformSampleHemisphere(const float x, const float y);

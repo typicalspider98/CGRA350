@@ -60,7 +60,7 @@ __device__ float3 lforward;
 __device__ float3 lup;
 __device__ float3 lright;
 template<bool predict, int type = Type::MRPNN>
-__global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g) {
+__global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, float scaleFactor) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j;
     if (dev_checkboard) j = (blockIdx.y * blockDim.y + threadIdx.y) * 2 + ((i + flip) % 2);
@@ -80,9 +80,9 @@ __global__ void RenderCamera(float4* target, Histogram* histo_buffer, int2 size,
 
     float4 res_dis;
     if (predict)
-        res_dis = NNPredict<type>(ori, dir, lightDir, lightColor, alpha, g);
+        res_dis = NNPredict<type>(ori, dir, lightDir, lightColor, alpha, g, scaleFactor);
     else
-        res_dis = CalculateRadiance(ori, dir, lightDir, lightColor, alpha, multiScatter, g, 1);
+        res_dis = CalculateRadiance(ori, dir, lightDir, lightColor, alpha, multiScatter, g, 1, scaleFactor);
     float3 res = make_float3(res_dis);
     bool sky = res_dis.w < 0;
     float dis = max(0.001f, res_dis.w < 0 ? 10.0f : res_dis.w);
@@ -505,7 +505,7 @@ vector<float3> VolumeRender::Render(int2 size, float3 ori, float3 up, float3 rig
     return res_cpu;
 }
 
-void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise) {
+void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int* target2, int2 size, float3 ori, float3 forward, float3 up, float3 right, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int randseed, RenderType rt, int toneType, bool denoise, float scaleFactor) {
 
     if (env_tex_dev != NULL && (rt != RenderType::PT)) {
 
@@ -556,11 +556,11 @@ void VolumeRender::Render(float4* target, Histogram* histo_buffer, unsigned int*
     last_predict = predict;
 
     if (rt == RenderType::PT)
-        RenderCamera<false><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<false><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g, scaleFactor);
     else if (rt == RenderType::RPNN)
-        RenderCamera<true, Type::RPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<true, Type::RPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g, scaleFactor);
     else
-        RenderCamera<true, Type::MRPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g);
+        RenderCamera<true, Type::MRPNN><<<dimGrid, dimBlock>>>(target, histo_buffer, size, ori, forward, up, right, lightDir, lightColor, alpha, multiScatter, g, scaleFactor);
 
     if (!predict) {
         if (denoise)

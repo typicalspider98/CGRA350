@@ -21,10 +21,11 @@ __device__ float3 SkyBox(float3 dir)
     return (dir.y > horiz ? sky * (1 + (dir.y - horiz)) : lerp(sky, ground, pow(-(dir.y - horiz), 0.4f))) * 0.6f;
 }
 
-__device__ float Density(float3 pos) {
+__device__ float Density(float3 pos, float scaleFactor) {
     //return 1;
-    float3 uv = pos + 0.5;
-    return tex3D<float>(_DensityVolume, uv.z, uv.y, uv.x);
+    float3 uv = pos / scaleFactor + 0.5;
+    float density = tex3D<float>(_DensityVolume, uv.z, uv.y, uv.x);
+    return density;
 }
 
 
@@ -48,7 +49,7 @@ __device__ float Rand(curandState* seed) {
     return curand_uniform(seed);
 }
 
-__device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float alpha) {
+__device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float alpha, float scaleFactor) {
     float SMax = maxDensity * alpha;
     float tr = 1;
     float t = 0;
@@ -61,7 +62,7 @@ __device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float 
         if (t > dis)
             break;
 
-        float density = Density(pos + (dir * t));
+        float density = Density(pos + (dir * t), scaleFactor);
         float S = density * alpha;
 
         tr *= 1 - max(0.0f, S / SMax);
@@ -78,7 +79,7 @@ __device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float 
         if (t > dis)
             break;
 
-        float density = Density(pos + (dir * t));
+        float density = Density(pos + (dir * t), scaleFactor);
         float S = density * alpha;
 
         if (Rand(seed) < max(0.0f, S / SMax)) {
@@ -93,7 +94,7 @@ __device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float 
     return tr;
 }
 
-__device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, float3 pos, float3 dir, float dis, float3* nextPos, float3* nextDir) {
+__device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, float3 pos, float3 dir, float dis, float3* nextPos, float3* nextDir, float scaleFactor) {
     float SMax = maxDensity * alpha;
     float t = 0;
 
@@ -110,7 +111,7 @@ __device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, f
         else {
             rk = Rand(seed);
 
-            float density = Density(pos + (dir * t));
+            float density = Density(pos + (dir * t), scaleFactor);
             float S = density * alpha;
 
             if (S / SMax > rk) {
@@ -129,22 +130,22 @@ __device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, f
     return true;
 }
 
-__device__ float4 GetSamplePoint(curandState* seed, float3 ori, float3 dir, float alpha) {
+__device__ float4 GetSamplePoint(curandState* seed, float3 ori, float3 dir, float alpha, float scaleFactor) {
 
     dir = normalize(dir);
-
+    //static float scale_factor = 1;
     float3 res = { 0, 0, 0 };
     float t = 0;
-    float dis = RayBoxOffset(ori, dir);
+    float dis = RayBoxOffset(ori, dir, scaleFactor);
     if (dis < 0)
         return make_float4(res, t);
 
-    float3 samplePosition = ori + dir * dis;
-    float3 rayDirection = dir;
+    float3 samplePosition = ori + dir * dis;// *scale_factor;
+    float3 rayDirection = dir;// *scale_factor;
 
-    float max_dis = RayBoxDistance(samplePosition, dir);
+    float max_dis = RayBoxDistance(samplePosition, dir, scaleFactor);
     float3 p0, p1;
-    bool in_volume = DeterminateNextVertex(seed, alpha, 0, samplePosition, rayDirection, max_dis, &p0, &p1);
+    bool in_volume = DeterminateNextVertex(seed, alpha, 0, samplePosition, rayDirection, max_dis, &p0, &p1, scaleFactor);
 
     if (in_volume)
     {
@@ -155,7 +156,7 @@ __device__ float4 GetSamplePoint(curandState* seed, float3 ori, float3 dir, floa
     return make_float4(res, t);
 }
 
-__device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int sampleNum) {
+__device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, float3 lightColor, float alpha, int multiScatter, float g, int sampleNum, float scaleFactor) {
 
     curandState seed;
     InitRand(&seed);
@@ -164,7 +165,7 @@ __device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, flo
     lightDir = normalize(lightDir);
 
     float t = -1;
-    float dis = RayBoxOffset(ori, dir);
+    float dis = RayBoxOffset(ori, dir, scaleFactor);
     if (dis < 0)
         return make_float4(SkyBox(dir), t);
 
@@ -187,9 +188,9 @@ __device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, flo
         for (int scatter_num = 0; scatter_num < multiScatter; scatter_num++)
         {
             float3 nextPos, nextDir;
-            float max_dis = RayBoxDistance(samplePosition, rayDirection);
+            float max_dis = RayBoxDistance(samplePosition, rayDirection, scaleFactor);
 
-            bool in_volume = DeterminateNextVertex(&seed, alpha, g, samplePosition, rayDirection, max_dis, &nextPos, &nextDir);
+            bool in_volume = DeterminateNextVertex(&seed, alpha, g, samplePosition, rayDirection, max_dis, &nextPos, &nextDir, scaleFactor);
 
             if (!in_volume)
             {
@@ -204,10 +205,10 @@ __device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, flo
 
             current_scatter_rate = current_scatter_rate * scatter_rate;
 
-            max_dis = RayBoxDistance(samplePosition, lightDir);
+            max_dis = RayBoxDistance(samplePosition, lightDir, scaleFactor);
 
             float light_phase = HenyeyGreenstein(dot(rayDirection, lightDir), g);
-            res = res + lightColor * current_scatter_rate * (Tr(&seed, samplePosition, lightDir, max_dis, alpha) * light_phase);
+            res = res + lightColor * current_scatter_rate * (Tr(&seed, samplePosition, lightDir, max_dis, alpha, scaleFactor) * light_phase);
 
             rayDirection = nextDir;
         }
@@ -326,7 +327,7 @@ __device__ float3x3 GetMatrixFromNormal(curandState* seed, float3 v1) {
     return float3x3(v1, v2, v3);
 }
 
-__device__ float3 Normal(float3 pos)
+__device__ float3 Normal(float3 pos, float scaleFactor)
 {
     float delta = 0.02;
 
@@ -334,9 +335,9 @@ __device__ float3 Normal(float3 pos)
     int max_loop = 10;
     do {
         n = {
-            max(0.f, -Density(pos + float3{ delta,0,0 })) - max(0.f, -Density(pos - float3{ delta,0,0 })),
-            max(0.f, -Density(pos + float3{ 0,delta,0 })) - max(0.f, -Density(pos - float3{ 0,delta,0 })),
-            max(0.f, -Density(pos + float3{ 0,0,delta })) - max(0.f, -Density(pos - float3{ 0,0,delta }))
+            max(0.f, -Density(pos + float3{ delta,0,0 }, scaleFactor)) - max(0.f, -Density(pos - float3{ delta,0,0 }, scaleFactor)),
+            max(0.f, -Density(pos + float3{ 0,delta,0 }, scaleFactor)) - max(0.f, -Density(pos - float3{ 0,delta,0 }, scaleFactor)),
+            max(0.f, -Density(pos + float3{ 0,0,delta }, scaleFactor)) - max(0.f, -Density(pos - float3{ 0,0,delta }, scaleFactor))
         };
         delta += 0.01;
     } while (n.x == 0 && n.y == 0 && n.z == 0 && max_loop-- > 0);
