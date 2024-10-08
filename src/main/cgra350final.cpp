@@ -863,7 +863,13 @@ namespace CGRA350
                 m_context.m_gui_param.light_pos_z
             );
 
-            glm::vec3 light_color(1.0f, 1.0f, 1.0f);    // 光源颜色
+            glm::vec3 light_color(
+                m_context.m_gui_param.light_color_x,
+                m_context.m_gui_param.light_color_y,
+                m_context.m_gui_param.light_color_z
+            );
+
+            //glm::vec3 light_color(1.0f, 1.0f, 1.0f);    // 光源颜色
 
             // 渲染灯塔模型
             lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
