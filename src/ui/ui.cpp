@@ -148,7 +148,16 @@ void UI::render()
 	// --- cloud
 	ImGui::Text("Volume Rendering:");
 	glm::vec3 cloud_pos = m_app_context->m_gui_param.cloud_position;
+	if (ImGui::Button("Camera Lookat"))
+	{
+		glm::vec3 offset_pos = glm::vec3(0.301, 0.068, 0.971);
+		m_app_context->m_render_camera.setPosition(cloud_pos + offset_pos);
+		m_app_context->m_render_camera.setPolarAngle(-4);
+		m_app_context->m_render_camera.setAzimuthalAngle(-90);
+		changed = true;
+	}		
 	changed |= ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f");
+	changed |= ImGui::SliderFloat("Scale", &m_app_context->m_gui_param.cloud_scale, 0.1, 15);
 	changed |= ImGui::SliderFloat("G", &m_app_context->m_gui_param.G, 0, 0.857);
 	changed |= ImGui::SliderFloat("Alpha", &m_app_context->m_gui_param.alpha, 0.1, 10);
 	changed |= ImGui::SliderInt("Multi Scatter", &m_app_context->m_gui_param.ms, 1, 1000);
@@ -255,7 +264,8 @@ GUIParam::GUIParam()
 	this->lightColor = lightColor;
 
 	// --- Volume Rendering
-	this->cloud_position = glm::vec3(-1.56288, 7, -1.2548155);
+	this->cloud_position = glm::vec3(-35, 25, -5);
+	this->cloud_scale = 1;
 	this->G = 0.857f;
 	this->alpha = 1.0f;
 	this->ms = 10.0f;
@@ -267,7 +277,7 @@ GUIParam::GUIParam()
 	// --- Rain
 	this->rain_position = glm::vec3(-60, 100, -60);
 	this->rain_radius = 86.0f;
-	this->rain_sea_level = -2.6f;
+	this->rain_sea_level = -8.8f;
 	this->raindrop_num = 1000;
 	this->raindrop_length = 0.8f;
 	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	

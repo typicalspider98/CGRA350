@@ -187,7 +187,7 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
 #endif
 }
 
-void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const glm::vec3& cloudPosition)
+void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
 {
     if (gui == NULL)
         return;
@@ -273,7 +273,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
         lightDir.x = cos(aziangle) * cos(altiangle);
         lightDir.z = sin(aziangle) * cos(altiangle);
 
-        glm::vec3 offsetPosition = cam.getPosition() - cloudPosition;
+        glm::vec3 offsetPosition = cam.getPosition() - gui->cloud_position;
         float3 cameraPosition = glmVec3ToFloat3(offsetPosition);
         //printf("Cam (%f, %f, %f) Cloud (%f, %f, %f), Offset(%f, %f, %f)\n", cam.getPosition().x, cam.getPosition().y, cam.getPosition().z, cloudPosition.x, cloudPosition.y, cloudPosition.z, offsetPosition.x, offsetPosition.y, offsetPosition.z);
         float3 cameraForward = glmVec3ToFloat3(cam.getFrontVector());
@@ -287,7 +287,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
             cameraPosition, cameraForward, cameraUp, cameraRight,
             lightDir, gui->lightColor, gui->alpha, gui->ms, gui->G, gui->frame,
             gui->predict ? (gui->mrpnn ? VolumeRender::RenderType::MRPNN : VolumeRender::RenderType::RPNN) : VolumeRender::RenderType::PT,
-            gui->toneType, gui->denoise);
+            gui->toneType, gui->denoise, gui->cloud_scale);
 
         auto finish_time = std::chrono::system_clock::now();
         float new_fps = 10000000.0f / (finish_time - start_time).count();

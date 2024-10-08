@@ -22,7 +22,7 @@ typedef float(*DensityFunc)(float3);
 
 __device__ float3 SkyBox(float3 dir);
 
-__device__ float Density(float3 pos);
+__device__ float Density(float3 pos, float scaleFactor);
 
 __device__ int Hash(int a);
 
@@ -30,13 +30,13 @@ __device__ void InitRand(curandState* seed);
 
 __device__ float Rand(curandState* seed);
 
-__device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float alpha = 1);
+__device__ float Tr(curandState* seed, float3 pos, float3 dir, float dis, float alpha = 1, float scaleFactor = 1);
 
-__device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, float3 pos, float3 dir, float dis, float3* nextPos, float3* nextDir);
+__device__ bool DeterminateNextVertex(curandState* seed, float alpha, float g, float3 pos, float3 dir, float dis, float3* nextPos, float3* nextDir, float scaleFactor = 1);
 
-__device__ float4 GetSamplePoint(curandState* seed, float3 ori, float3 dir, float alpha = 1);
+__device__ float4 GetSamplePoint(curandState* seed, float3 ori, float3 dir, float alpha = 1, float scaleFactor = 1);
 
-__device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int sampleNum = 1);
+__device__ float4 CalculateRadiance(float3 ori, float3 dir, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, int multiScatter = 1, float g = 0, int sampleNum = 1, float scaleFactor = 1);
 
 __device__ float3 ShadowTerm(float3 ori, float3 lightDir, float3 dir, float3 lightColor, float alpha, float g);
 
@@ -60,7 +60,7 @@ struct Task
 
 __device__ float3x3 GetMatrixFromNormal(curandState* seed, float3 v1);
 
-__device__ float3 Normal(float3 pos);
+__device__ float3 Normal(float3 pos, float scaleFactor);
 
 __device__ float GGXTerm(const float NdotH, const float roughness);
 
@@ -85,7 +85,7 @@ enum Type {
 };
 
 template<int type = MRPNN, int BatchSize = 4, int StepNum = 1024>
-__device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, float g = 0) {
+__device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 lightColor = { 1, 1, 1 }, float alpha = 1, float g = 0, float scaleFactor = 1) {
 
     dir = normalize(dir);
     lightDir = normalize(lightDir);
@@ -94,7 +94,7 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
     InitRand(&seed);
 
     if (type != -1) {
-        float4 spoint = GetSamplePoint(&seed, ori, dir, alpha);
+        float4 spoint = GetSamplePoint(&seed, ori, dir, alpha, scaleFactor);
         float3 pos = make_float3(spoint);
         SampleBasis sb = { GetMatrixFromNormal(&seed, dir), GetMatrixFromNormal(&seed, lightDir) };
 
@@ -123,9 +123,9 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
                 alpha, g, scatter_rate / 1.001);
         }
         {
-            float dis = RayBoxDistance(pos, sb.Light.x);
+            float dis = RayBoxDistance(pos, sb.Light.x, scaleFactor);
             float phase = HenyeyGreenstein(dot(sb.Main.x, sb.Light.x), g);
-            float tr = (Tr(&seed, pos, sb.Light.x, dis, alpha) * phase);
+            float tr = (Tr(&seed, pos, sb.Light.x, dis, alpha, scaleFactor) * phase);
             predict = predict + tr;
         }
 
@@ -143,12 +143,12 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
         bool unfinish = true;
         SampleBasis basis = { GetMatrixFromNormal(&seed, dir), GetMatrixFromNormal(&seed, lightDir) };
 
-        float offset = RayBoxOffset(ori, dir);
+        float offset = RayBoxOffset(ori, dir, scaleFactor);
         if (offset < 0)
             unfinish = false;
 
         ori = ori + dir * offset;
-        float dis = RayBoxDistance(ori, dir);
+        float dis = RayBoxDistance(ori, dir, scaleFactor);
         float inv = dis / (StepNum - 1);
         float transmittance = 1.0;
 
@@ -167,7 +167,7 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
 
             float3 samplePos = ori + dir * t;
 
-            float voxel_data = Density(samplePos);
+            float voxel_data = Density(samplePos, scaleFactor);
             hitDis = voxel_data > 0 && hitDis == -1 ? offset + t : hitDis;
             t += max(inv, -voxel_data);
 
@@ -175,16 +175,16 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
                 continue;
 
             if (!hit) {
-                float3 n = Normal(samplePos);
+                float3 n = Normal(samplePos, scaleFactor);
                 n = n - dir * max(0.f, dot(n, dir) + 0.01);
                 float4 tmp = BRDF(n, -dir, lightDir);
-                float dis = RayBoxDistance(samplePos, lightDir);
-                ref = float3{ tmp.x,tmp.y,tmp.z } *Tr(&seed, samplePos, lightDir, dis, alpha) * lightColor;
+                float dis = RayBoxDistance(samplePos, lightDir, scaleFactor);
+                ref = float3{ tmp.x,tmp.y,tmp.z } *Tr(&seed, samplePos, lightDir, dis, alpha, scaleFactor) * lightColor;
                 if (Rand(&seed) < tmp.w) {
                     ori = samplePos;
                     dir = reflect(dir, n);
                     t = 0;
-                    dis = RayBoxDistance(ori, dir);
+                    dis = RayBoxDistance(ori, dir, scaleFactor);
                     inv = dis / (StepNum - 1);
                     basis = { GetMatrixFromNormal(&seed, dir), GetMatrixFromNormal(&seed, lightDir) };
                 }
@@ -192,7 +192,7 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
                     ori = samplePos;
                     dir = refract(dir, n, 1.0f / IOR);
                     t = 0;
-                    dis = RayBoxDistance(ori, dir);
+                    dis = RayBoxDistance(ori, dir, scaleFactor);
                     inv = dis / (StepNum - 1);
                     basis = { GetMatrixFromNormal(&seed, dir), GetMatrixFromNormal(&seed, lightDir) };
                 }
@@ -240,9 +240,9 @@ __device__ float4 NNPredict(float3 ori, float3 dir, float3 lightDir, float3 ligh
                     alpha, g, scatter_rate / 1.001);
             }
             {
-                float dis = RayBoxDistance(pos, basis.Light.x);
+                float dis = RayBoxDistance(pos, basis.Light.x, scaleFactor);
                 float phase = HenyeyGreenstein(dot(basis.Main.x, basis.Light.x), g);
-                float tr = (Tr(&seed, pos, basis.Light.x, dis, alpha) * phase);
+                float tr = (Tr(&seed, pos, basis.Light.x, dis, alpha, scaleFactor) * phase);
                 res = res + tr;
             }
 

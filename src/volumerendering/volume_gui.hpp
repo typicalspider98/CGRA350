@@ -46,7 +46,7 @@ static void resize_buffers(float3** accum_buffer_cuda, Histogram** histo_buffer_
 
 void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param);
 
-void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const glm::vec3& cloudPosition);
+void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window);
 
 void ChangeCloudEnv(VolumeRender& volume, GUIParam& param);
 
