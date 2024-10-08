@@ -90,15 +90,13 @@ public:
     // --- Directional Light
     float dlight_azimuth, dlight_altitute;
     float3 dlight_color;
-    float dlight_strength;
+    float dlight_strength = 1.0f;  // 光强值
 
     //// --- Point Light
     //// 分别存储光源位置的 x、y、z 值
     //glm::vec3 plight_position;
     //// 分别存储光源颜色的 r、g、b 值
     //glm::vec3 plight_color;
-    //// 光强值
-    //float plight_strength = 1.0f;
 
     // --- Rain
     glm::vec3 rain_position;

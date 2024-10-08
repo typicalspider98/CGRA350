@@ -117,8 +117,10 @@ void UI::render()
 	glm::vec3 lightdir = m_app_context->m_gui_param.GetDLight_Direction();
 	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
 	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.dlight_azimuth, -180, 180);
-	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.dlight_altitute, -90, 90);
+	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.dlight_altitute, -180, 180);
 	changed |= ImGui::ColorEdit3("Light Color", (float*)&m_app_context->m_gui_param.dlight_color);
+
+	ImGui::SliderFloat("Light Strength", &m_app_context->m_gui_param.dlight_strength, 0.0f, 20.0f);
 	ImGui::Separator();
 
 	//// 新增 Object Light 控制部分
@@ -248,7 +250,7 @@ GUIParam::GUIParam()
 {
 	// --- Directional Light
 	float3 lightColor = { 1.0, 1.0, 1.0 };
-	float3 lightDir = float3{ 0.34281, 0.70711, 0.61845 };
+	float3 lightDir = float3{ 0.055, 0.055, 0.055 };
 	this->dlight_azimuth = atan2(lightDir.z, lightDir.x);
 	this->dlight_altitute = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
 	this->dlight_color = lightColor;
