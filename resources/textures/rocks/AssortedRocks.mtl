@@ -1,0 +1,11 @@
+# Created with Anim8or 1.00
+# Object "AssortedRocks":
+
+newmtl AssortedRocks
+Ka 0.267 0.267 0.267
+Kd 0.502 0.502 0.502
+Ks 0.298 0.298 0.298
+Ns 738.6
+map_Kd AssortedRocks_Base_Diffuse.png
+map_Ks AssortedRocks_Base_Specular.png
+
