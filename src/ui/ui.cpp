@@ -110,6 +110,22 @@ void UI::render()
 
 	ImGui::Separator();
 
+	// 新增 Object Light 控制部分
+	ImGui::Text("Object Light:");
+
+	// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
+	ImGui::SliderFloat("Light Position X", &m_app_context->m_gui_param.light_pos_x, -200.0f, 200.0f);
+	ImGui::SliderFloat("Light Position Y", &m_app_context->m_gui_param.light_pos_y, -200.0f, 200.0f);
+	ImGui::SliderFloat("Light Position Z", &m_app_context->m_gui_param.light_pos_z, -200.0f, 200.0f);
+
+	// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
+	ImGui::SliderFloat("Light Color RED", &m_app_context->m_gui_param.light_color_x, 0.0f, 1.0f);
+	ImGui::SliderFloat("Light Color GREEN", &m_app_context->m_gui_param.light_color_y, 0.0f, 1.0f);
+	ImGui::SliderFloat("Light Color BLUE", &m_app_context->m_gui_param.light_color_z, 0.0f, 1.0f);
+
+
+	ImGui::Separator();
+
 	// --- light options
 	bool changed = false;
 	ImGui::Text("Directional Light:");
