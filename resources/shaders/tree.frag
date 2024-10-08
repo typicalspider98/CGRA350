@@ -7,7 +7,7 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D texture1;   // 纹理采样器
-uniform vec3 light_pos;       // 光源位置
+uniform vec3 light_dir;       // 光源方向（平行光用）
 uniform vec3 light_color;     // 光源颜色
 uniform vec3 object_color;    // 物体颜色
 uniform vec3 view_pos;        // 摄像机位置
@@ -20,8 +20,8 @@ void main()
 {
     // 计算光照方向
     vec3 normal = normalize(Normal);
-    vec3 lightDir = normalize(light_pos - FragPos);
-    
+    vec3 lightDir = normalize(-light_dir); // 平行光的方向
+
     // 计算漫反射分量
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diff * light_color;
