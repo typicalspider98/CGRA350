@@ -855,7 +855,14 @@ namespace CGRA350
             //渲染OBJ文件
             // 渲染灯塔模型
             // 设置光照参数
-            glm::vec3 light_pos(-15.0f, 85.0f, -15.0f);  // 光源位置
+            //glm::vec3 light_pos(-15.0f, 85.0f, -15.0f);  // 光源位置
+            // 设置光照参数
+            glm::vec3 light_pos(
+                m_context.m_gui_param.light_pos_x,
+                m_context.m_gui_param.light_pos_y,
+                m_context.m_gui_param.light_pos_z
+            );
+
             glm::vec3 light_color(1.0f, 1.0f, 1.0f);    // 光源颜色
 
             // 渲染灯塔模型
@@ -935,13 +942,13 @@ namespace CGRA350
 
             //-----------------------------//
             // 设置光照参数
-            glm::vec3 light_pos2(-15.0f, 85.0f, -15.0f);  // 光源位置
-            glm::vec3 light_color2(1.0f, 1.0f, 1.0f);    // 光源颜色 
+            //glm::vec3 light_pos2(-15.0f, 85.0f, -15.0f);  // 光源位置
+            //glm::vec3 light_color2(1.0f, 1.0f, 1.0f);    // 光源颜色 
 
             // 渲染树模型
             tree_shader_prog.use();  // 使用灯塔模型的着色器程序
-            tree_shader_prog.setVec3("light_pos", light_pos2);    // 设置光照位置
-            tree_shader_prog.setVec3("light_color", light_color2);  // 设置光源颜色
+            tree_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+            tree_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
             tree_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             tree_shader_prog.setInt("normalMap", 1); // 0表示绑定到的纹理单元
 
