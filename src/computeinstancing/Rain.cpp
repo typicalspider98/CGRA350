@@ -19,7 +19,7 @@ Rain::Rain(ShaderProgram& computeShader, ShaderProgram& raindropShader, ShaderPr
     m_splash_ssbo = 0;
 
     m_splashShader.use();
-    m_splashShader.setInt("spriteTexture", 6);
+    m_splashShader.setInt("spriteTexture", CGRA350Constants::TEX_SAMPLE_ID_RAIN_SPLASH);
 }
 
 void Rain::setupShadersAndBuffers()
@@ -240,7 +240,7 @@ void Rain::renderSplashes(const glm::mat4& projection, const glm::mat4& view, co
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // active and bind texture
-    glActiveTexture(GL_TEXTURE6);
+    glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_RAIN_SPLASH);
     m_splash_texture.bind();
 
     // set uniform variables

@@ -19,7 +19,6 @@ cudaGraphicsResource_t display_buffer_cuda = NULL;
 ShaderProgram* fsr_shader_prog = NULL;
 GLuint tempBuffer = 0;
 GLuint tempTex = 0;
-int m_tempTex_Id = 10;
 GLuint display_buffer = 0;
 GLuint display_tex = 0;
 GLuint program = 0;
@@ -136,7 +135,7 @@ static void resize_buffers(float4** accum_buffer_cuda, Histogram** histo_buffer_
     glDeleteTextures(1, tempTex);
     glBindFramebuffer(GL_FRAMEBUFFER, tempFB);
     glGenTextures(1, tempTex);
-    glActiveTexture(GL_TEXTURE0 + m_tempTex_Id);
+    glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_CLOUD);
     glBindTexture(GL_TEXTURE_2D, *tempTex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width2, width2, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -161,7 +160,7 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
     glGenFramebuffers(1, &tempBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
     glGenTextures(1, &tempTex);
-    glActiveTexture(GL_TEXTURE0 + m_tempTex_Id);
+    glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_CLOUD);
     glBindTexture(GL_TEXTURE_2D, tempTex);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, cam.GetResolution(), cam.GetResolution(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -181,7 +180,7 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
 
 
     glUseProgram(program);
-    glUniform1i(glGetUniformLocation(program, "TexSampler"), m_tempTex_Id);
+    glUniform1i(glGetUniformLocation(program, "TexSampler"), CGRA350Constants::TEX_SAMPLE_ID_CLOUD);
     glUseProgram(0);
 
     init_cuda();
@@ -334,7 +333,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window, const gl
     //glClear(GL_COLOR_BUFFER_BIT);
     glBindVertexArray(quad_vao);
 
-    glActiveTexture(GL_TEXTURE0 + m_tempTex_Id);
+    glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_CLOUD);
     glUniform1i(glGetUniformLocation(program, "Size"), gui->width);
     if (gui->fsr) {
         glUniform1f(glGetUniformLocation(program, "sharp"), gui->sharpness);
