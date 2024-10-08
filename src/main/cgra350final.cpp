@@ -9,6 +9,8 @@
 
 #include <cuda_runtime.h>
 #include <vector_types.h>
+#include <glm/gtc/type_ptr.hpp>
+
 
 // System Headers
 #include <glm/glm.hpp>
@@ -241,6 +243,24 @@ namespace CGRA350
         // Create Skybox renderer
         SkyBoxRenderer skybox_renderer(skybox_shader_prog, *env_maps[last_env_map]);
 
+        // 在 cgra350final.cpp 中定义光照变量
+        //glm::vec3 lightColour(1.0f, 1.0f, 1.0f);
+        //glm::vec3 lightDirection(15.0f, -5.0f, 15.0f);
+        //float lightStrength = 1.0f;
+
+        glm::vec3 lightDirection(
+            m_context.m_gui_param.light_direction_x,
+            m_context.m_gui_param.light_direction_y,
+            m_context.m_gui_param.light_direction_z
+        );
+
+        glm::vec3 lightColour(
+            m_context.m_gui_param.light_color_x,
+            m_context.m_gui_param.light_color_y,
+            m_context.m_gui_param.light_color_z
+        );
+
+        float lightStrength = m_context.m_gui_param.lightStrength;
 
         // ------------------------------
         // Ocean
@@ -258,12 +278,34 @@ namespace CGRA350
         // Create ocean renderer
         FullOceanRenderer ocean_renderer_fresnel(ocean_shader_prog_fresnel, ocean_mesh_ptr, skybox_renderer.getCubeMapTexture());
 
+        // 获取 uniform 变量的位置
+        int lightColourLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.colour");
+        int lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.direction");
+        int lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.strength");
+
+        // 渲染循环中设置 uniform 变量
+        ocean_shader_prog_fresnel.use();
+        glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+        glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+        glUniform1f(lightStrengthLoc, lightStrength);
+
         // --- Reflection
         std::vector<Shader> ocean_shaders_refl;
         ocean_shaders_refl.emplace_back("ocean_wavesim.vert");
         ocean_shaders_refl.emplace_back("ocean_refl.frag");
         ShaderProgram ocean_shader_prog_refl(ocean_shaders_refl);
         ReflectiveOceanRenderer ocean_renderer_refl(ocean_shader_prog_refl, ocean_mesh_ptr, skybox_renderer.getCubeMapTexture());
+
+        // 获取 uniform 变量的位置
+        lightColourLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.colour");
+        lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.direction");
+        lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.strength");
+
+        // 渲染循环中设置 uniform 变量
+        ocean_shader_prog_refl.use();
+        glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+        glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+        glUniform1f(lightStrengthLoc, lightStrength);
 
         // --- Refraction
         std::vector<Shader> ocean_shaders_refr;
@@ -272,12 +314,35 @@ namespace CGRA350
         ShaderProgram ocean_shader_prog_refr(ocean_shaders_refr);
         RefractiveOceanRenderer ocean_renderer_refr(ocean_shader_prog_refr, ocean_mesh_ptr);
 
+        // 获取 uniform 变量的位置
+        lightColourLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.colour");
+        lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.direction");
+        lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.strength");
+
+        // 渲染循环中设置 uniform 变量
+        ocean_shader_prog_refr.use();
+        glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+        glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+        glUniform1f(lightStrengthLoc, lightStrength);
+
+
         // --- Phong
         std::vector<Shader> ocean_shaders_phong;
         ocean_shaders_phong.emplace_back("ocean_wavesim.vert");
         ocean_shaders_phong.emplace_back("ocean_phong.frag");
         ShaderProgram ocean_shader_prog_phong(ocean_shaders_phong);
         OceanRenderer ocean_renderer_phong(ocean_shader_prog_phong, ocean_mesh_ptr);
+
+        // 获取 uniform 变量的位置
+        lightColourLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.colour");
+        lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.direction");
+        lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.strength");
+
+        // 渲染循环中设置 uniform 变量
+        ocean_shader_prog_phong.use();
+        glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+        glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+        glUniform1f(lightStrengthLoc, lightStrength);
 
 
         // --- Other params
@@ -302,7 +367,6 @@ namespace CGRA350
 
         // ------------------------------
         // Seabed
-
         // Create seabed shaders
         std::vector<Shader> seabed_shaders;
         seabed_shaders.emplace_back("seabed.vert");
@@ -320,6 +384,16 @@ namespace CGRA350
             seabed_textures[i] = std::make_shared<Texture2D>(seabed_imgs_names[i]);
         }
 
+        // 获取 uniform 变量的位置
+        lightColourLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.colour");
+        lightDirectionLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.direction");
+        lightStrengthLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.strength");
+
+        // 渲染循环中设置 uniform 变量
+        seabed_shader_prog.use();
+        glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+        glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+        glUniform1f(lightStrengthLoc, lightStrength);
 
         // Create seabed renderer
         SeabedRenderer seabed_renderer(seabed_shader_prog, perlin_tex);
@@ -642,6 +716,20 @@ namespace CGRA350
             const glm::vec3 cameraRight = m_context.m_render_camera.getRightVector();
             const glm::vec3 cameraUp = m_context.m_render_camera.getUpVector();
 
+            glm::vec3 lightDirection(
+                m_context.m_gui_param.light_direction_x,
+                m_context.m_gui_param.light_direction_y,
+                m_context.m_gui_param.light_direction_z
+            );
+
+            glm::vec3 lightColour(
+                m_context.m_gui_param.light_color_x,
+                m_context.m_gui_param.light_color_y,
+                m_context.m_gui_param.light_color_z
+            );
+
+            float lightStrength = m_context.m_gui_param.lightStrength;
+
             // --- update mesh data if changed in UI ---
 
             // update mesh data if the grid resolution has been changed in the UI
@@ -777,22 +865,82 @@ namespace CGRA350
             {
                 switch (m_context.m_illumin_model)
                 {
-                case 0:
+                case 0: {
+                    // 获取 uniform 变量的位置
+                    int lightColourLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.colour");
+                    int lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.direction");
+                    int lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_fresnel.getHandle(), "light.strength");
+
+                    // 渲染循环中设置 uniform 变量
+                    ocean_shader_prog_fresnel.use();
+                    glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+                    glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+                    glUniform1f(lightStrengthLoc, lightStrength);
+                    
                     ocean_renderer_fresnel.render(m_context.m_render_camera);
+                }
                     break;
-                case 1:
+                case 1: {
+                    // 获取 uniform 变量的位置
+                    int lightColourLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.colour");
+                    int lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.direction");
+                    int lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_refl.getHandle(), "light.strength");
+
+                    // 渲染循环中设置 uniform 变量
+                    ocean_shader_prog_refl.use();
+                    glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+                    glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+                    glUniform1f(lightStrengthLoc, lightStrength);
+                    
                     ocean_renderer_refl.render(m_context.m_render_camera);
+                }
                     break;
-                case 2:
+                case 2: {
+                    // 获取 uniform 变量的位置
+                    int lightColourLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.colour");
+                    int lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.direction");
+                    int lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_refr.getHandle(), "light.strength");
+
+                    // 渲染循环中设置 uniform 变量
+                    ocean_shader_prog_refr.use();
+                    glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+                    glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+                    glUniform1f(lightStrengthLoc, lightStrength);
+                    
                     ocean_renderer_refr.render(m_context.m_render_camera);
+                }
                     break;
                 default:
+                {
+                    // 获取 uniform 变量的位置
+                    int lightColourLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.colour");
+                    int lightDirectionLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.direction");
+                    int lightStrengthLoc = glGetUniformLocation(ocean_shader_prog_phong.getHandle(), "light.strength");
+
+                    // 渲染循环中设置 uniform 变量
+                    ocean_shader_prog_phong.use();
+                    glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+                    glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+                    glUniform1f(lightStrengthLoc, lightStrength);
+
                     ocean_renderer_phong.render(m_context.m_render_camera);
+                }
                     break;
                 }
             }
 
             // --- render seabed ---
+            // 获取 uniform 变量的位置
+            int lightColourLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.colour");
+            int lightDirectionLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.direction");
+            int lightStrengthLoc = glGetUniformLocation(seabed_shader_prog.getHandle(), "light.strength");
+
+            // 渲染循环中设置 uniform 变量
+            seabed_shader_prog.use();
+            glUniform3fv(lightColourLoc, 1, glm::value_ptr(lightColour));
+            glUniform3fv(lightDirectionLoc, 1, glm::value_ptr(lightDirection));
+            glUniform1f(lightStrengthLoc, lightStrength);
+
             if (m_context.m_do_render_seabed)
             {
                 seabed_renderer.render(m_context.m_render_camera);
