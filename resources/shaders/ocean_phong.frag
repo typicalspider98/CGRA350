@@ -19,11 +19,7 @@ struct DirectionalLight
     float strength;
 };
 
-const DirectionalLight light = DirectionalLight(
-	vec3(1.0, 1.0, 1.0),	// colour
-	vec3(30, -45, 30),		// direction
-	3.0						// strength
-);
+uniform DirectionalLight light;
 
 // Some material constants
 

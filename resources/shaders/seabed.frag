@@ -19,13 +19,8 @@ struct DirectionalLight
     float strength;
 };
 
-const DirectionalLight light = DirectionalLight(
-	vec3(1.0, 1.0, 1.0),		// colour
-	vec3(15.0, -5.0, 15.0),		// direction
-	1.0							// strength
-);
-
-// Some material constants
+// 将 light 定义为 uniform
+uniform DirectionalLight light;
 
 const vec3 diffuse_colour = vec3(0.37, 0.30, 0.21);		// diffuse intensity/colour
 const float K_diff = 0.6;								// diffuse reflection coefficient
@@ -41,8 +36,6 @@ uniform sampler2D seabed_tex;
 // tonemapping and display encoding combined
 vec3 tonemap(vec3 linear_rgb)
 {
-    // no tonemap
-	// display encoding
     return pow(linear_rgb, vec3(1.0/2.2)); 
 }
 
@@ -50,14 +43,11 @@ void main()
 {
 	vec3 I_result;
 	
-	// calculate normal and view vectors
 	vec3 N = normalize(fs_in.wc_normal);
     vec3 V = normalize(wc_camera_pos - fs_in.wc_pos);
     vec3 L = normalize(-light.direction);
     vec3 R = reflect(-L, N);
 
-
-    // diffuse & specular shading
 	vec3 diff_col = diffuse_colour;
 	if (use_seabed_tex == 1)
 	{
@@ -67,10 +57,7 @@ void main()
     vec3 I_specular = light.colour * specular_colour * K_spec * pow(max(dot(V, R), 0.0), shininess);
 
 	I_result = (I_diffuse + I_specular) * light.strength;
-
-	// ambient light
     I_result += I_a * diffuse_colour * K_a;
 
-	// set output/final colour
 	frag_colour = vec4(tonemap(I_result), 1.0);
 }
