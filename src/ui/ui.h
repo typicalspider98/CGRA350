@@ -98,6 +98,14 @@ public:
     float light_color_y = 1.0f;
     float light_color_z = 1.0f;
 
+    // 分别存储光源位置的 x、y、z 值
+    float light_direction_x = 15.0f;
+    float light_direction_y = -5.0f;
+    float light_direction_z = 15.0f;
+
+    // 光强值
+    float lightStrength = 1.0f;
+
     // --- Rain
     glm::vec3 rain_position;
     float rain_radius;
