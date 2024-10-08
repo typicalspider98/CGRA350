@@ -151,12 +151,12 @@ namespace CGRA350
         glm::vec3 last_water_base_colour = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR;
         float last_water_base_colour_amt = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR_AMOUNT;
 
-        // 加载法线贴图
-        Texture2D normal_map_texture = Texture2D("./water_normal1.jpg");  //Add: 水面波纹
-        // 将法线贴图传递给反射渲染器
+        // Loading Normal Maps
+        Texture2D normal_map_texture = Texture2D("./water_normal1.jpg");  //Add: Water ripples
+        // Passing a normal map to the reflection renderer
         ocean_renderer_refl.setNormalMapTexture(normal_map_texture);
 
-        // 将法线贴图传递给折射渲染器
+        // Passing a normal map to the refraction renderer
         ocean_renderer_refr.setNormalMapTexture(normal_map_texture);
 
 
