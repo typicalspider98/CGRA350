@@ -225,4 +225,21 @@ public:
 
 	void render(const Camera &render_cam);
 };
+
+class LighthouseRenderer : public Renderer {
+private:
+	std::shared_ptr<ObjMesh> m_lighthouse_mesh_ptr;
+	glm::vec3 m_light_pos;
+	glm::vec3 m_light_color;
+	glm::vec3 m_camera_pos;
+
+public:
+	LighthouseRenderer(ShaderProgram& shader_prog, std::shared_ptr<ObjMesh> lighthouse_mesh_ptr);
+
+	void prepare();  // 准备渲染所需的数据
+	void setLight(const glm::vec3& light_pos, const glm::vec3& light_color);
+	void setCameraPosition(const glm::vec3& camera_pos);
+	void render(const Camera& render_cam);  // 执行渲染
+};
+
 #endif

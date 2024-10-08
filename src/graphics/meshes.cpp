@@ -1,6 +1,9 @@
 #include "meshes.h"
 #include "../main/constants.h"
 
+#include <fstream>
+#include <sstream>
+#include <iostream>
 #include <vector>
 
 #define NOMINMAX // to disable 'max' macro from minwindef.h #included indirectly
@@ -322,4 +325,54 @@ void ScreenQuadMesh::initIndices(std::vector<int> &indices)
 		0, 1, 3,
 		1, 2, 3
 	};
+}
+
+void ObjMesh::loadMtl(const std::string& filepath) {
+	std::ifstream file(filepath);
+	if (!file.is_open()) {
+		std::cerr << "Failed to open MTL file: " << filepath << std::endl;
+		return;
+	}
+
+	std::string line, currentMaterialName;
+	Material currentMaterial;
+
+	while (std::getline(file, line)) {
+		std::istringstream iss(line);
+		std::string prefix;
+		iss >> prefix;
+
+		if (prefix == "newmtl") {
+			if (!currentMaterialName.empty()) {
+				materials[currentMaterialName] = currentMaterial;  // 保存前一个材质
+			}
+			iss >> currentMaterialName;
+			currentMaterial = Material();  // 创建一个新的材质
+		}
+		else if (prefix == "Ka") {  // 环境光
+			iss >> currentMaterial.ambient.r >> currentMaterial.ambient.g >> currentMaterial.ambient.b;
+		}
+		else if (prefix == "Kd") {  // 漫反射
+			iss >> currentMaterial.diffuse.r >> currentMaterial.diffuse.g >> currentMaterial.diffuse.b;
+		}
+		else if (prefix == "Ks") {  // 镜面反射
+			iss >> currentMaterial.specular.r >> currentMaterial.specular.g >> currentMaterial.specular.b;
+		}
+		else if (prefix == "Ns") {  // 光泽度
+			iss >> currentMaterial.shininess;
+		}
+		else if (prefix == "map_Kd") {  // 漫反射纹理
+			iss >> currentMaterial.diffuseMap;
+		}
+		else if (prefix == "map_Ks") {  // 镜面反射纹理
+			iss >> currentMaterial.specularMap;
+		}
+	}
+
+	// 保存最后一个材质
+	if (!currentMaterialName.empty()) {
+		materials[currentMaterialName] = currentMaterial;
+	}
+
+	file.close();
 }
