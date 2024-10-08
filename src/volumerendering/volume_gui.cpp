@@ -267,9 +267,9 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
         }
 
         float3 lightDir;
-        float altiangle = gui->lighty;
+        float altiangle = gui->dlight_altitute;
         lightDir.y = sin(altiangle);
-        float aziangle = gui->lighta;
+        float aziangle = gui->dlight_azimuth;
         lightDir.x = cos(aziangle) * cos(altiangle);
         lightDir.z = sin(aziangle) * cos(altiangle);
 
@@ -285,7 +285,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
         volume.Render(accum_buffer, histo_buffer_cuda, reinterpret_cast<unsigned int*>(p), int2{ gui->width , gui->height },
             //cameraPosition, cameraUp, cameraRight,
             cameraPosition, cameraForward, cameraUp, cameraRight,
-            lightDir, gui->lightColor, gui->alpha, gui->ms, gui->G, gui->frame,
+            lightDir, gui->dlight_color, gui->alpha, gui->ms, gui->G, gui->frame,
             gui->predict ? (gui->mrpnn ? VolumeRender::RenderType::MRPNN : VolumeRender::RenderType::RPNN) : VolumeRender::RenderType::PT,
             gui->toneType, gui->denoise, gui->cloud_scale);
 

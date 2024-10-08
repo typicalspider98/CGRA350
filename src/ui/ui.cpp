@@ -110,39 +110,29 @@ void UI::render()
 
 	ImGui::Separator();
 
-	// 新增 Object Light 控制部分
-	ImGui::Text("Object Light:");
-
-	// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
-	ImGui::SliderFloat("Light Direction X", &m_app_context->m_gui_param.light_direction_x, -100.0f, 100.0f);
-	ImGui::SliderFloat("Light Direction Y", &m_app_context->m_gui_param.light_direction_y, -100.0f, 100.0f);
-	ImGui::SliderFloat("Light Direction Z", &m_app_context->m_gui_param.light_direction_z, -100.0f, 100.0f);
-
-	// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
-	ImGui::SliderFloat("Light Color RED", &m_app_context->m_gui_param.light_color_x, 0.0f, 1.0f);
-	ImGui::SliderFloat("Light Color GREEN", &m_app_context->m_gui_param.light_color_y, 0.0f, 1.0f);
-	ImGui::SliderFloat("Light Color BLUE", &m_app_context->m_gui_param.light_color_z, 0.0f, 1.0f);
-
-	// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
-	ImGui::SliderFloat("Light Position X", &m_app_context->m_gui_param.light_pos_x, -200.0f, 200.0f);
-	ImGui::SliderFloat("Light Position Y", &m_app_context->m_gui_param.light_pos_y, -200.0f, 200.0f);
-	ImGui::SliderFloat("Light Position Z", &m_app_context->m_gui_param.light_pos_z, -200.0f, 200.0f);
-
-	ImGui::SliderFloat("Light Strength", &m_app_context->m_gui_param.lightStrength, 0.0f, 10.0f);
-
-	ImGui::Separator();
-
 	// --- light options
 	bool changed = false;
 	ImGui::Text("Directional Light:");
-	// direction	
-	float aziangle = m_app_context->m_gui_param.lighta;
-	float altiangle = m_app_context->m_gui_param.lighty;
-	float3 lightdir{ cos(aziangle) * cos(altiangle), sin(altiangle), sin(aziangle) * cos(altiangle) };
+	// direction
+	glm::vec3 lightdir = m_app_context->m_gui_param.GetDLight_Direction();
 	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
-	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.lighta, -180, 180);
-	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.lighty, -90, 90);
-	changed |= ImGui::ColorPicker3("Color", (float*)&m_app_context->m_gui_param.lightColor, ImGuiColorEditFlags_::ImGuiColorEditFlags_Float | ImGuiColorEditFlags_::ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_::ImGuiColorEditFlags_HDR);
+	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.dlight_azimuth, -180, 180);
+	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.dlight_altitute, -90, 90);
+	changed |= ImGui::ColorEdit3("Light Color", (float*)&m_app_context->m_gui_param.dlight_color);
+	ImGui::Separator();
+
+	//// 新增 Object Light 控制部分
+	//ImGui::Text("Point Light:");
+	//// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
+	//ImGui::SliderFloat("PLight Position X", &m_app_context->m_gui_param.plight_position.x, -200.0f, 200.0f);
+	//ImGui::SliderFloat("PLight Position Y", &m_app_context->m_gui_param.plight_position.y, -200.0f, 200.0f);
+	//ImGui::SliderFloat("PLight Position Z", &m_app_context->m_gui_param.plight_position.z, -200.0f, 200.0f);
+
+	//// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
+	//ImGui::ColorEdit3("PLight Color", (float*)&m_app_context->m_gui_param.plight_color);
+
+	//ImGui::SliderFloat("PLight Strength", &m_app_context->m_gui_param.plight_strength, 0.0f, 10.0f);
+
 	ImGui::Separator();
 
 	// --- cloud
@@ -256,12 +246,18 @@ bool UI::GetIsChanging()
 
 GUIParam::GUIParam()
 {
-	// --- Common Settings
+	// --- Directional Light
 	float3 lightColor = { 1.0, 1.0, 1.0 };
 	float3 lightDir = float3{ 0.34281, 0.70711, 0.61845 };
-	this->lighta = atan2(lightDir.z, lightDir.x);
-	this->lighty = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
-	this->lightColor = lightColor;
+	this->dlight_azimuth = atan2(lightDir.z, lightDir.x);
+	this->dlight_altitute = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
+	this->dlight_color = lightColor;
+	this->dlight_strength = 1;
+
+	//// Point Light
+	//this->plight_position = glm::vec3(-15.0, 85.0, -15.0);
+	//this->plight_color = glm::vec3(1, 1, 1);
+	//this->plight_strength = 1;
 
 	// --- Volume Rendering
 	this->cloud_position = glm::vec3(-35, 25, -5);
@@ -283,4 +279,12 @@ GUIParam::GUIParam()
 	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	
 	this->raindrop_min_speed = 11.5f;
 	this->raindrop_max_speed = 17.1f;	
+}
+
+glm::vec3 GUIParam::GetDLight_Direction() const
+{
+	float aziangle = dlight_azimuth;
+	float altiangle = dlight_altitute;
+	glm::vec3 lightdir(cos(aziangle) * cos(altiangle), sin(altiangle), sin(aziangle) * cos(altiangle));
+	return lightdir;
 }
