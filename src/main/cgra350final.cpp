@@ -853,9 +853,8 @@ namespace CGRA350
 
             //——————————————————————————————————//
             //渲染OBJ文件
+            
             // 渲染灯塔模型
-            // 设置光照参数
-            //glm::vec3 light_pos(-15.0f, 85.0f, -15.0f);  // 光源位置
             // 设置光照参数
             glm::vec3 light_pos(
                 m_context.m_gui_param.light_pos_x,
@@ -869,14 +868,12 @@ namespace CGRA350
                 m_context.m_gui_param.light_color_z
             );
 
-            //glm::vec3 light_color(1.0f, 1.0f, 1.0f);    // 光源颜色
-
             // 渲染灯塔模型
             lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
             lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
             lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            //lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+            lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
 
             // 设定灰色材质颜色
             lighthouse_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
@@ -962,7 +959,7 @@ namespace CGRA350
             tree_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
 
             // 设置模型矩阵
-            glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-3.0f, 0.0f, -10.0f));  // 模型变换
+            glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-3.0f, -0.85f, -10.0f));  // 模型变换
             tree_shader_prog.setMat4("model", tree_model_matrix);
 
             // 设置视图和投影矩阵
@@ -995,7 +992,7 @@ namespace CGRA350
             tree2_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
 
             // 设置模型矩阵
-            glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-9.0f, 0.0f, -15.0f));  // 模型变换
+            glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-9.0f, -3.5f, -15.0f));  // 模型变换
             tree2_shader_prog.setMat4("model", tree2_model_matrix);
 
             // 设置视图和投影矩阵
