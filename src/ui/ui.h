@@ -33,6 +33,7 @@ public:
 class GUIParam {
 public:
     GUIParam();
+    glm::vec3 GetDLight_Direction() const;
 
 public:
     int width = -1;
@@ -63,9 +64,6 @@ public:
 
     int toneType = 2;
 
-    float lighta, lighty;
-    float3 lightColor;
-
     bool predict = true;
 
     bool mrpnn = true;
@@ -89,23 +87,18 @@ public:
 
     std::string hdri_path = "";
 
-    // 分别存储光源位置的 x、y、z 值
-    float light_pos_x = -15.0f;
-    float light_pos_y = 85.0f;
-    float light_pos_z = -15.0f;
+    // --- Directional Light
+    float dlight_azimuth, dlight_altitute;
+    float3 dlight_color;
+    float dlight_strength;
 
-    // 分别存储光源颜色的 r、g、b 值
-    float light_color_x = 1.0f;
-    float light_color_y = 1.0f;
-    float light_color_z = 1.0f;
-
-    // 分别存储光源位置的 x、y、z 值
-    float light_direction_x = 15.0f;
-    float light_direction_y = -5.0f;
-    float light_direction_z = 15.0f;
-
-    // 光强值
-    float lightStrength = 1.0f;
+    //// --- Point Light
+    //// 分别存储光源位置的 x、y、z 值
+    //glm::vec3 plight_position;
+    //// 分别存储光源颜色的 r、g、b 值
+    //glm::vec3 plight_color;
+    //// 光强值
+    //float plight_strength = 1.0f;
 
     // --- Rain
     glm::vec3 rain_position;
