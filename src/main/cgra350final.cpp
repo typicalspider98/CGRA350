@@ -977,7 +977,7 @@ namespace CGRA350
             tree_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
 
             // 设置模型矩阵
-            glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-3.0f, -0.85f, -10.0f));  // 模型变换
+            glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
             tree_shader_prog.setMat4("model", tree_model_matrix);
 
             // 设置视图和投影矩阵
