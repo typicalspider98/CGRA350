@@ -16,26 +16,39 @@ uniform float roughness;      // 粗糙度
 uniform vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);
 uniform float ambient_strength = 0.2;
 
+uniform sampler2D normalMap;        // 法线贴图
+uniform sampler2D specularMap;      // 特定光照贴图
+uniform sampler2D alphaMap;         // alpha裁剪贴图
+
 void main()
 {
-    // 计算光照方向
-    vec3 normal = normalize(Normal);
-    vec3 lightDir = normalize(-light_dir); // 平行光的方向
+    vec3 norm = texture(normalMap, TexCoord).rgb * 2.0 - 1.0;  // 法线贴图
+    norm = normalize(norm);
 
-    // 计算漫反射分量
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 lightDir = normalize(-light_dir);
+    vec3 viewDir = normalize(view_pos - FragPos);
+
+    // 透明度裁剪
+    float alpha = texture(alphaMap, TexCoord).r;
+    if (alpha < 0.5) discard;
+
+    // 漫反射分量
+    float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * light_color;
 
-    // 计算环境光
+    // 环境光
     vec3 ambient = ambient_light_color * ambient_strength;
 
-    // 采样纹理颜色
-    vec3 textureColor = texture(texture1, TexCoord).rgb;
+    // 反射光分量
+    vec3 specularColor = texture(specularMap, TexCoord).rgb;
+    vec3 specular = specularColor * light_color * pow(max(dot(viewDir, reflect(-lightDir, norm)), 0.0), 16.0);
 
-    // 最终颜色
-    vec3 final_color = (ambient + diffuse) * textureColor;
-    FragColor = vec4(final_color, 1.0);
+    vec3 textureColor = texture(texture1, TexCoord).rgb;
+    vec3 final_color = (ambient + diffuse + specular) * textureColor;
+
+    FragColor = vec4(final_color, alpha);
 }
+
 
 
 
