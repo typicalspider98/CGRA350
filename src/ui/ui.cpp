@@ -115,6 +115,23 @@ void UI::render()
 	//ImGui::InputFloat("FOV", &fov);
 	//m_app_context->m_render_camera.setFOV(fov);
 
+	// Default Pos
+	ImGui::Text("Look at:");
+	if (ImGui::Button("Cloud"))
+	{
+		glm::vec3 camera_pos = glm::vec3(0.301, 0.068, 0.971) + m_app_context->m_gui_param.cloud_position;
+		m_app_context->m_render_camera.setPosition(camera_pos);
+		m_app_context->m_render_camera.setPolarAngle(-4);
+		m_app_context->m_render_camera.setAzimuthalAngle(-90);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Rain"))
+	{
+		glm::vec3 camera_pos = glm::vec3(-0.04156, 0.00043, -0.99914);
+		m_app_context->m_render_camera.setPosition(camera_pos);
+		m_app_context->m_render_camera.setPolarAngle(3.1);
+		m_app_context->m_render_camera.setAzimuthalAngle(-97.4);
+	}
 	ImGui::Separator();
 
 	// --- light options
@@ -148,15 +165,7 @@ void UI::render()
 
 	// --- cloud
 	ImGui::Text("Volume Rendering:");
-	glm::vec3 cloud_pos = m_app_context->m_gui_param.cloud_position;
-	if (ImGui::Button("Camera Lookat"))
-	{
-		glm::vec3 offset_pos = glm::vec3(0.301, 0.068, 0.971);
-		m_app_context->m_render_camera.setPosition(cloud_pos + offset_pos);
-		m_app_context->m_render_camera.setPolarAngle(-4);
-		m_app_context->m_render_camera.setAzimuthalAngle(-90);
-		changed = true;
-	}		
+	glm::vec3 cloud_pos = m_app_context->m_gui_param.cloud_position;	
 	changed |= ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f");
 	changed |= ImGui::SliderFloat("G", &m_app_context->m_gui_param.G, 0, 0.857);
 	changed |= ImGui::SliderFloat("Alpha", &m_app_context->m_gui_param.alpha, 0.1, 10);
