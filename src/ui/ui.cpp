@@ -92,24 +92,24 @@ void UI::render()
 	float3 cameradir{ sin(polar) * cos(azimuthal), sin(polar) * sin(azimuthal), cos(polar) };
 	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", cameradir.x, cameradir.y, cameradir.z);
 	// polar angle	
-	ImGui::InputFloat("Polar", &polar);
-	m_app_context->m_render_camera.setPolarAngle(polar);
+	if (ImGui::InputFloat("Polar", &polar))
+		m_app_context->m_render_camera.setPolarAngle(polar);
 	// azimuthal angle	
-	ImGui::InputFloat("Azimuthal", &azimuthal);
-	m_app_context->m_render_camera.setAzimuthalAngle(azimuthal);
+	if (ImGui::InputFloat("Azimuthal", &azimuthal))
+		m_app_context->m_render_camera.setAzimuthalAngle(azimuthal);
 	// position
 	glm::vec3 cam_pos = m_app_context->m_render_camera.getPosition();
 	float cam_pos_a[3] = { cam_pos.x, cam_pos.y, cam_pos.z };
-	ImGui::InputFloat3("Position", cam_pos_a);
-	m_app_context->m_render_camera.setPosition(glm::vec3(
-		cam_pos_a[0],
-		cam_pos_a[1],
-		cam_pos_a[2]
-	));
+	if (ImGui::InputFloat3("Position", cam_pos_a))
+		m_app_context->m_render_camera.setPosition(glm::vec3(
+			cam_pos_a[0],
+			cam_pos_a[1],
+			cam_pos_a[2]
+		));
 	// speed
 	float speed = m_app_context->m_render_camera.getSpeed();
-	ImGui::SliderFloat("Speed", &speed, 0, CGRA350Constants::DEFAULT_CAMERA_SPEED);
-	m_app_context->m_render_camera.setSpeed(speed);
+	if (ImGui::SliderFloat("Speed", &speed, 0, CGRA350Constants::DEFAULT_CAMERA_SPEED))
+		m_app_context->m_render_camera.setSpeed(speed);
 	// fov
 	//float fov = m_app_context->m_render_camera.getFOV();
 	//ImGui::InputFloat("FOV", &fov);
