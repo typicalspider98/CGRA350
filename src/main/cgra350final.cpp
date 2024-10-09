@@ -395,6 +395,7 @@ namespace CGRA350
         // 加载灯塔墙壁的法线贴图或颜色贴图
         //Texture2D lighthouse_texture = Texture2D("./lighthouse_wall4.jpg");  // 载入纹理
 
+        Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
         Texture2D lighthouse_iron = Texture2D("./Lighthouse_Material/Floor2.jpg");  //
         Texture2D lighthouse_blglass = Texture2D("./Lighthouse_Material/window4.jpg");   //
         Texture2D lighthouse_glass = Texture2D("./Lighthouse_Material/Wooden_door.jpg");  //
@@ -402,8 +403,34 @@ namespace CGRA350
         Texture2D lighthouse_mirror = Texture2D("./Lighthouse_Material/window2.jpg");  //
         Texture2D lighthouse_rediron = Texture2D("./Lighthouse_Material/roof2.jpg"); // roof
         Texture2D lighthouse_rock = Texture2D("./Lighthouse_Material/Floor.jpg");  //
-        Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
         Texture2D lighthouse_wood = Texture2D("./Lighthouse_Material/wood2.jpg"); //
+
+        Texture2D lighthouse_wall1 = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
+        Texture2D lighthouse_wall2 = Texture2D("./Lighthouse_Material/wood2.jpg");  //
+        Texture2D lighthouse_wall3 = Texture2D("./Lighthouse_Material/25_concrete.png");
+        Texture2D lighthouse_wall4 = Texture2D("./Lighthouse_Material/27_grey_new_brick.png");
+        Texture2D lighthouse_wall5 = Texture2D("./Lighthouse_Material/28_grey_marble.png");
+        Texture2D lighthouse_wall6 = Texture2D("./Lighthouse_Material/30_stainless steel.jpeg");
+        Texture2D lighthouse_wall7 = Texture2D("./Lighthouse_Material/31_brushed_medal.jpg");
+
+        Texture2D lighthouse_roof1 = Texture2D("./Lighthouse_Material/roof2.jpg");  //
+        Texture2D lighthouse_roof2 = Texture2D("./Lighthouse_Material/16_medal.jpg");  //
+        Texture2D lighthouse_roof3 = Texture2D("./Lighthouse_Material/18_marble.jpg");  //
+        Texture2D lighthouse_roof4 = Texture2D("./Lighthouse_Material/23_rusty_medal.jpg");  //
+        Texture2D lighthouse_roof5 = Texture2D("./Lighthouse_Material/25_concrete.png");  //
+        Texture2D lighthouse_roof6 = Texture2D("./Lighthouse_Material/30_stainless steel.jpeg");  //
+        Texture2D lighthouse_roof7 = Texture2D("./Lighthouse_Material/33_glavanized_medal.jpg");  //
+        Texture2D lighthouse_roof8 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");  //
+
+        Texture2D lighthouse_rock1 = Texture2D("./Lighthouse_Material/Floor.jpg");  //
+        Texture2D lighthouse_rock2 = Texture2D("./Lighthouse_Material/11_soil.jpg");  //
+        Texture2D lighthouse_rock3 = Texture2D("./Lighthouse_Material/17_sand.jpg");  //
+        Texture2D lighthouse_rock4 = Texture2D("./Lighthouse_Material/18_marble.jpg");  //
+        Texture2D lighthouse_rock5 = Texture2D("./Lighthouse_Material/19_black stone.jpg");  //
+        Texture2D lighthouse_rock6 = Texture2D("./Lighthouse_Material/21_cobblestone.png");  //
+        Texture2D lighthouse_rock7 = Texture2D("./Lighthouse_Material/22_medal.png");  //
+        Texture2D lighthouse_rock8 = Texture2D("./Lighthouse_Material/34_concrete.jpeg");  //
+        Texture2D lighthouse_rock9 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");  //
 
         lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
         lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
@@ -619,7 +646,7 @@ namespace CGRA350
         stone2_shaders.emplace_back("stone.frag");
         ShaderProgram stone2_shader_prog(stone_shaders);
 
-        Texture2D stone2_texture = Texture2D("./rocks/window.jpg");  //
+        Texture2D stone2_texture = Texture2D("./Lighthouse_Material/13_stone2_iron.jpg");  //
 
         //使用普通石头的着色器程序
         stone2_shader_prog.use();
@@ -956,6 +983,84 @@ namespace CGRA350
             // 设置视图和投影矩阵
             lighthouse_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
             lighthouse_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+            // 修改Wall贴图
+            if (m_context.m_wall_material == 0) {
+                lighthouse_wall = lighthouse_wall1;  //
+            }
+            else if (m_context.m_wall_material == 1) {
+                lighthouse_wall = lighthouse_wall2;  //
+            }
+            else if (m_context.m_wall_material == 2) {
+                lighthouse_wall = lighthouse_wall3;  //
+            }
+            else if (m_context.m_wall_material == 3) {
+                lighthouse_wall = lighthouse_wall4;  //
+            }
+            else if (m_context.m_wall_material == 4) {
+                lighthouse_wall = lighthouse_wall5;  //
+            }
+            else if (m_context.m_wall_material == 5) {
+                lighthouse_wall = lighthouse_wall6;  //
+            }
+            else if (m_context.m_wall_material == 6) {
+                lighthouse_wall = lighthouse_wall7;  //
+            }
+
+            // 修改Roof贴图
+            if (m_context.m_roof_material == 0) {
+                lighthouse_rediron = lighthouse_roof1;  //
+            }
+            else if (m_context.m_roof_material == 1) {
+                lighthouse_rediron = lighthouse_roof2;  //
+            }
+            else if (m_context.m_roof_material == 2) {
+                lighthouse_rediron = lighthouse_roof3;  //
+            }
+            else if (m_context.m_roof_material == 3) {
+                lighthouse_rediron = lighthouse_roof4;  //
+            }
+            else if (m_context.m_roof_material == 4) {
+                lighthouse_rediron = lighthouse_roof5;  //
+            }
+            else if (m_context.m_roof_material == 5) {
+                lighthouse_rediron = lighthouse_roof6;  //
+            }
+            else if (m_context.m_roof_material == 6) {
+                lighthouse_rediron = lighthouse_roof7;  //
+            }
+            else if (m_context.m_roof_material == 7) {
+                lighthouse_rediron = lighthouse_roof8;  //
+            }
+
+            // 修改Rock贴图
+            if (m_context.m_bottom_material == 0) {
+                lighthouse_rock = lighthouse_rock1;  //
+            }
+            else if (m_context.m_bottom_material == 1) {
+                lighthouse_rock = lighthouse_rock2;  //
+            }
+            else if (m_context.m_bottom_material == 2) {
+                lighthouse_rock = lighthouse_rock3;  //
+            }
+            else if (m_context.m_bottom_material == 3) {
+                lighthouse_rock = lighthouse_rock4;  //
+            }
+            else if (m_context.m_bottom_material == 4) {
+                lighthouse_rock = lighthouse_rock5;  //
+            }
+            else if (m_context.m_bottom_material == 5) {
+                lighthouse_rock = lighthouse_rock6;  //
+            }
+            else if (m_context.m_bottom_material == 6) {
+                lighthouse_rock = lighthouse_rock7;  //
+            }
+            else if (m_context.m_bottom_material == 7) {
+                lighthouse_rock = lighthouse_rock8;  //
+            }
+            else if (m_context.m_bottom_material == 8) {
+                lighthouse_rock = lighthouse_rock9;  //
+            }
 
             // 渲染灯塔模型
             //lighthouseMesh.render();
