@@ -405,17 +405,9 @@ namespace CGRA350
         Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
         Texture2D lighthouse_wood = Texture2D("./Lighthouse_Material/wood2.jpg"); //
 
-        lighthouse_shader_prog.setFloat("roughness", 0.5f);
-        lighthouse_shader_prog.setFloat("metalness", 0.1f);
-        lighthouse_shader_prog.setFloat("reflectivity", 0.8f);
-
-        // 在渲染循环中绑定纹理
-        /*
-        lighthouse_shader_prog.use();
-        glActiveTexture(GL_TEXTURE0);  // 激活纹理单元0
-        lighthouse_texture.bind();     // 绑定纹理
-        lighthouse_shader_prog.setInt("texture1", 0);  // 设置着色器中纹理采样器的值
-        */
+        lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
+        lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
+        lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
 
         // 使用灯塔的着色器程序
         lighthouse_shader_prog.use();
@@ -935,9 +927,9 @@ namespace CGRA350
             // 渲染灯塔模型
             lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
             
-            lighthouse_shader_prog.setFloat("roughness", 0.5f);
-            lighthouse_shader_prog.setFloat("metalness", 0.1f);
-            lighthouse_shader_prog.setFloat("reflectivity", 0.8f);
+            lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
+            lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
+            lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
                                            
             //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
