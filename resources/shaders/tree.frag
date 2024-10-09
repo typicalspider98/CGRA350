@@ -7,8 +7,19 @@ in vec3 ViewDir;
 out vec4 FragColor;
 
 uniform sampler2D texture1;   // 纹理采样器
-uniform vec3 light_dir;       // 光源方向（平行光用）
-uniform vec3 light_color;     // 光源颜色
+//uniform vec3 light_dir;       // 光源方向（平行光用）
+//uniform vec3 light_color;     // 光源颜色
+
+// Main (directional) light in the scene
+struct DirectionalLight 
+{ 
+    vec3 colour;
+    vec3 direction;
+    float strength;
+};
+
+// 将 light 定义为 uniform
+uniform DirectionalLight light;
 
 uniform vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);
 uniform float ambient_strength = 0.2;
@@ -18,12 +29,12 @@ void main()
     vec3 albedoColor = texture(texture1, TexCoord).rgb;
     vec3 norm = normalize(Normal);
 
-    vec3 lightDir = normalize(-light_dir);
+    vec3 lightDir = normalize(-light.direction);
     vec3 viewDir = normalize(ViewDir);
 
     // 漫反射分量
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * albedoColor;
+    vec3 diffuse = diff * albedoColor * light.strength;
 
     // 环境光
     vec3 ambient = ambient_light_color * ambient_strength * albedoColor;
@@ -33,7 +44,7 @@ void main()
     float spec = pow(max(dot(viewDir, reflect(-lightDir, norm)), 0.0), 16.0);
     vec3 specular = specularStrength * spec * vec3(1);
 
-    vec3 final_color = (ambient + diffuse + specular) * light_color;
+    vec3 final_color = (ambient + diffuse + specular) * light.colour;
     FragColor = vec4(final_color, 1);
 }
 
