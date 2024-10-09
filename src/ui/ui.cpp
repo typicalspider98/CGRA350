@@ -250,7 +250,7 @@ GUIParam::GUIParam()
 {
 	// --- Directional Light
 	float3 lightColor = { 1.0, 1.0, 1.0 };
-	float3 lightDir = float3{ 0.055, 0.055, 0.055 };
+	float3 lightDir = float3{ -0.829, 0.60, -0.545 };
 	this->dlight_azimuth = atan2(lightDir.z, lightDir.x);
 	this->dlight_altitute = atan2(lightDir.y, sqrt(max(0.0001f, lightDir.x * lightDir.x + lightDir.z * lightDir.z)));
 	this->dlight_color = lightColor;

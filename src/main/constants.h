@@ -47,7 +47,19 @@ namespace CGRA350Constants
 	const std::string ENV_FORLDER_NAME[] = { "sky_skybox_1", "sky_skybox_2", "sunset_skybox_1", "sunset_skybox_2", "sunset_skybox_3" };
 	const std::string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
 
+	// ---- Texture Sample ID
+	// Tree1
+	const int TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE = 15;
+	const int TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE = 16;
+	const int TEX_SAMPLE_ID_TREE1_LEAF_NORMAL = 27;
+	const int TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR = 28;
+	// Tree2
+	const int TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE = 18;
+	const int TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE = 19;
+	const int TEX_SAMPLE_ID_TREE2_LEAF_NORMAL = 32;
+	const int TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR = 33;
 
+	// Cloud and Rain
 	const int TEX_SAMPLE_ID_CLOUD = 30;
 	const int TEX_SAMPLE_ID_RAIN_SPLASH = 31;
 }
