@@ -991,8 +991,11 @@ namespace CGRA350
             //-----------------------------//
             // 渲染树1模型
             trunk_shader_prog.use();
-            trunk_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            trunk_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+
+            trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            trunk_shader_prog.setFloat("light.strength", dLightStrength);
+
             trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             // 设置模型矩阵
             glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
@@ -1009,8 +1012,13 @@ namespace CGRA350
 
             // 渲染 树叶 部分
             leaf_shader_prog.use();
-            leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+
+            //leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
+            //leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            leaf_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            leaf_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            leaf_shader_prog.setFloat("light.strength", dLightStrength);
+
             leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             // 设置模型矩阵
             leaf_shader_prog.setMat4("model", tree_model_matrix);
@@ -1035,8 +1043,11 @@ namespace CGRA350
             //-----------------------------//
             // 渲染树2模型
             trunk_shader_prog.use();
-            trunk_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            trunk_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+
+            trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            trunk_shader_prog.setFloat("light.strength", dLightStrength);
+
             trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             // 设置模型矩阵
             glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-12.0f, -3.5f, -25.0f));  // 模型变换
