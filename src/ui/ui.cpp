@@ -127,19 +127,14 @@ void UI::render()
 	changed |= ImGui::ColorEdit3("Light Color", (float*)&m_app_context->m_gui_param.dlight_color);
 
 	ImGui::SliderFloat("Light Strength", &m_app_context->m_gui_param.dlight_strength, 0.0f, 20.0f);
+	
 	ImGui::Separator();
 
-	//// 新增 Object Light 控制部分
-	//ImGui::Text("Point Light:");
-	//// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
-	//ImGui::SliderFloat("PLight Position X", &m_app_context->m_gui_param.plight_position.x, -200.0f, 200.0f);
-	//ImGui::SliderFloat("PLight Position Y", &m_app_context->m_gui_param.plight_position.y, -200.0f, 200.0f);
-	//ImGui::SliderFloat("PLight Position Z", &m_app_context->m_gui_param.plight_position.z, -200.0f, 200.0f);
-
-	//// 分别为 x、y、z 设置滑动条，范围为 -200 到 200
-	//ImGui::ColorEdit3("PLight Color", (float*)&m_app_context->m_gui_param.plight_color);
-
-	//ImGui::SliderFloat("PLight Strength", &m_app_context->m_gui_param.plight_strength, 0.0f, 10.0f);
+	// --- material options
+	//bool changed = false;
+	ImGui::Text("Lighthouse's Material:");
+	// direction
+	ImGui::Combo("Model", &(m_app_context->m_light_model), "None\0Cook-Torrance\0Oren-Nayar");
 
 	ImGui::Separator();
 
