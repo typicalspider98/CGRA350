@@ -466,126 +466,80 @@ namespace CGRA350
         // 加载 tree.obj 文件
         ObjMesh treeMesh = load_wavefront_obj(BASE_PATH + "tree.obj");
 
-        std::vector<Shader> tree_shaders;
-        tree_shaders.emplace_back("tree.vert");
-        tree_shaders.emplace_back("tree.frag");
-        ShaderProgram tree_shader_prog(tree_shaders);
+        std::vector<Shader> trunk_shaders;
+        trunk_shaders.emplace_back("tree.vert");
+        trunk_shaders.emplace_back("tree.frag");
+        ShaderProgram trunk_shader_prog(trunk_shaders);
+
+        std::vector<Shader> leaf_shaders;
+        leaf_shaders.emplace_back("tree.vert");
+        leaf_shaders.emplace_back("tree_leaf.frag");
+        ShaderProgram leaf_shader_prog(leaf_shaders);
 
         Texture2D tree_trunk = Texture2D("./tree/bark_0021.jpg");  //
         Texture2D tree_leaf = Texture2D("./tree/DB2X2_L01.png");   //
         Texture2D tree_leaf_normal_map = Texture2D("./tree/DB2X2_L01_Nor.png");   //
         Texture2D tree_leaf_specular_map = Texture2D("./tree/DB2X2_L01_Spec.png");   //
-        Texture2D tree_leaf_alpha_map = Texture2D("./tree/DB2X2_L01.png");   //
 
-        // 使用灯塔的着色器程序
-        tree_shader_prog.use();
-        glActiveTexture(GL_TEXTURE0);
-
+        // 使用树干的着色器程序
+        trunk_shader_prog.use();
         // 绑定树干的纹理
-        glActiveTexture(GL_TEXTURE0 + 15);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
         tree_trunk.bind();
-        tree_shader_prog.setInt("texture1", 15);
-
-        tree_shader_prog.setInt("normalMap", -1);    // 不绑定法线贴图
-        tree_shader_prog.setInt("specularMap", -1);  // 不绑定反射光贴图
-        tree_shader_prog.setInt("alphaMap", -1);     // 不绑定透明度贴图
-        treeMesh.renderPart("Trank_bark");
-
-        // 绑定树叶的纹理
-        //glActiveTexture(GL_TEXTURE0 + 16);
-        //tree_leaf.bind();
-        //treeMesh.renderPart("polySurface1SG1");
+        trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
         
+        // 使用树叶的着色器程序  
+        leaf_shader_prog.use();
         //树叶贴图
-        // 绑定树叶的基本颜色贴图
-        glActiveTexture(GL_TEXTURE0 + 16);
+        // 绑定树叶的基本颜色贴图        
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
         tree_leaf.bind();
-        tree_shader_prog.setInt("texture1", 16);
-        //treeMesh.renderPart("polySurface1SG1");
-
+        leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
         // 绑定树叶的法线贴图
-        glActiveTexture(GL_TEXTURE0 + 27);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
         tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-        tree_shader_prog.setInt("normalMap", 27);
-        //treeMesh.renderPart("polySurface1SG1");
-
+        leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
         // 绑定树叶的特定光照贴图
-        glActiveTexture(GL_TEXTURE0 + 28);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
         tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-        tree_shader_prog.setInt("specularMap", 28);
-        //treeMesh.renderPart("polySurface1SG1");
-
-        // 绑定树叶的透明度贴图
-        glActiveTexture(GL_TEXTURE0 + 29);
-        tree_leaf_alpha_map.bind();  // 假设已加载为 tree_alpha_map
-        tree_shader_prog.setInt("alphaMap", 29);
-        treeMesh.renderPart("polySurface1SG1");
-
-        // 渲染树叶部分
-        //treeMesh.renderPart("polySurface1SG1");
+        leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
 
         
         //*/
-
-
         //-----------------------//
         // 加载树2的模型
         // 加载 tree8.obj 文件
         ObjMesh tree2Mesh = load_wavefront_obj(BASE_PATH + "tree8.obj");
 
-        std::vector<Shader> tree2_shaders;
-        tree2_shaders.emplace_back("tree2.vert");
-        tree2_shaders.emplace_back("tree2.frag");
-        ShaderProgram tree2_shader_prog(tree2_shaders);
-
         Texture2D tree2_bark = Texture2D("./tree2/bark.png");  //
         Texture2D tree2_leaf = Texture2D("./tree2/leaf.png");   //
-
         Texture2D tree2_leaf_normal_map = Texture2D("./tree2/leaf_normal.png");   //
-        Texture2D tree2_leaf_specular_map = Texture2D("./tree2/leaf_ao.png");   //
-        Texture2D tree2_leaf_alpha_map = Texture2D("./tree2/leaf_roughness.png");   //
+        Texture2D tree2_leaf_specular_map = Texture2D("./tree2/leaf_specular.png");   //
 
-        //使用灯塔的着色器程序
-        tree2_shader_prog.use();
-
+        // 使用树干的着色器程序
+        trunk_shader_prog.use();
         // 绑定树干的纹理
-        glActiveTexture(GL_TEXTURE0 + 18);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
         tree2_bark.bind();
-        //tree2Mesh.renderPart("bark");
+        trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
 
-        tree2_shader_prog.setInt("normalMap", -1);    // 不绑定法线贴图
-        tree2_shader_prog.setInt("specularMap", -1);  // 不绑定反射光贴图
-        tree2_shader_prog.setInt("alphaMap", -1);     // 不绑定透明度贴图
-        tree2Mesh.renderPart("bark");
-
+        // 使用树叶的着色程序
+        leaf_shader_prog.use();
         // 绑定树叶的纹理
-        glActiveTexture(GL_TEXTURE0 + 19);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
         tree2_leaf.bind();
-        tree2_shader_prog.setInt("texture1", 19);
-        //tree2Mesh.renderPart("leaf");
-
+        leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
         // 绑定树叶的法线贴图
-        glActiveTexture(GL_TEXTURE0 + 32);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
         tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-        tree2_shader_prog.setInt("normalMap", 32);
-        //treeMesh.renderPart("polySurface1SG1");
-
+        leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
         // 绑定树叶的特定光照贴图
-        glActiveTexture(GL_TEXTURE0 + 33);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
         tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-        tree2_shader_prog.setInt("specularMap", 33);
-        //treeMesh.renderPart("polySurface1SG1");
-
-        // 绑定树叶的透明度贴图
-        glActiveTexture(GL_TEXTURE0 + 34);
-        tree2_leaf_alpha_map.bind();  // 假设已加载为 tree_alpha_map
-        tree2_shader_prog.setInt("alphaMap", 34);
-        tree2Mesh.renderPart("polySurface1SG1");
+        leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
 
 
         //*/
-
-
         // 加载一群石头模型
         // 加载 rocks.obj 文件
         ObjMesh rocksMesh = load_wavefront_obj(BASE_PATH + "rocks.obj");
@@ -1026,123 +980,88 @@ namespace CGRA350
 
 
             //-----------------------------//
-            // 设置光照参数
-            //glm::vec3 light_pos2(-15.0f, 85.0f, -15.0f);  // 光源位置
-            //glm::vec3 light_color2(1.0f, 1.0f, 1.0f);    // 光源颜色 
-
-            // 渲染树模型
-            tree_shader_prog.use();  // 使用灯塔模型的着色器程序
-            //tree_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //tree_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            tree_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            tree_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
-
-            tree_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            tree_shader_prog.setInt("normalMap", 1); // 0表示绑定到的纹理单元
-
-            // 设定灰色材质颜色
-            tree_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
-
+            // 渲染树1模型
+            trunk_shader_prog.use();
+            trunk_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
+            trunk_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             // 设置模型矩阵
             glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
-            tree_shader_prog.setMat4("model", tree_model_matrix);
-
+            tree_model_matrix = glm::scale(tree_model_matrix, glm::vec3(0.6f, 0.6f, 0.6f));
+            trunk_shader_prog.setMat4("model", tree_model_matrix);
             // 设置视图和投影矩阵
-            tree_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            tree_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
+            trunk_shader_prog.setMat4("view", view);
+            trunk_shader_prog.setMat4("projection", proj);
             // 渲染 树干 部分
-            glActiveTexture(GL_TEXTURE0 + 15);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
             tree_trunk.bind();
-            tree_shader_prog.setInt("texture1", 15);
-
-            tree_shader_prog.setInt("normalMap", -1);    // 不绑定法线贴图
-            tree_shader_prog.setInt("specularMap", -1);  // 不绑定反射光贴图
-            tree_shader_prog.setInt("alphaMap", -1);     // 不绑定透明度贴图
-            treeMesh.renderPart("Trank_bark");
+            trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
+            treeMesh.renderPart("bark");
 
             // 渲染 树叶 部分
-            glActiveTexture(GL_TEXTURE0 + 16);
+            leaf_shader_prog.use();
+            leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
+            leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+            // 设置模型矩阵
+            leaf_shader_prog.setMat4("model", tree_model_matrix);
+            // 设置视图和投影矩阵
+            leaf_shader_prog.setMat4("view", view);
+            leaf_shader_prog.setMat4("projection", proj);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
             tree_leaf.bind();
-            tree_shader_prog.setInt("texture1", 16);
-            //treeMesh.renderPart("polySurface1SG1");
-
+            leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
             // 绑定树叶的法线贴图
-            glActiveTexture(GL_TEXTURE0 + 27);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
             tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-            tree_shader_prog.setInt("normalMap", 27);
-            //treeMesh.renderPart("polySurface1SG1");
-
+            leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
             // 绑定树叶的特定光照贴图
-            glActiveTexture(GL_TEXTURE0 + 28);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
             tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-            tree_shader_prog.setInt("specularMap", 28);
-            //treeMesh.renderPart("polySurface1SG1");
-
-            // 绑定树叶的透明度贴图
-            glActiveTexture(GL_TEXTURE0 + 29);
-            tree_leaf_alpha_map.bind();  // 假设已加载为 tree_alpha_map
-            tree_shader_prog.setInt("alphaMap", 29);
-            treeMesh.renderPart("polySurface1SG1");
+            leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
+            treeMesh.renderPart("leaf");
             //*/
 
 
             //-----------------------------//
             // 渲染树2模型
-            tree2_shader_prog.use();  // 使用灯塔模型的着色器程序
-            //tree2_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //tree2_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            tree2_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            tree2_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
-
-            tree2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            tree2_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定灰色材质颜色
-            tree2_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
-
+            trunk_shader_prog.use();
+            trunk_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
+            trunk_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             // 设置模型矩阵
             glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-12.0f, -3.5f, -25.0f));  // 模型变换
-            tree2_shader_prog.setMat4("model", tree2_model_matrix);
-
+            trunk_shader_prog.setMat4("model", tree2_model_matrix);
             // 设置视图和投影矩阵
-            tree2_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            tree2_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
+            trunk_shader_prog.setMat4("view", view);
+            trunk_shader_prog.setMat4("projection", proj);
             // 渲染 树干 部分
-            glActiveTexture(GL_TEXTURE0 + 18);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
             tree2_bark.bind();
-            tree2_shader_prog.setInt("texture1", 18);
-            
-            tree2_shader_prog.setInt("normalMap", -1);    // 不绑定法线贴图
-            tree2_shader_prog.setInt("specularMap", -1);  // 不绑定反射光贴图
-            tree2_shader_prog.setInt("alphaMap", -1);     // 不绑定透明度贴图
+            trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
             tree2Mesh.renderPart("bark");
 
+            // 使用树叶着色程序
+            leaf_shader_prog.use();
+            leaf_shader_prog.setVec3("light_dir", dLightDirection);     // 设置光照位置
+            leaf_shader_prog.setVec3("light_color", dLightColour);      // 设置光源颜色
+            leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+            // 设置视图和投影矩阵
+            leaf_shader_prog.setMat4("model", tree2_model_matrix);
+            leaf_shader_prog.setMat4("view", view);
+            leaf_shader_prog.setMat4("projection", proj);
             // 绑定树叶的纹理
-            glActiveTexture(GL_TEXTURE0 + 19);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
             tree2_leaf.bind();
-            tree2_shader_prog.setInt("texture1", 19);
-            //tree2Mesh.renderPart("leaf");
-
+            leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
             // 绑定树叶的法线贴图
-            glActiveTexture(GL_TEXTURE0 + 32);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
             tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-            tree2_shader_prog.setInt("normalMap", 32);
-            //treeMesh.renderPart("polySurface1SG1");
-
+            leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
             // 绑定树叶的特定光照贴图
-            glActiveTexture(GL_TEXTURE0 + 33);
+            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
             tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-            tree2_shader_prog.setInt("specularMap", 33);
-            //treeMesh.renderPart("polySurface1SG1");
-
-            // 绑定树叶的透明度贴图
-            glActiveTexture(GL_TEXTURE0 + 34);
-            tree2_leaf_alpha_map.bind();  // 假设已加载为 tree_alpha_map
-            tree2_shader_prog.setInt("alphaMap", 34);
+            leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
             tree2Mesh.renderPart("leaf");
             //*/
 
