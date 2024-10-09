@@ -123,8 +123,8 @@ void UI::render()
 	glm::vec3 lightdir = m_app_context->m_gui_param.GetDLight_Direction();
 	ImGui::Text("Direction: (%.5f, %.5f, %.5f) ", lightdir.x, lightdir.y, lightdir.z);
 	changed |= ImGui::SliderAngle("Azimuth", (float*)&m_app_context->m_gui_param.dlight_azimuth, -180, 180);
-	changed |= ImGui::SliderAngle("Altitude ", (float*)&m_app_context->m_gui_param.dlight_altitute, -180, 180);
-	changed |= ImGui::ColorEdit3("Light Color", (float*)&m_app_context->m_gui_param.dlight_color);
+	changed |= ImGui::SliderAngle("Altitude", (float*)&m_app_context->m_gui_param.dlight_altitute, -180, 180);
+	changed |= ImGui::ColorEdit3("Color", (float*)&m_app_context->m_gui_param.dlight_color);
 
 	ImGui::SliderFloat("Light Strength", &m_app_context->m_gui_param.dlight_strength, 0.0f, 20.0f);
 	
@@ -134,7 +134,12 @@ void UI::render()
 	//bool changed = false;
 	ImGui::Text("Lighthouse's Material:");
 	// direction
-	ImGui::Combo("Model", &(m_app_context->m_light_model), "None\0Cook-Torrance\0Oren-Nayar");
+	ImGui::Combo("Wall Material", &(m_app_context->m_wall_material), "White");
+	ImGui::Combo("Light Model", &(m_app_context->m_light_model), "None\0Cook-Torrance\0Oren-Nayar");
+
+	ImGui::SliderFloat("Roughness", &m_app_context->m_lighthouse_roughness, 0.0f, 3.0f);
+	ImGui::SliderFloat("Metalness", &m_app_context->m_lighthouse_medalness, 0.0f, 3.0f);
+	ImGui::SliderFloat("Reflectivity", &m_app_context->m_lighthouse_reflectivity, 0.0f, 3.0f);
 
 	ImGui::Separator();
 
