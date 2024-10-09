@@ -42,6 +42,14 @@ namespace CGRA350
 		unsigned int m_num_ocean_primitives = 2 * CGRA350Constants::DEFAULT_OCEAN_GRID_WIDTH * CGRA350Constants::DEFAULT_OCEAN_GRID_LENGTH;
 		unsigned int m_num_seabed_primitives = 2 * CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH * CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
+		bool m_appear_lighthouse = true;
+		bool m_appear_tree1 = true;
+		bool m_appear_tree2 = true;
+		bool m_appear_stone1 = true;
+		bool m_appear_stone2 = true;
+		bool m_appear_stone3 = true;
+		bool m_appear_stone4 = true;
+
 		int m_wall_material = 0; // 0: white
 		int m_roof_material = 0; // 0: white
 		int m_bottom_material = 0; // 0: white
