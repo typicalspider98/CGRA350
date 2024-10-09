@@ -80,6 +80,7 @@ void UI::render()
 	ImGui::SameLine();
 	// render ocean mesh toggle (on/off)
 	ImGui::Checkbox("Render Ocean", &(m_app_context->m_do_render_ocean));
+	ImGui::Checkbox("Render Cloud", &(m_app_context->m_do_render_cloud));
 	ImGui::Checkbox("Postprocessing", &(m_app_context->m_do_render_postprocessing));
 	ImGui::Separator();
 
