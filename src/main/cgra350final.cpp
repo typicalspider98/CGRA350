@@ -351,7 +351,8 @@ namespace CGRA350
                             m_context.m_gui_param.rain_position,
                             m_context.m_gui_param.rain_radius,
                             m_context.m_gui_param.raindrop_min_speed,
-                            m_context.m_gui_param.raindrop_max_speed);
+                            m_context.m_gui_param.raindrop_max_speed,
+                            m_context.m_gui_param.rain_sea_level);
 
         // ------------------------------
         // Axis
@@ -897,7 +898,8 @@ namespace CGRA350
                         m_context.m_gui_param.rain_position,
                         m_context.m_gui_param.rain_radius,
                         m_context.m_gui_param.raindrop_min_speed,
-                        m_context.m_gui_param.raindrop_max_speed);
+                        m_context.m_gui_param.raindrop_max_speed,
+                        m_context.m_gui_param.rain_sea_level);
                 }
 
                 rain.computeRainOnGPU(ImGui::GetIO().DeltaTime,

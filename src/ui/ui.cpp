@@ -155,12 +155,12 @@ void UI::render()
 		changed = true;
 	}		
 	changed |= ImGui::InputFloat3("Cloud Position", glm::value_ptr(m_app_context->m_gui_param.cloud_position), "%.5f");
-	changed |= ImGui::SliderFloat("Scale", &m_app_context->m_gui_param.cloud_scale, 0.1, 15);
 	changed |= ImGui::SliderFloat("G", &m_app_context->m_gui_param.G, 0, 0.857);
 	changed |= ImGui::SliderFloat("Alpha", &m_app_context->m_gui_param.alpha, 0.1, 10);
 	changed |= ImGui::SliderInt("Multi Scatter", &m_app_context->m_gui_param.ms, 1, 1000);
 	changed |= ImGui::SliderFloat("Tr scale", &m_app_context->m_gui_param.tr, 1, 10);
 	changed |= ImGui::SliderFloat3("Scatter rate", (float*)&m_app_context->m_gui_param.scatter_rate, 0, 1);
+	changed |= ImGui::SliderFloat("Scale (Experimental)", &m_app_context->m_gui_param.cloud_scale, 0.1, 15);
 	if (changed)
 		UI::SetIsChanging(true);
 	ImGui::Separator();
@@ -308,7 +308,7 @@ GUIParam::GUIParam()
 	this->rain_position = glm::vec3(-60, 100, -60);
 	this->rain_radius = 86.0f;
 	this->rain_sea_level = -8.8f;
-	this->raindrop_num = 1000;
+	this->raindrop_num = 0;
 	this->raindrop_length = 0.8f;
 	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	
 	this->raindrop_min_speed = 11.5f;

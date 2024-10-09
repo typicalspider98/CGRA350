@@ -101,14 +101,14 @@ void Rain::clearRain()
 #endif
 }
 
-void Rain::initializeRain(int numDrops, const glm::vec3& rainPosition, float cloudRadius, float minSpeed, float maxSpeed)
+void Rain::initializeRain(int numDrops, const glm::vec3& rainPosition, float cloudRadius, float minSpeed, float maxSpeed, float seaLevel)
 {
     m_raindrop_num = numDrops;
     m_splash_max = numDrops;
 
     for (int i = 0; i < numDrops; i++) 
     {
-        glm::vec4 position = generateRainDropPosition(rainPosition, cloudRadius);
+        glm::vec4 position = generateRainDropPosition(rainPosition, cloudRadius, seaLevel);
         glm::vec4 velocity = generateRainDropVelocity(minSpeed, maxSpeed);
         Raindrop raindrop;
         raindrop.position = position;
@@ -129,13 +129,13 @@ void Rain::initializeRain(int numDrops, const glm::vec3& rainPosition, float clo
     setupShadersAndBuffers();
 }
 
-glm::vec4 Rain::generateRainDropPosition(const glm::vec3& rainPosition, float cloudRadius)
+glm::vec4 Rain::generateRainDropPosition(const glm::vec3& rainPosition, float cloudRadius, float seaLevel)
 {
     float r = cloudRadius * (static_cast<float>(rand()) / RAND_MAX);
     float theta = static_cast<float>(rand()) / RAND_MAX * 2.0f * 3.1415926f;
 
     float x = rainPosition.x + r * cos(theta);
-    float y = rainPosition.y;
+    float y = seaLevel + (static_cast<float>(rand()) / RAND_MAX) * (rainPosition.y - seaLevel);
     float z = rainPosition.z + r * sin(theta);
 
     return glm::vec4(x, y, z, 1.0f);
@@ -235,9 +235,6 @@ void Rain::renderSplashes(const glm::mat4& projection, const glm::mat4& view, co
 
     // active the shader program
     m_splashShader.use();
-    GLboolean isBlendEnabled = glIsEnabled(GL_BLEND);
-    glDisable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // active and bind texture
     glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_RAIN_SPLASH);
@@ -248,7 +245,6 @@ void Rain::renderSplashes(const glm::mat4& projection, const glm::mat4& view, co
     glUniformMatrix4fv(glGetUniformLocation(m_splashShader.getHandle(), "projection"), 1, GL_FALSE, &projection[0][0]);
     glUniform3fv(glGetUniformLocation(m_splashShader.getHandle(), "cameraRight"), 1, glm::value_ptr(cameraRight));
     glUniform3fv(glGetUniformLocation(m_splashShader.getHandle(), "cameraUp"), 1, glm::value_ptr(cameraUp));
-    //glUniform1i(glGetUniformLocation(m_splashShader.getHandle(), "spriteTexture"), 6);
 
     // bind ssbo to binding 1
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_splash_ssbo);
@@ -256,10 +252,8 @@ void Rain::renderSplashes(const glm::mat4& projection, const glm::mat4& view, co
     // bind the vao and instanced render splashes
     glBindVertexArray(m_splash_vao);
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, m_splash_max);
-    //glDrawArraysInstanced(GL_POINTS, 0, 1, m_splash_max);
     glBindVertexArray(0);
 
     // unbind the shader program
-    if (isBlendEnabled) glEnable(GL_BLEND);
     glUseProgram(0);
 }
