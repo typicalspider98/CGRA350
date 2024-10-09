@@ -73,7 +73,8 @@ set(PROJECT_HEADERS src/main/cgra350final.h
                     src/graphics/textures.h
                     src/graphics/window.h
                     src/graphics/meshes.h
-                    src/graphics/renderers.h)
+                    src/graphics/renderers.h
+                    src/graphics/postprocessing.h)
 
 set(PROJECT_SOURCES src/main/cgra350final.cpp
                     src/main/app_context.cpp
@@ -85,7 +86,8 @@ set(PROJECT_SOURCES src/main/cgra350final.cpp
                     src/graphics/textures.cpp
                     src/graphics/window.cpp
                     src/graphics/meshes.cpp
-                    src/graphics/renderers.cpp)
+                    src/graphics/renderers.cpp
+                    src/graphics/postprocessing.cpp)
 
 file(GLOB PROJECT_SHADERS ${PROJECT_SOURCE_DIR}/resources/shaders/*.frag
                           ${PROJECT_SOURCE_DIR}/resources/shaders/*.vert

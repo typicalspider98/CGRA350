@@ -107,5 +107,26 @@ public:
     glm::vec3 raindrop_color;    
     float raindrop_min_speed;
     float raindrop_max_speed;
+
+    // --- Postprocessing
+    // Color Grading
+    bool enableColorGrading;
+    glm::vec3 colorFilter;
+
+    // Dynamic Filter
+    bool enableDynamicFilter;
+    float contrast;
+    float brightness;
+
+    // Gaussian Blur
+    bool enableGaussianBlur;
+    glm::vec2 blurDirection;
+    float blurWeight[5];
+    glm::vec2 blurOffset[5];
+
+    // Bloom Effect
+    bool enableBloom;
+    float bloomThreshold;
+    float bloomIntensity;
 };
 #endif

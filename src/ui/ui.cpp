@@ -217,6 +217,7 @@ void UI::render()
 	// --- skybox
 	ImGui::Text("Environment Map:");
 	ImGui::Combo("Env.Map", &(m_app_context->m_gui_param.env_map), "sky_skybox_1\0sky_skybox_2\0sunset_skybox_1\0sunset_skybox_2\0sunset_skybox_3");
+	ImGui::Separator();
 
 	// --- rain
 	ImGui::Text("Rain:");
@@ -225,6 +226,29 @@ void UI::render()
 	ImGui::SliderFloat("Rain Min Speed", &m_app_context->m_gui_param.raindrop_min_speed, 0.0f, 100.0f, "%.1f");
 	ImGui::SliderFloat("Rain Max Speed", &m_app_context->m_gui_param.raindrop_max_speed, 0.0f, 100.0f, "%.1f");
 	ImGui::SliderFloat("Sea Level", &m_app_context->m_gui_param.rain_sea_level, -150.0f, 50.0f, "%.1f");
+	ImGui::Separator();
+
+	// --- postprocessing
+	ImGui::Text("Post-processing:");
+	// Color Grading
+	ImGui::Checkbox("Enable Color Grading", &m_app_context->m_gui_param.enableColorGrading);
+	ImGui::ColorEdit3("Color Filter", (float*)&m_app_context->m_gui_param.colorFilter);
+	// Dynamic Filter
+	ImGui::Checkbox("Enable Dynamic Filter", &m_app_context->m_gui_param.enableDynamicFilter);
+	ImGui::SliderFloat("Contrast", &m_app_context->m_gui_param.contrast, 0.0f, 2.0f);
+	ImGui::SliderFloat("Brightness", &m_app_context->m_gui_param.brightness, -1.0f, 1.0f);
+	// Gaussian Blur
+	ImGui::Checkbox("Enable Gaussian Blur", &m_app_context->m_gui_param.enableGaussianBlur);
+	ImGui::SliderFloat2("Blur Direction", (float*)&m_app_context->m_gui_param.blurDirection, -1.0f, 1.0f);
+	ImGui::SliderFloat("Blur Weight 0", &m_app_context->m_gui_param.blurWeight[0], 0.0f, 1.0f);
+	ImGui::SliderFloat("Blur Weight 1", &m_app_context->m_gui_param.blurWeight[1], 0.0f, 1.0f);
+	ImGui::SliderFloat("Blur Weight 2", &m_app_context->m_gui_param.blurWeight[2], 0.0f, 1.0f);
+	ImGui::SliderFloat("Blur Weight 3", &m_app_context->m_gui_param.blurWeight[3], 0.0f, 1.0f);
+	ImGui::SliderFloat("Blur Weight 4", &m_app_context->m_gui_param.blurWeight[4], 0.0f, 1.0f);
+	// Bloom Effect
+	ImGui::Checkbox("Enable Bloom", &m_app_context->m_gui_param.enableBloom);
+	ImGui::SliderFloat("Bloom Threshold", &m_app_context->m_gui_param.bloomThreshold, 0.0f, 5.0f);
+	ImGui::SliderFloat("Bloom Intensity", &m_app_context->m_gui_param.bloomIntensity, 0.0f, 5.0f);
 
 	// --- end window
 	ImGui::End();
@@ -254,6 +278,8 @@ bool UI::GetIsChanging()
 
 GUIParam::GUIParam()
 {
+	float screenWidth = CGRA350Constants::DEFAULT_WINDOW_WIDTH;
+
 	// --- Directional Light
 	float3 lightColor = { 1.0, 1.0, 1.0 };
 	float3 lightDir = float3{ -0.829, 0.60, -0.545 };
@@ -286,7 +312,36 @@ GUIParam::GUIParam()
 	this->raindrop_length = 0.8f;
 	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	
 	this->raindrop_min_speed = 11.5f;
-	this->raindrop_max_speed = 17.1f;	
+	this->raindrop_max_speed = 17.1f;
+
+	// --- Postprocessing
+	// Color Grading
+	this->enableColorGrading = false;
+	this->colorFilter = glm::vec3(0.8f, 0.8f, 1.1f);
+
+	// Dynamic Filter
+	this->enableDynamicFilter = false;
+	this->contrast = 1.2f;
+	this->brightness = -0.1f;
+
+	// Gaussian Blur
+	this->enableGaussianBlur = false;
+	this->blurDirection = glm::vec2(1.0f, 0.0f);
+	this->blurWeight[0] = 0.227027f;
+	this->blurWeight[1] = 0.1945946f;
+	this->blurWeight[2] = 0.1216216f;
+	this->blurWeight[3] = 0.054054f;
+	this->blurWeight[4] = 0.016216f;
+	this->blurOffset[0] = glm::vec2(1.0f / screenWidth, 0.0f);
+	this->blurOffset[1] = glm::vec2(2.0f / screenWidth, 0.0f);
+	this->blurOffset[2] = glm::vec2(3.0f / screenWidth, 0.0f);
+	this->blurOffset[3] = glm::vec2(4.0f / screenWidth, 0.0f);
+	this->blurOffset[4] = glm::vec2(5.0f / screenWidth, 0.0f);
+
+	// Bloom Effect
+	this->enableBloom = false;
+	this->bloomThreshold = 1.0f;
+	this->bloomIntensity = 0.8f;
 }
 
 glm::vec3 GUIParam::GetDLight_Direction() const

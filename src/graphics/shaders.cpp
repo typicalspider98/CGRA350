@@ -146,6 +146,11 @@ void ShaderProgram::use()
 	glUseProgram(m_id);
 }
 
+void ShaderProgram::use_end()
+{
+	glUseProgram(0);
+}
+
 // Return the GLuint program handle/id
 GLuint ShaderProgram::getHandle() const
 {
