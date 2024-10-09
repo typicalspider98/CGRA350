@@ -44,6 +44,8 @@ namespace CGRA350
 		unsigned int m_num_seabed_primitives = 2 * CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH * CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
 		int m_wall_material = 0; // 0: white
+		int m_roof_material = 0; // 0: white
+		int m_bottom_material = 0; // 0: white
 		int m_light_model = 0; // 0: Phong, 1: Cook-Torrance, 2: Oren-Nayar
 
 		float m_lighthouse_roughness = 0.5f;
