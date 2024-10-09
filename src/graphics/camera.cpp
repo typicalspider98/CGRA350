@@ -2,12 +2,12 @@
 #include "../main/constants.h"
 
 
-Camera::Camera() : m_position(0.0f, 0.0f, 0.0f), m_azimuthal_angle(-135.0f), m_polar_angle(-10.0f), m_resolution(500)
+Camera::Camera() : m_position(0.0f, 0.0f, 0.0f), m_azimuthal_angle(-135.0f), m_polar_angle(6.0f), m_resolution(500)
 {
 
 }
 
-Camera::Camera(glm::vec3 position, int resolution) : m_position(position), m_azimuthal_angle(-135.0f), m_polar_angle(-10.0f), m_resolution(resolution)
+Camera::Camera(glm::vec3 position, int resolution) : m_position(position), m_azimuthal_angle(-135.0f), m_polar_angle(6.0f), m_resolution(resolution)
 {
 
 }
