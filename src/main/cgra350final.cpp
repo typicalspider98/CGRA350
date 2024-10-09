@@ -65,7 +65,7 @@ namespace CGRA350
 
     void CGRA350App::initVolumeRendering()
     {
-        if (m_context.m_do_render_cloud)
+        if (m_context.m_enable_cloud_func)
         {
             CheckCuda();
 

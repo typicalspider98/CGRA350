@@ -103,6 +103,7 @@ void Camera::processMouseScroll(float scroll_amt)
 void Camera::setPosition(const glm::vec3 &new_pos)
 {
 	m_position = new_pos;
+	SetIsMoving(true);
 }
 
 void Camera::setAzimuthalAngle(float new_azimuthal)

@@ -22,7 +22,8 @@ namespace CGRA350
 		int m_seabed_grid_width = CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH;
 		int m_seabed_grid_length = CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
-		bool m_do_render_cloud = true;
+		bool m_enable_cloud_func = true;
+		bool m_do_render_cloud = false;
 		bool m_do_render_seabed = true;
 		bool m_do_render_skybox = true;
 		bool m_do_render_ocean = true;
