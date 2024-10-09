@@ -29,7 +29,7 @@ private:
 
 	float m_fov = 45.0f;
 	float m_aspect_ratio = CGRA350Constants::DEFAULT_WINDOW_WIDTH / CGRA350Constants::DEFAULT_WINDOW_HEIGHT;
-	float m_speed = 1;
+	float m_speed = 5;
 	const float m_SENSITIVITY = CGRA350Constants::DEFAULT_CAMERA_SENSITIVITY;
 
 public:
