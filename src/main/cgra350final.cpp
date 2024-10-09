@@ -840,13 +840,6 @@ namespace CGRA350
                 }
             }
 
-
-            // --- postprocessing
-            if (m_context.m_do_render_postprocessing)
-            {
-                postprocessing.beforeRender(m_window.getScreenWidth(), m_window.getScreenHeight());
-            }
-
             // --- render skybox ---
             if (m_context.m_do_render_skybox)
             {
@@ -1379,6 +1372,8 @@ namespace CGRA350
             // --- postprocessing
             if (m_context.m_do_render_postprocessing)
             {
+                postprocessing.blitFrameBuffer(m_window.getScreenWidth(), m_window.getScreenHeight());
+                postprocessing.beforeRender(m_window.getScreenWidth(), m_window.getScreenHeight());
                 postprocessing.render(m_context.m_gui_param);
             }
 
