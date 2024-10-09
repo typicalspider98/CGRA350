@@ -346,7 +346,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
     else {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glUniform1i(glGetUniformLocation(program, "FSR"), 0);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }

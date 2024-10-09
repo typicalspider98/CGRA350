@@ -62,6 +62,9 @@ namespace CGRA350Constants
 	// Cloud and Rain
 	const int TEX_SAMPLE_ID_CLOUD = 30;
 	const int TEX_SAMPLE_ID_RAIN_SPLASH = 31;
+
+	// Postprocessing
+	const int TEX_SAMPLE_ID_POSTPROCESSING = 20;
 }
 
 #endif

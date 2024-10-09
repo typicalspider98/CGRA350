@@ -44,6 +44,7 @@ public:
 	ShaderProgram(const std::vector<Shader> &shaders);
 	~ShaderProgram();
 	void use();
+	void use_end();
 	GLuint getHandle() const;
 
 	void bindData(GLuint location, const Buffer &buffer, GLuint attribute_size) const;

@@ -4,6 +4,7 @@
 #include "../graphics/shaders.h"
 #include "../graphics/renderers.h"
 #include "../graphics/textures.h"
+#include "../graphics/postprocessing.h"
 #include "../volumerendering/vector.cuh"
 #include "../computeinstancing/Rain.hpp"
 
@@ -628,9 +629,16 @@ namespace CGRA350
         glActiveTexture(GL_TEXTURE0 + 25);
         stone2_texture.bind();
         stone2Mesh.render();
-        //*/
 
-        //！！！！！！！！！！！！！！！！！！！！！！！！！！！！//
+
+        // ------------------------------
+        // Postprocessing
+        std::vector<Shader> postprocessing_shaders;
+        postprocessing_shaders.emplace_back("postprocessing.vert");
+        postprocessing_shaders.emplace_back("postprocessing.frag");
+        ShaderProgram postprocessing_shader_prog(postprocessing_shaders);
+        Postprocessing postprocessing(postprocessing_shader_prog, m_window.getScreenWidth(), m_window.getScreenHeight());
+
 
         // ------------------------------
         // Rendering Loop
@@ -802,6 +810,13 @@ namespace CGRA350
                 {
                     ocean_renderer_refr.unbindFBO();
                 }
+            }
+
+
+            // --- postprocessing
+            if (m_context.m_do_render_postprocessing)
+            {
+                postprocessing.beforeRender(m_window.getScreenWidth(), m_window.getScreenHeight());
             }
 
             // --- render skybox ---
@@ -1240,18 +1255,24 @@ namespace CGRA350
             //*/
             //！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！//
 
-            // --- render cloud ---
-            if (m_context.m_do_render_cloud)
-            {
-                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow());
-            }
-
             // --- render Rain Drops ---
             if (m_context.m_do_render_rain)
             {
                 rain.renderRaindrops(proj, view, ImGui::GetIO().DeltaTime,
                     m_context.m_gui_param.raindrop_length,
                     m_context.m_gui_param.raindrop_color);
+            }
+
+            // --- render cloud ---
+            if (m_context.m_do_render_cloud)
+            {
+                RenderCloud(m_context.m_render_camera, *m_volumerender, m_window.getWindow());
+            }
+
+            // --- postprocessing
+            if (m_context.m_do_render_postprocessing)
+            {
+                postprocessing.render(m_context.m_gui_param);
             }
 
             // --- render Axis ---

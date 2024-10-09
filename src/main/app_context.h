@@ -30,7 +30,8 @@ namespace CGRA350
 		bool m_do_render_axis = false;
 		bool m_do_render_grid = false;
 		bool m_do_render_ui = true;
-		
+		bool m_do_render_postprocessing = true;
+
 		int m_illumin_model = 0; // 0: Fresnel, 1: Reflection, 2: Refraction, 3: Phong
 
 		glm::vec3 m_water_base_colour = CGRA350Constants::DEFAULT_WATER_BASE_COLOUR;
