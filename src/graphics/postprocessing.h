@@ -24,6 +24,7 @@ public:
 	~Postprocessing() { release(); }
 
 	void beforeRender(int screenWidth, int screenHeight);
+	void blitFrameBuffer(int screenWidth, int screenHeight);
 
 	void render(GUIParam& param);
 	void renderQuad();

@@ -148,6 +148,42 @@ void Postprocessing::render(GUIParam& param)
 	m_shader_prog.use_end();
 }
 
+void Postprocessing::blitFrameBuffer(int screenWidth, int screenHeight)
+{
+	GLint currentFramebuffer = 0;
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &currentFramebuffer);
+	//std::cout << "Current draw framebuffer ID: " << currentFramebuffer << std::endl;
+
+	// --- Blit refractionFramebuffer to postProcessingFramebuffer ---
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, currentFramebuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_framebuffer);
+	glBlitFramebuffer(0, 0, screenWidth, screenHeight,
+					  0, 0, screenWidth, screenHeight,
+					  GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+					  GL_NEAREST);
+
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+		std::cerr << "OpenGL error: " << err << std::endl;
+		switch (err) {
+		case GL_INVALID_ENUM:
+			std::cerr << "GL_INVALID_ENUM: An unacceptable value is specified for an enumerated argument." << std::endl;
+			break;
+		case GL_INVALID_VALUE:
+			std::cerr << "GL_INVALID_VALUE: A numeric argument is out of range." << std::endl;
+			break;
+		case GL_INVALID_OPERATION:
+			std::cerr << "GL_INVALID_OPERATION: The specified operation is not allowed in the current state." << std::endl;
+			break;
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			std::cerr << "GL_INVALID_FRAMEBUFFER_OPERATION: The framebuffer object is not complete." << std::endl;
+			break;
+		default:
+			std::cerr << "Unknown OpenGL error." << std::endl;
+		}
+	}
+}
+
 void Postprocessing::renderQuad()
 {
 	if (m_quadVAO == 0)

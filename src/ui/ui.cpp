@@ -77,10 +77,10 @@ void UI::render()
 
 	// render seabed mesh toggle (on/off)
 	ImGui::Checkbox("Render Seabed", &(m_app_context->m_do_render_seabed));
-
+	ImGui::SameLine();
 	// render ocean mesh toggle (on/off)
 	ImGui::Checkbox("Render Ocean", &(m_app_context->m_do_render_ocean));
-
+	ImGui::Checkbox("Postprocessing", &(m_app_context->m_do_render_postprocessing));
 	ImGui::Separator();
 
 	// --- camera options
