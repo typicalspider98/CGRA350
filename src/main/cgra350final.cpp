@@ -1126,7 +1126,7 @@ namespace CGRA350
             }
 
             //-----------------------------//
-            if (m_context.m_appear_tree1 == true) {
+            if (m_context.m_appear_tree == true) {
                 // 渲染树1模型
                 trunk_shader_prog.use();
 
@@ -1178,7 +1178,7 @@ namespace CGRA350
                 //*/
             }
 
-            if (m_context.m_appear_tree2 == true) {
+            if (m_context.m_appear_tree == true) {
                 //-----------------------------//
                 // 渲染树2模型
                 trunk_shader_prog.use();
@@ -1225,7 +1225,7 @@ namespace CGRA350
                 //*/
             }
 
-            if (m_context.m_appear_stone4 == true) {
+            if (m_context.m_appear_stone == true) {
                 //-----------------------------//
                 // 渲染石头模型
                 rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
@@ -1259,7 +1259,7 @@ namespace CGRA350
                 //*/
             }
 
-            if (m_context.m_appear_stone1 == true) {
+            if (m_context.m_appear_stone == true) {
                 //-----------------------------//
                 // 渲染大石头模型
                 caverock_shader_prog.use();  // 使用大石头模型的着色器程序
@@ -1293,7 +1293,7 @@ namespace CGRA350
                 //*/
             }
 
-            if (m_context.m_appear_stone2 == true) {
+            if (m_context.m_appear_stone == true) {
                 //-----------------------------//
                 // 渲染普通石头模型
                 stone_shader_prog.use();  // 使用普通石头模型的着色器程序
@@ -1327,7 +1327,7 @@ namespace CGRA350
                 //*/
             }
 
-            if (m_context.m_appear_stone3 == true) {
+            if (m_context.m_appear_stone == true) {
                 //-----------------------------//
                 // 渲染普通石头2模型
                 stone2_shader_prog.use();  // 使用普通石头模型的着色器程序
