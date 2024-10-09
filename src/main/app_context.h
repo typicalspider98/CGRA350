@@ -42,6 +42,8 @@ namespace CGRA350
 		unsigned int m_num_ocean_primitives = 2 * CGRA350Constants::DEFAULT_OCEAN_GRID_WIDTH * CGRA350Constants::DEFAULT_OCEAN_GRID_LENGTH;
 		unsigned int m_num_seabed_primitives = 2 * CGRA350Constants::DEFAULT_SEABED_GRID_WIDTH * CGRA350Constants::DEFAULT_SEABED_GRID_LENGTH;
 
+		int m_light_model = 0; // 0: Phong, 1: Cook-Torrance, 2: Oren-Nayar
+
 		Camera m_render_camera;
 		GUIParam m_gui_param;
 

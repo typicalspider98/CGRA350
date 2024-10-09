@@ -121,6 +121,15 @@ void UI::render()
 	changed |= ImGui::ColorEdit3("Light Color", (float*)&m_app_context->m_gui_param.dlight_color);
 
 	ImGui::SliderFloat("Light Strength", &m_app_context->m_gui_param.dlight_strength, 0.0f, 20.0f);
+	
+	ImGui::Separator();
+
+	// --- material options
+	//bool changed = false;
+	ImGui::Text("Lighthouse's Material:");
+	// direction
+	ImGui::Combo("Model", &(m_app_context->m_light_model), "None\0Cook-Torrance\0Oren-Nayar");
+
 	ImGui::Separator();
 
 	//// 新增 Object Light 控制部分
@@ -135,7 +144,7 @@ void UI::render()
 
 	//ImGui::SliderFloat("PLight Strength", &m_app_context->m_gui_param.plight_strength, 0.0f, 10.0f);
 
-	ImGui::Separator();
+	//ImGui::Separator();
 
 	// --- cloud
 	ImGui::Text("Volume Rendering:");

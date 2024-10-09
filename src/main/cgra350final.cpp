@@ -376,12 +376,26 @@ namespace CGRA350
         ObjMesh lighthouseMesh = load_wavefront_obj(BASE_PATH + "lighthouse9.obj");
 
         std::vector<Shader> lighthouse_shaders;
+
+        if (m_context.m_light_model == 0) {
+            lighthouse_shaders.emplace_back("lighthouse.vert");
+            lighthouse_shaders.emplace_back("lighthouse.frag");
+        }
+        else if (m_context.m_light_model == 1) {
+            lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
+            lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
+        }
+        else if (m_context.m_light_model == 2) {
+            lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+            lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
+        }
+
         //lighthouse_shaders.emplace_back("lighthouse.vert");
         //lighthouse_shaders.emplace_back("lighthouse.frag");
         //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
         //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
-        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
-        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
+        //lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+        //lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
         ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
         // 加载灯塔墙壁的法线贴图或颜色贴图
@@ -908,8 +922,31 @@ namespace CGRA350
             //    m_context.m_gui_param.light_color_z
             //);
 
+            //-----------------------------//
+            std::vector<Shader> lighthouse_shaders;
+            if (m_context.m_light_model == 0) {
+                lighthouse_shaders.emplace_back("lighthouse.vert");
+                lighthouse_shaders.emplace_back("lighthouse.frag");
+            }
+            else if (m_context.m_light_model == 1) {
+                lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
+                lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
+            }
+            else if (m_context.m_light_model == 2) {
+                lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+                lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
+            }
+            ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
+
             // 渲染灯塔模型
             lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
+
+            lighthouse_shader_prog.setFloat("roughness", 0.5f);
+            lighthouse_shader_prog.setFloat("metalness", 0.1f);
+            lighthouse_shader_prog.setFloat("reflectivity", 0.8f);
+
+            // 渲染灯塔模型
+            //lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
             //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
