@@ -243,6 +243,25 @@ namespace CGRA350
         // Create Skybox renderer
         SkyBoxRenderer skybox_renderer(skybox_shader_prog, *env_maps[last_env_map]);
 
+        // 加载一群石头模型
+        // 加载 rocks.obj 文件
+        ObjMesh rocksMesh = load_wavefront_obj(BASE_PATH + "rocks.obj");
+
+        std::vector<Shader> rocks_shaders;
+        rocks_shaders.emplace_back("rocks.vert");
+        rocks_shaders.emplace_back("rocks.frag");
+        ShaderProgram rocks_shader_prog(rocks_shaders);
+
+        Texture2D rocks_texture = Texture2D("./rocks/Handle0.jpg");  //
+
+        //使用岩石的着色器程序
+        rocks_shader_prog.use();
+
+        // 绑定岩石的纹理
+        glActiveTexture(GL_TEXTURE0 + 21);
+        rocks_texture.bind();
+        rocksMesh.renderPart("AssortedRocks"); // 渲染灯塔的glass部分
+
         // ------------------------------
         // Ocean
 
@@ -547,7 +566,7 @@ namespace CGRA350
         leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
 
 
-        //*/
+        /*
         // 加载一群石头模型
         // 加载 rocks.obj 文件
         ObjMesh rocksMesh = load_wavefront_obj(BASE_PATH + "rocks.obj");
@@ -676,6 +695,43 @@ namespace CGRA350
             glm::vec3 dLightColour(m_context.m_gui_param.dlight_color.x, m_context.m_gui_param.dlight_color.y, m_context.m_gui_param.dlight_color.z);
             float dLightStrength = m_context.m_gui_param.dlight_strength;
 
+            // --- render skybox ---
+            if (m_context.m_do_render_skybox)
+            {
+                skybox_renderer.render(m_context.m_render_camera);
+            }
+
+            //-----------------------------//
+            // 渲染石头模型
+            rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
+            //rocks_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+            //rocks_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+            rocks_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            rocks_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            rocks_shader_prog.setFloat("light.strength", dLightStrength);
+
+            rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+            rocks_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+            // 设定石头材质颜色
+            rocks_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
+
+            // 设置模型矩阵
+            glm::mat4 rocks_model_matrix = glm::translate(glm::mat4(0.9f), glm::vec3(-280.0f, -37.0f, -180.0f));  // 模型变换
+            rocks_model_matrix = glm::rotate(rocks_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+            rocks_shader_prog.setMat4("model", rocks_model_matrix);
+
+            // 设置视图和投影矩阵
+            rocks_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+            rocks_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+            // 渲染 石头 部分
+            glActiveTexture(GL_TEXTURE0 + 21);
+            rocks_texture.bind();
+            rocks_shader_prog.setInt("texture1", 21);
+            rocksMesh.renderPart("AssortedRocks");
+
             //// --- Point Light Parameters
             //glm::vec3 pLightColour = m_context.m_gui_param.plight_color;
             //float pLightStrength = m_context.m_gui_param.plight_strength;
@@ -802,12 +858,6 @@ namespace CGRA350
                 {
                     ocean_renderer_refr.unbindFBO();
                 }
-            }
-
-            // --- render skybox ---
-            if (m_context.m_do_render_skybox)
-            {
-                skybox_renderer.render(m_context.m_render_camera);
             }
 
             // --- render ocean ---
@@ -1085,7 +1135,7 @@ namespace CGRA350
             tree2Mesh.renderPart("leaf");
             //*/
 
-
+            /*
             //-----------------------------//
             // 渲染石头模型
             rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
