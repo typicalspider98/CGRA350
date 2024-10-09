@@ -7,16 +7,25 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D texture1;         // 纹理采样器
-uniform vec3 light_dir;             // 光源方向（平行光用）
-uniform vec3 light_color;           // 光源颜色
 uniform vec3 object_color;          // 物体颜色
 uniform vec3 view_pos;              // 摄像机位置
 uniform float roughness;            // 粗糙度
 uniform float metalness;            // 金属度
 uniform float reflectivity;         // 反射率
 
-uniform vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);
-uniform float ambient_strength = 0.2;
+// 定义 DirectionalLight 结构体
+struct DirectionalLight {
+    vec3 colour;
+    vec3 direction;
+    float strength;
+};
+
+// 将 light 定义为 uniform
+uniform DirectionalLight light;
+
+// 固定的环境光参数
+const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // 白色环境光
+const float ambient_strength = 0.2;                    // 环境光强度
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness * roughness;
@@ -58,7 +67,7 @@ void main()
 {
     // 法线、光源方向和视线方向的单位化
     vec3 N = normalize(Normal);
-    vec3 L = normalize(-light_dir); // 平行光的方向
+    vec3 L = normalize(-light.direction); // 使用 DirectionalLight 中的方向
     vec3 V = normalize(view_pos - FragPos);
     vec3 H = normalize(V + L);
 
@@ -77,10 +86,12 @@ void main()
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
     vec3 specular = numerator / denominator;
 
-    // 环境光和漫反射分量
-    vec3 ambient = ambient_light_color * ambient_strength;
+    // 使用 DirectionalLight 计算的漫反射分量
     float NdotL = max(dot(N, L), 0.0);
-    vec3 diffuse = (1.0 - F) * object_color * NdotL; // 金属表面没有漫反射
+    vec3 diffuse = (1.0 - F) * object_color * light.colour * light.strength * NdotL;
+
+    // 环境光分量，不受 DirectionalLight 的影响
+    vec3 ambient = ambient_light_color * ambient_strength;
 
     // 纹理采样和最终颜色
     vec3 textureColor = texture(texture1, TexCoord).rgb;
@@ -88,6 +99,7 @@ void main()
 
     FragColor = vec4(final_color, 1.0);
 }
+
 
 
 

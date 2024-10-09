@@ -376,8 +376,12 @@ namespace CGRA350
         ObjMesh lighthouseMesh = load_wavefront_obj(BASE_PATH + "lighthouse9.obj");
 
         std::vector<Shader> lighthouse_shaders;
-        lighthouse_shaders.emplace_back("lighthouse.vert");
-        lighthouse_shaders.emplace_back("lighthouse.frag");
+        //lighthouse_shaders.emplace_back("lighthouse.vert");
+        //lighthouse_shaders.emplace_back("lighthouse.frag");
+        //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
+        //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
+        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
         ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
         // 加载灯塔墙壁的法线贴图或颜色贴图
