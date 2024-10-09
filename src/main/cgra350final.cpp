@@ -376,8 +376,12 @@ namespace CGRA350
         ObjMesh lighthouseMesh = load_wavefront_obj(BASE_PATH + "lighthouse9.obj");
 
         std::vector<Shader> lighthouse_shaders;
-        lighthouse_shaders.emplace_back("lighthouse.vert");
-        lighthouse_shaders.emplace_back("lighthouse.frag");
+        //lighthouse_shaders.emplace_back("lighthouse.vert");
+        //lighthouse_shaders.emplace_back("lighthouse.frag");
+        //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
+        //lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
+        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+        lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
         ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
         // 加载灯塔墙壁的法线贴图或颜色贴图
@@ -392,6 +396,10 @@ namespace CGRA350
         Texture2D lighthouse_rock = Texture2D("./Lighthouse_Material/Floor.jpg");  //
         Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
         Texture2D lighthouse_wood = Texture2D("./Lighthouse_Material/wood2.jpg"); //
+
+        lighthouse_shader_prog.setFloat("roughness", 0.5f);
+        lighthouse_shader_prog.setFloat("metalness", 0.1f);
+        lighthouse_shader_prog.setFloat("reflectivity", 0.8f);
 
         // 在渲染循环中绑定纹理
         /*
@@ -905,8 +913,9 @@ namespace CGRA350
             //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
-            lighthouse_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            lighthouse_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            lighthouse_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            lighthouse_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            lighthouse_shader_prog.setFloat("light.strength", dLightStrength);
 
             lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
@@ -1072,8 +1081,9 @@ namespace CGRA350
             //rocks_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //rocks_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
-            rocks_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            rocks_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            rocks_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            rocks_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            rocks_shader_prog.setFloat("light.strength", dLightStrength);
 
             rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             rocks_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
@@ -1104,8 +1114,9 @@ namespace CGRA350
             //caverock_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //caverock_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
-            caverock_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            caverock_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            caverock_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            caverock_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            caverock_shader_prog.setFloat("light.strength", dLightStrength);
 
             caverock_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             caverock_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
@@ -1135,8 +1146,9 @@ namespace CGRA350
             //stone_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //stone_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
-            stone_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            stone_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            stone_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            stone_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            stone_shader_prog.setFloat("light.strength", dLightStrength);
 
             stone_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             stone_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
@@ -1167,8 +1179,9 @@ namespace CGRA350
             //stone2_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
             //stone2_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
 
-            stone2_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            stone2_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+            stone2_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+            stone2_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+            stone2_shader_prog.setFloat("light.strength", dLightStrength);
 
             stone2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
             stone2_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
