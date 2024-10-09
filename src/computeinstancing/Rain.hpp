@@ -44,8 +44,8 @@ public:
 	Rain(ShaderProgram& computeShader, ShaderProgram& raindropShader, ShaderProgram& splashShader, const Texture2D& splash_texture);
 
 	void clearRain();
-	void initializeRain(int numDrops, const glm::vec3& rainPosition, float cloudRadius, float minSpeed, float maxSpeed);
-	glm::vec4 generateRainDropPosition(const glm::vec3& rainPosition, float cloudRadius);
+	void initializeRain(int numDrops, const glm::vec3& rainPosition, float cloudRadius, float minSpeed, float maxSpeed, float seaLevel);
+	glm::vec4 generateRainDropPosition(const glm::vec3& rainPosition, float cloudRadius, float seaLevel);
 	glm::vec4 generateRainDropVelocity(float minSpeed, float maxSpeed);
 
 	void computeRainOnGPU(float deltaTime, float seaLevel, const glm::vec3& rainPosition, float cloudRadius, float minSpeed, float maxSpeed);

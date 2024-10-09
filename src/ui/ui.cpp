@@ -308,7 +308,7 @@ GUIParam::GUIParam()
 	this->rain_position = glm::vec3(-60, 100, -60);
 	this->rain_radius = 86.0f;
 	this->rain_sea_level = -8.8f;
-	this->raindrop_num = 1000;
+	this->raindrop_num = 0;
 	this->raindrop_length = 0.8f;
 	this->raindrop_color = glm::vec3(0.635f, 0.863f, 0.949f);	
 	this->raindrop_min_speed = 11.5f;
