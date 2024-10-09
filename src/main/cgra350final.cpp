@@ -945,414 +945,424 @@ namespace CGRA350
             //    m_context.m_gui_param.light_color_z
             //);
 
-            //-----------------------------//
-            std::vector<Shader> lighthouse_shaders;
-            if (m_context.m_light_model == 0) {
-                lighthouse_shaders.emplace_back("lighthouse.vert");
-                lighthouse_shaders.emplace_back("lighthouse.frag");
-            }
-            else if (m_context.m_light_model == 1) {
-                lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
-                lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
-            }
-            else if (m_context.m_light_model == 2) {
-                lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
-                lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
-            }
-            ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
+            if (m_context.m_appear_lighthouse == true) {
+                //-----------------------------//
+                std::vector<Shader> lighthouse_shaders;
+                if (m_context.m_light_model == 0) {
+                    lighthouse_shaders.emplace_back("lighthouse.vert");
+                    lighthouse_shaders.emplace_back("lighthouse.frag");
+                }
+                else if (m_context.m_light_model == 1) {
+                    lighthouse_shaders.emplace_back("lighthouse_CookTorrance.vert");
+                    lighthouse_shaders.emplace_back("lighthouse_CookTorrance.frag");
+                }
+                else if (m_context.m_light_model == 2) {
+                    lighthouse_shaders.emplace_back("lighthouse_OrenNayar.vert");
+                    lighthouse_shaders.emplace_back("lighthouse_OrenNayar.frag");
+                }
+                ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
-            // 渲染灯塔模型
-            lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
+                // 渲染灯塔模型
+                lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
+
+                lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
+                lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
+                lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
+
+                //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+                //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+                lighthouse_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                lighthouse_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                lighthouse_shader_prog.setFloat("light.strength", dLightStrength);
+
+                lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+                // 设定灰色材质颜色
+                lighthouse_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
+
+                // 设置模型矩阵
+                glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.3f), glm::vec3(-80.0f, 15.0f, -420.0f)); // 平移变换
+                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
+                lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
+
+                //glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-20.0f, 0.0f, -160.0f));  // 模型变换
+                //lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
+
+                // 设置视图和投影矩阵
+                lighthouse_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+                lighthouse_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+                // 修改Wall贴图
+                if (m_context.m_wall_material == 0) {
+                    lighthouse_wall = lighthouse_wall1;  //
+                }
+                else if (m_context.m_wall_material == 1) {
+                    lighthouse_wall = lighthouse_wall2;  //
+                }
+                else if (m_context.m_wall_material == 2) {
+                    lighthouse_wall = lighthouse_wall3;  //
+                }
+                else if (m_context.m_wall_material == 3) {
+                    lighthouse_wall = lighthouse_wall4;  //
+                }
+                else if (m_context.m_wall_material == 4) {
+                    lighthouse_wall = lighthouse_wall5;  //
+                }
+                else if (m_context.m_wall_material == 5) {
+                    lighthouse_wall = lighthouse_wall6;  //
+                }
+                else if (m_context.m_wall_material == 6) {
+                    lighthouse_wall = lighthouse_wall7;  //
+                }
+
+                // 修改Roof贴图
+                if (m_context.m_roof_material == 0) {
+                    lighthouse_rediron = lighthouse_roof1;  //
+                }
+                else if (m_context.m_roof_material == 1) {
+                    lighthouse_rediron = lighthouse_roof2;  //
+                }
+                else if (m_context.m_roof_material == 2) {
+                    lighthouse_rediron = lighthouse_roof3;  //
+                }
+                else if (m_context.m_roof_material == 3) {
+                    lighthouse_rediron = lighthouse_roof4;  //
+                }
+                else if (m_context.m_roof_material == 4) {
+                    lighthouse_rediron = lighthouse_roof5;  //
+                }
+                else if (m_context.m_roof_material == 5) {
+                    lighthouse_rediron = lighthouse_roof6;  //
+                }
+                else if (m_context.m_roof_material == 6) {
+                    lighthouse_rediron = lighthouse_roof7;  //
+                }
+                else if (m_context.m_roof_material == 7) {
+                    lighthouse_rediron = lighthouse_roof8;  //
+                }
+
+                // 修改Rock贴图
+                if (m_context.m_bottom_material == 0) {
+                    lighthouse_rock = lighthouse_rock1;  //
+                }
+                else if (m_context.m_bottom_material == 1) {
+                    lighthouse_rock = lighthouse_rock2;  //
+                }
+                else if (m_context.m_bottom_material == 2) {
+                    lighthouse_rock = lighthouse_rock3;  //
+                }
+                else if (m_context.m_bottom_material == 3) {
+                    lighthouse_rock = lighthouse_rock4;  //
+                }
+                else if (m_context.m_bottom_material == 4) {
+                    lighthouse_rock = lighthouse_rock5;  //
+                }
+                else if (m_context.m_bottom_material == 5) {
+                    lighthouse_rock = lighthouse_rock6;  //
+                }
+                else if (m_context.m_bottom_material == 6) {
+                    lighthouse_rock = lighthouse_rock7;  //
+                }
+                else if (m_context.m_bottom_material == 7) {
+                    lighthouse_rock = lighthouse_rock8;  //
+                }
+                else if (m_context.m_bottom_material == 8) {
+                    lighthouse_rock = lighthouse_rock9;  //
+                }
+
+                // 渲染灯塔模型
+                //lighthouseMesh.render();
+                //lighthouse_shader_prog.setInt("texture1", 0);  // 设置贴图单元
+
+                glActiveTexture(GL_TEXTURE0 + 5);
+                lighthouse_iron.bind();
+                lighthouse_shader_prog.setInt("texture1", 5);
+                lighthouseMesh.renderPart("Bl_iron");
+
+                // 渲染 bl_glass 部分
+                glActiveTexture(GL_TEXTURE0 + 6);
+                lighthouse_blglass.bind();
+                lighthouse_shader_prog.setInt("texture1", 6);
+                lighthouseMesh.renderPart("bl_glass");
+
+                // 渲染 clglass 部分
+                glActiveTexture(GL_TEXTURE0 + 7);
+                lighthouse_glass.bind();
+                lighthouse_shader_prog.setInt("texture1", 7);
+                lighthouseMesh.renderPart("clglass");
+
+                // 渲染 lens 部分
+                glActiveTexture(GL_TEXTURE0 + 8);
+                lighthouse_lens.bind();
+                lighthouse_shader_prog.setInt("texture1", 8);
+                lighthouseMesh.renderPart("lens");
+
+                // 渲染 red_iron 部分
+                glActiveTexture(GL_TEXTURE0 + 10);
+                lighthouse_rediron.bind();
+                lighthouse_shader_prog.setInt("texture1", 10);
+                lighthouseMesh.renderPart("red_iron");
+
+                // 渲染 rock 部分
+                glActiveTexture(GL_TEXTURE0 + 11);
+                lighthouse_rock.bind();
+                lighthouse_shader_prog.setInt("texture1", 11);
+                lighthouseMesh.renderPart("rock");
+
+                // 渲染 walls 部分
+                glActiveTexture(GL_TEXTURE0 + 12);
+                lighthouse_wall.bind();
+                lighthouse_shader_prog.setInt("texture1", 12);
+                lighthouseMesh.renderPart("walls");
+
+                // 渲染 wood 部分
+                glActiveTexture(GL_TEXTURE0 + 13);
+                lighthouse_wood.bind();
+                lighthouse_shader_prog.setInt("texture1", 13);
+                lighthouseMesh.renderPart("wood");
+            }
+
+            //-----------------------------//
+            if (m_context.m_appear_tree1 == true) {
+                // 渲染树1模型
+                trunk_shader_prog.use();
+
+                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                trunk_shader_prog.setFloat("light.strength", dLightStrength);
+
+                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                // 设置模型矩阵
+                glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
+                tree_model_matrix = glm::scale(tree_model_matrix, glm::vec3(0.6f, 0.6f, 0.6f));
+                trunk_shader_prog.setMat4("model", tree_model_matrix);
+                // 设置视图和投影矩阵
+                trunk_shader_prog.setMat4("view", view);
+                trunk_shader_prog.setMat4("projection", proj);
+                // 渲染 树干 部分
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
+                tree_trunk.bind();
+                trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
+                treeMesh.renderPart("bark");
+
+                // 渲染 树叶 部分
+                leaf_shader_prog.use();
+
+                //leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
+                //leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
+                leaf_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                leaf_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                leaf_shader_prog.setFloat("light.strength", dLightStrength);
+
+                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                // 设置模型矩阵
+                leaf_shader_prog.setMat4("model", tree_model_matrix);
+                // 设置视图和投影矩阵
+                leaf_shader_prog.setMat4("view", view);
+                leaf_shader_prog.setMat4("projection", proj);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
+                tree_leaf.bind();
+                leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
+                // 绑定树叶的法线贴图
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
+                tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+                leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
+                // 绑定树叶的特定光照贴图
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
+                tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+                leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
+                treeMesh.renderPart("leaf");
+                //*/
+            }
+
+            if (m_context.m_appear_tree2 == true) {
+                //-----------------------------//
+                // 渲染树2模型
+                trunk_shader_prog.use();
+
+                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                trunk_shader_prog.setFloat("light.strength", dLightStrength);
+
+                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                // 设置模型矩阵
+                glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-18.0f, -3.5f, -25.0f));  // 模型变换
+                trunk_shader_prog.setMat4("model", tree2_model_matrix);
+                // 设置视图和投影矩阵
+                trunk_shader_prog.setMat4("view", view);
+                trunk_shader_prog.setMat4("projection", proj);
+                // 渲染 树干 部分
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
+                tree2_bark.bind();
+                trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
+                tree2Mesh.renderPart("bark");
+
+                // 使用树叶着色程序
+                leaf_shader_prog.use();
+                leaf_shader_prog.setVec3("light_dir", dLightDirection);     // 设置光照位置
+                leaf_shader_prog.setVec3("light_color", dLightColour);      // 设置光源颜色
+                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                // 设置视图和投影矩阵
+                leaf_shader_prog.setMat4("model", tree2_model_matrix);
+                leaf_shader_prog.setMat4("view", view);
+                leaf_shader_prog.setMat4("projection", proj);
+                // 绑定树叶的纹理
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
+                tree2_leaf.bind();
+                leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
+                // 绑定树叶的法线贴图
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
+                tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+                leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
+                // 绑定树叶的特定光照贴图
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
+                tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+                leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
+                tree2Mesh.renderPart("leaf");
+                //*/
+            }
+
+            if (m_context.m_appear_stone4 == true) {
+                //-----------------------------//
+                // 渲染石头模型
+                rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
+                //rocks_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+                //rocks_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+                rocks_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                rocks_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                rocks_shader_prog.setFloat("light.strength", dLightStrength);
+
+                rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                rocks_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+                // 设定石头材质颜色
+                rocks_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
+
+                // 设置模型矩阵
+                glm::mat4 rocks_model_matrix = glm::translate(glm::mat4(0.9f), glm::vec3(-280.0f, -37.0f, -180.0f));  // 模型变换
+                rocks_model_matrix = glm::rotate(rocks_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                rocks_shader_prog.setMat4("model", rocks_model_matrix);
+
+                // 设置视图和投影矩阵
+                rocks_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+                rocks_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+                // 渲染 石头 部分
+                glActiveTexture(GL_TEXTURE0 + 21);
+                rocks_texture.bind();
+                rocks_shader_prog.setInt("texture1", 21);
+                rocksMesh.renderPart("AssortedRocks");
+                //*/
+            }
+
+            if (m_context.m_appear_stone1 == true) {
+                //-----------------------------//
+                // 渲染大石头模型
+                caverock_shader_prog.use();  // 使用大石头模型的着色器程序
+                //caverock_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+                //caverock_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+                caverock_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                caverock_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                caverock_shader_prog.setFloat("light.strength", dLightStrength);
+
+                caverock_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                caverock_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+                // 设定大石头材质颜色
+                caverock_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
+
+                // 设置模型矩阵
+                glm::mat4 caverock_model_matrix = glm::translate(glm::mat4(0.1f), glm::vec3(-120.0f, -42.0f, -150.0f));  // 模型变换
+                caverock_model_matrix = glm::rotate(caverock_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                caverock_shader_prog.setMat4("model", caverock_model_matrix);
+
+                // 设置视图和投影矩阵
+                caverock_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+                caverock_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+                // 渲染 大石头 部分
+                glActiveTexture(GL_TEXTURE0 + 23);
+                caverock_texture.bind();
+                caverock_shader_prog.setInt("texture1", 23);
+                caverockMesh.renderPart("CavePlatform4");
+                //*/
+            }
+
+            if (m_context.m_appear_stone2 == true) {
+                //-----------------------------//
+                // 渲染普通石头模型
+                stone_shader_prog.use();  // 使用普通石头模型的着色器程序
+                //stone_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+                //stone_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+                stone_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                stone_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                stone_shader_prog.setFloat("light.strength", dLightStrength);
+
+                stone_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                stone_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+                // 设定普通石头材质颜色
+                stone_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
+
+                // 设置模型矩阵
+                glm::mat4 stone_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-340.0f, -25.0f, -180.0f));  // 模型变换
+                stone_model_matrix = glm::rotate(stone_model_matrix, glm::radians(-100.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                stone_shader_prog.setMat4("model", stone_model_matrix);
+
+                // 设置视图和投影矩阵
+                stone_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+                stone_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+                // 渲染 普通石头 部分
+                glActiveTexture(GL_TEXTURE0 + 1);
+                stone_texture.bind();
+                stone_shader_prog.setInt("texture1", 1);
+                stoneMesh.render();
+                //*/
+            }
+
+            if (m_context.m_appear_stone3 == true) {
+                //-----------------------------//
+                // 渲染普通石头2模型
+                stone2_shader_prog.use();  // 使用普通石头模型的着色器程序
+                //stone2_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
+                //stone2_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+
+                stone2_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
+                stone2_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                stone2_shader_prog.setFloat("light.strength", dLightStrength);
+
+                stone2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
+                stone2_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+
+                // 设定普通石头材质颜色
+                stone2_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
+
+                // 设置模型矩阵
+                glm::mat4 stone2_model_matrix = glm::translate(glm::mat4(0.6f), glm::vec3(-24.0f, -7.0f, -380.0f));  // 模型变换
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                stone2_shader_prog.setMat4("model", stone2_model_matrix);
+
+                // 设置视图和投影矩阵
+                stone2_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
+                stone2_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
+
+                // 渲染 普通石头 部分
+                glActiveTexture(GL_TEXTURE0 + 25);
+                stone2_texture.bind();
+                stone2_shader_prog.setInt("texture1", 25);
+                stone2Mesh.render();
+                //*/
+            }
             
-            lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
-            lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
-            lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
-                                           
-            //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            lighthouse_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            lighthouse_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            lighthouse_shader_prog.setFloat("light.strength", dLightStrength);
-
-            lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定灰色材质颜色
-            lighthouse_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
-
-            // 设置模型矩阵
-            glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.3f), glm::vec3(-80.0f, 15.0f, -420.0f)); // 平移变换
-            lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
-            lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
-
-            //glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-20.0f, 0.0f, -160.0f));  // 模型变换
-            //lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
-
-            // 设置视图和投影矩阵
-            lighthouse_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            lighthouse_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
-            // 修改Wall贴图
-            if (m_context.m_wall_material == 0) {
-                lighthouse_wall = lighthouse_wall1;  //
-            }
-            else if (m_context.m_wall_material == 1) {
-                lighthouse_wall = lighthouse_wall2;  //
-            }
-            else if (m_context.m_wall_material == 2) {
-                lighthouse_wall = lighthouse_wall3;  //
-            }
-            else if (m_context.m_wall_material == 3) {
-                lighthouse_wall = lighthouse_wall4;  //
-            }
-            else if (m_context.m_wall_material == 4) {
-                lighthouse_wall = lighthouse_wall5;  //
-            }
-            else if (m_context.m_wall_material == 5) {
-                lighthouse_wall = lighthouse_wall6;  //
-            }
-            else if (m_context.m_wall_material == 6) {
-                lighthouse_wall = lighthouse_wall7;  //
-            }
-
-            // 修改Roof贴图
-            if (m_context.m_roof_material == 0) {
-                lighthouse_rediron = lighthouse_roof1;  //
-            }
-            else if (m_context.m_roof_material == 1) {
-                lighthouse_rediron = lighthouse_roof2;  //
-            }
-            else if (m_context.m_roof_material == 2) {
-                lighthouse_rediron = lighthouse_roof3;  //
-            }
-            else if (m_context.m_roof_material == 3) {
-                lighthouse_rediron = lighthouse_roof4;  //
-            }
-            else if (m_context.m_roof_material == 4) {
-                lighthouse_rediron = lighthouse_roof5;  //
-            }
-            else if (m_context.m_roof_material == 5) {
-                lighthouse_rediron = lighthouse_roof6;  //
-            }
-            else if (m_context.m_roof_material == 6) {
-                lighthouse_rediron = lighthouse_roof7;  //
-            }
-            else if (m_context.m_roof_material == 7) {
-                lighthouse_rediron = lighthouse_roof8;  //
-            }
-
-            // 修改Rock贴图
-            if (m_context.m_bottom_material == 0) {
-                lighthouse_rock = lighthouse_rock1;  //
-            }
-            else if (m_context.m_bottom_material == 1) {
-                lighthouse_rock = lighthouse_rock2;  //
-            }
-            else if (m_context.m_bottom_material == 2) {
-                lighthouse_rock = lighthouse_rock3;  //
-            }
-            else if (m_context.m_bottom_material == 3) {
-                lighthouse_rock = lighthouse_rock4;  //
-            }
-            else if (m_context.m_bottom_material == 4) {
-                lighthouse_rock = lighthouse_rock5;  //
-            }
-            else if (m_context.m_bottom_material == 5) {
-                lighthouse_rock = lighthouse_rock6;  //
-            }
-            else if (m_context.m_bottom_material == 6) {
-                lighthouse_rock = lighthouse_rock7;  //
-            }
-            else if (m_context.m_bottom_material == 7) {
-                lighthouse_rock = lighthouse_rock8;  //
-            }
-            else if (m_context.m_bottom_material == 8) {
-                lighthouse_rock = lighthouse_rock9;  //
-            }
-
-            // 渲染灯塔模型
-            //lighthouseMesh.render();
-            //lighthouse_shader_prog.setInt("texture1", 0);  // 设置贴图单元
-
-            glActiveTexture(GL_TEXTURE0 + 5);
-            lighthouse_iron.bind();
-            lighthouse_shader_prog.setInt("texture1", 5);
-            lighthouseMesh.renderPart("Bl_iron");
-
-            // 渲染 bl_glass 部分
-            glActiveTexture(GL_TEXTURE0 + 6);
-            lighthouse_blglass.bind();
-            lighthouse_shader_prog.setInt("texture1", 6);
-            lighthouseMesh.renderPart("bl_glass");
-
-            // 渲染 clglass 部分
-            glActiveTexture(GL_TEXTURE0 + 7);
-            lighthouse_glass.bind();
-            lighthouse_shader_prog.setInt("texture1", 7);
-            lighthouseMesh.renderPart("clglass");
-
-            // 渲染 lens 部分
-            glActiveTexture(GL_TEXTURE0 + 8);
-            lighthouse_lens.bind();
-            lighthouse_shader_prog.setInt("texture1", 8);
-            lighthouseMesh.renderPart("lens");
-
-            // 渲染 red_iron 部分
-            glActiveTexture(GL_TEXTURE0 + 10);
-            lighthouse_rediron.bind();
-            lighthouse_shader_prog.setInt("texture1", 10);
-            lighthouseMesh.renderPart("red_iron");
-
-            // 渲染 rock 部分
-            glActiveTexture(GL_TEXTURE0 + 11);
-            lighthouse_rock.bind();
-            lighthouse_shader_prog.setInt("texture1", 11);
-            lighthouseMesh.renderPart("rock");
-
-            // 渲染 walls 部分
-            glActiveTexture(GL_TEXTURE0 + 12);
-            lighthouse_wall.bind();
-            lighthouse_shader_prog.setInt("texture1", 12);
-            lighthouseMesh.renderPart("walls");
-
-            // 渲染 wood 部分
-            glActiveTexture(GL_TEXTURE0 + 13);
-            lighthouse_wood.bind();
-            lighthouse_shader_prog.setInt("texture1", 13);
-            lighthouseMesh.renderPart("wood");
-
-
-            //-----------------------------//
-            // 渲染树1模型
-            trunk_shader_prog.use();
-
-            trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            trunk_shader_prog.setFloat("light.strength", dLightStrength);
-
-            trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            // 设置模型矩阵
-            glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
-            tree_model_matrix = glm::scale(tree_model_matrix, glm::vec3(0.6f, 0.6f, 0.6f));
-            trunk_shader_prog.setMat4("model", tree_model_matrix);
-            // 设置视图和投影矩阵
-            trunk_shader_prog.setMat4("view", view);
-            trunk_shader_prog.setMat4("projection", proj);
-            // 渲染 树干 部分
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
-            tree_trunk.bind();
-            trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
-            treeMesh.renderPart("bark");
-
-            // 渲染 树叶 部分
-            leaf_shader_prog.use();
-
-            //leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-            //leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
-            leaf_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            leaf_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            leaf_shader_prog.setFloat("light.strength", dLightStrength);
-
-            leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            // 设置模型矩阵
-            leaf_shader_prog.setMat4("model", tree_model_matrix);
-            // 设置视图和投影矩阵
-            leaf_shader_prog.setMat4("view", view);
-            leaf_shader_prog.setMat4("projection", proj);
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
-            tree_leaf.bind();
-            leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
-            // 绑定树叶的法线贴图
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-            tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-            leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-            // 绑定树叶的特定光照贴图
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
-            tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-            leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
-            treeMesh.renderPart("leaf");
-            //*/
-
-
-            //-----------------------------//
-            // 渲染树2模型
-            trunk_shader_prog.use();
-
-            trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            trunk_shader_prog.setFloat("light.strength", dLightStrength);
-
-            trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            // 设置模型矩阵
-            glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-12.0f, -3.5f, -25.0f));  // 模型变换
-            trunk_shader_prog.setMat4("model", tree2_model_matrix);
-            // 设置视图和投影矩阵
-            trunk_shader_prog.setMat4("view", view);
-            trunk_shader_prog.setMat4("projection", proj);
-            // 渲染 树干 部分
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
-            tree2_bark.bind();
-            trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
-            tree2Mesh.renderPart("bark");
-
-            // 使用树叶着色程序
-            leaf_shader_prog.use();
-            leaf_shader_prog.setVec3("light_dir", dLightDirection);     // 设置光照位置
-            leaf_shader_prog.setVec3("light_color", dLightColour);      // 设置光源颜色
-            leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            // 设置视图和投影矩阵
-            leaf_shader_prog.setMat4("model", tree2_model_matrix);
-            leaf_shader_prog.setMat4("view", view);
-            leaf_shader_prog.setMat4("projection", proj);
-            // 绑定树叶的纹理
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
-            tree2_leaf.bind();
-            leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
-            // 绑定树叶的法线贴图
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-            tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
-            leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-            // 绑定树叶的特定光照贴图
-            glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
-            tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
-            leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
-            tree2Mesh.renderPart("leaf");
-            //*/
-
-
-            //-----------------------------//
-            // 渲染石头模型
-            rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
-            //rocks_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //rocks_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            rocks_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            rocks_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            rocks_shader_prog.setFloat("light.strength", dLightStrength);
-
-            rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            rocks_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定石头材质颜色
-            rocks_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
-
-            // 设置模型矩阵
-            glm::mat4 rocks_model_matrix = glm::translate(glm::mat4(0.9f), glm::vec3(-280.0f, -37.0f, -180.0f));  // 模型变换
-            rocks_model_matrix = glm::rotate(rocks_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            rocks_shader_prog.setMat4("model", rocks_model_matrix);
-
-            // 设置视图和投影矩阵
-            rocks_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            rocks_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
-            // 渲染 石头 部分
-            glActiveTexture(GL_TEXTURE0 + 21);
-            rocks_texture.bind();
-            rocks_shader_prog.setInt("texture1", 21);
-            rocksMesh.renderPart("AssortedRocks");
-            //*/
-
-
-            //-----------------------------//
-            // 渲染大石头模型
-            caverock_shader_prog.use();  // 使用大石头模型的着色器程序
-            //caverock_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //caverock_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            caverock_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            caverock_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            caverock_shader_prog.setFloat("light.strength", dLightStrength);
-
-            caverock_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            caverock_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定大石头材质颜色
-            caverock_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
-
-            // 设置模型矩阵
-            glm::mat4 caverock_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-120.0f, -10.0f, -1090.0f));  // 模型变换
-            caverock_model_matrix = glm::rotate(caverock_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            caverock_shader_prog.setMat4("model", caverock_model_matrix);
-
-            // 设置视图和投影矩阵
-            caverock_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            caverock_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
-            // 渲染 大石头 部分
-            glActiveTexture(GL_TEXTURE0 + 23);
-            caverock_texture.bind();
-            caverock_shader_prog.setInt("texture1", 23);
-            caverockMesh.renderPart("CavePlatform4");
-            //*/
-
-            //-----------------------------//
-            // 渲染普通石头模型
-            stone_shader_prog.use();  // 使用普通石头模型的着色器程序
-            //stone_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //stone_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            stone_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            stone_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            stone_shader_prog.setFloat("light.strength", dLightStrength);
-
-            stone_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            stone_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定普通石头材质颜色
-            stone_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
-
-            // 设置模型矩阵
-            glm::mat4 stone_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-340.0f, -25.0f, -180.0f));  // 模型变换
-            stone_model_matrix = glm::rotate(stone_model_matrix, glm::radians(-100.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            stone_shader_prog.setMat4("model", stone_model_matrix);
-
-            // 设置视图和投影矩阵
-            stone_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            stone_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
-            // 渲染 普通石头 部分
-            glActiveTexture(GL_TEXTURE0 + 1);
-            stone_texture.bind();
-            stone_shader_prog.setInt("texture1", 1);
-            stoneMesh.render();
-            //*/
-
-
-            //-----------------------------//
-            // 渲染普通石头2模型
-            stone2_shader_prog.use();  // 使用普通石头模型的着色器程序
-            //stone2_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-            //stone2_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-            stone2_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-            stone2_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
-            stone2_shader_prog.setFloat("light.strength", dLightStrength);
-
-            stone2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-            stone2_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
-
-            // 设定普通石头材质颜色
-            stone2_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
-
-            // 设置模型矩阵
-            glm::mat4 stone2_model_matrix = glm::translate(glm::mat4(0.6f), glm::vec3(-35.0f, -5.0f, -30.0f));  // 模型变换
-            stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
-            stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-            stone2_shader_prog.setMat4("model", stone2_model_matrix);
-
-            // 设置视图和投影矩阵
-            stone2_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
-            stone2_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
-
-            // 渲染 普通石头 部分
-            glActiveTexture(GL_TEXTURE0 + 25);
-            stone2_texture.bind();
-            stone2_shader_prog.setInt("texture1", 25);
-            stone2Mesh.render();
-            //*/
             //——————————————————————————————————//
 
             // --- render Rain Drops ---

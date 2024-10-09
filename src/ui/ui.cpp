@@ -134,6 +134,19 @@ void UI::render()
 	}
 	ImGui::Separator();
 
+	// --- objects appear
+	ImGui::Text("Objects Appear Control");
+
+	ImGui::Checkbox("Lighthouse", &m_app_context->m_appear_lighthouse);
+	ImGui::Checkbox("Tree1", &m_app_context->m_appear_tree1);
+	ImGui::Checkbox("Tree2", &m_app_context->m_appear_tree2);
+	ImGui::Checkbox("Stone1", &m_app_context->m_appear_stone1);
+	ImGui::Checkbox("Stone2", &m_app_context->m_appear_stone2);
+	ImGui::Checkbox("Stone3", &m_app_context->m_appear_stone3);
+	ImGui::Checkbox("Stone4", &m_app_context->m_appear_stone4);
+
+	ImGui::Separator();
+
 	// --- light options
 	bool changed = false;
 	ImGui::Text("Directional Light:");
