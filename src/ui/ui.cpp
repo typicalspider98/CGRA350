@@ -138,12 +138,8 @@ void UI::render()
 	ImGui::Text("Objects Appear Control");
 
 	ImGui::Checkbox("Lighthouse", &m_app_context->m_appear_lighthouse);
-	ImGui::Checkbox("Tree1", &m_app_context->m_appear_tree1);
-	ImGui::Checkbox("Tree2", &m_app_context->m_appear_tree2);
-	ImGui::Checkbox("Stone1", &m_app_context->m_appear_stone1);
-	ImGui::Checkbox("Stone2", &m_app_context->m_appear_stone2);
-	ImGui::Checkbox("Stone3", &m_app_context->m_appear_stone3);
-	ImGui::Checkbox("Stone4", &m_app_context->m_appear_stone4);
+	ImGui::Checkbox("Tree", &m_app_context->m_appear_tree);
+	ImGui::Checkbox("Stone", &m_app_context->m_appear_stone);
 
 	ImGui::Separator();
 
