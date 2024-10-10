@@ -135,7 +135,7 @@ void UI::render()
 	ImGui::Separator();
 
 	// --- objects appear
-	ImGui::Text("Objects Appear Control");
+	ImGui::Text("Objects Appear Control:");
 
 	ImGui::Checkbox("Lighthouse", &m_app_context->m_appear_lighthouse);
 	ImGui::Checkbox("Tree", &m_app_context->m_appear_tree);
