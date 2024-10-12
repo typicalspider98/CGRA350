@@ -76,7 +76,7 @@ namespace CGRA350
     }
 
     //————————————————————————————//
-    // 加载obj
+    // Load obj files
     struct wavefront_vertex {
         unsigned int p, n, t;
     };
@@ -100,7 +100,7 @@ namespace CGRA350
             throw runtime_error("Error: could not open file " + filepath);
         }
 
-        // 解析 .obj 文件
+        // Parse the.obj file
         while (objFile.good()) {
             string line;
             getline(objFile, line);
@@ -146,14 +146,14 @@ namespace CGRA350
                     face.push_back(v);
                 }
 
-                // 处理三角形面
+                // Treated triangular face
                 if (face.size() == 3) {
                     for (int i = 0; i < 3; ++i) {
                         wv_vertices.push_back(face[i]);
                     }
 
                     for (int i = 0; i < 3; ++i) {
-                        // 将面加入当前材质对应的部分
+                        // Adds the face to the corresponding part of the current material
                         meshParts[currentMaterialName].positions.push_back(positions[face[i].p]);
                         meshParts[currentMaterialName].normals.push_back(normals[face[i].n]);
                         meshParts[currentMaterialName].texCoords.push_back(uvs[face[i].t]);
@@ -162,12 +162,12 @@ namespace CGRA350
                 }
             }
             else if (mode == "usemtl") {
-                // 处理新的材质
+                // Handle new materials
                 objLine >> currentMaterialName;
             }
         }
 
-        // 生成法线
+        // Generating normal
         if (normals.empty()) {
             // Generate normals if not present
             for (size_t i = 0; i < positions.size(); ++i) {
@@ -192,14 +192,14 @@ namespace CGRA350
             }
         }
 
-        // 构建索引
+        // Build index
         for (const wavefront_vertex& v : wv_vertices) {
             indices.push_back(v.p);
         }
 
-        // 创建 ObjMesh 对象
+        // Create an ObjMesh object
         ObjMesh objMesh(positions, normals, uvs, indices);
-        objMesh.initialise();  // 初始化 OpenGL 数据
+        objMesh.initialise();  // Initializes OpenGL data
 
         for (auto& part : meshParts) {
             part.second.initialise();
@@ -370,11 +370,10 @@ namespace CGRA350
         ShaderProgram grid_shader_prog(grid_shaders);
 
         //————————————————————————————//
-        //OBJ处理
+        // OBJ processing
 
         //-----------------------//
-        // 加载灯塔模型
-        // 加载 teapot.obj 文件
+        // Loaded lighthouse model
         ObjMesh lighthouseMesh = load_wavefront_obj(BASE_PATH + "lighthouse9.obj");
 
         std::vector<Shader> lighthouse_shaders;
@@ -394,113 +393,101 @@ namespace CGRA350
 
         ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
-        // 加载灯塔墙壁的法线贴图或颜色贴图
-        //Texture2D lighthouse_texture = Texture2D("./lighthouse_wall4.jpg");  // 载入纹理
+        // Load normal maps or color maps for each part of the lighthouse
 
-        Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
-        Texture2D lighthouse_iron = Texture2D("./Lighthouse_Material/Floor2.jpg");  //
-        Texture2D lighthouse_blglass = Texture2D("./Lighthouse_Material/window4.jpg");   //
-        Texture2D lighthouse_glass = Texture2D("./Lighthouse_Material/Wooden_door.jpg");  //
+        Texture2D lighthouse_wall = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");
+        Texture2D lighthouse_iron = Texture2D("./Lighthouse_Material/Floor2.jpg");
+        Texture2D lighthouse_blglass = Texture2D("./Lighthouse_Material/window4.jpg");
+        Texture2D lighthouse_glass = Texture2D("./Lighthouse_Material/Wooden_door.jpg");
         Texture2D lighthouse_lens = Texture2D("./Lighthouse_Material/Handle0.jpg");
-        Texture2D lighthouse_mirror = Texture2D("./Lighthouse_Material/window2.jpg");  //
-        Texture2D lighthouse_rediron = Texture2D("./Lighthouse_Material/roof2.jpg"); // roof
-        Texture2D lighthouse_rock = Texture2D("./Lighthouse_Material/Floor.jpg");  //
-        Texture2D lighthouse_wood = Texture2D("./Lighthouse_Material/wood2.jpg"); //
+        Texture2D lighthouse_mirror = Texture2D("./Lighthouse_Material/window2.jpg");
+        Texture2D lighthouse_rediron = Texture2D("./Lighthouse_Material/roof2.jpg");
+        Texture2D lighthouse_rock = Texture2D("./Lighthouse_Material/Floor.jpg");
+        Texture2D lighthouse_wood = Texture2D("./Lighthouse_Material/wood2.jpg");
 
-        Texture2D lighthouse_wall1 = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");  //
-        Texture2D lighthouse_wall2 = Texture2D("./Lighthouse_Material/wood2.jpg");  //
+        Texture2D lighthouse_wall1 = Texture2D("./Lighthouse_Material/Windows_Dome - Map.jpg");
+        Texture2D lighthouse_wall2 = Texture2D("./Lighthouse_Material/wood2.jpg");
         Texture2D lighthouse_wall3 = Texture2D("./Lighthouse_Material/25_concrete.png");
         Texture2D lighthouse_wall4 = Texture2D("./Lighthouse_Material/27_grey_new_brick.png");
         Texture2D lighthouse_wall5 = Texture2D("./Lighthouse_Material/28_grey_marble.png");
         Texture2D lighthouse_wall6 = Texture2D("./Lighthouse_Material/30_stainless steel.jpeg");
         Texture2D lighthouse_wall7 = Texture2D("./Lighthouse_Material/31_brushed_medal.jpg");
 
-        Texture2D lighthouse_roof1 = Texture2D("./Lighthouse_Material/roof2.jpg");  //
-        Texture2D lighthouse_roof2 = Texture2D("./Lighthouse_Material/16_medal.jpg");  //
-        Texture2D lighthouse_roof3 = Texture2D("./Lighthouse_Material/18_marble.jpg");  //
-        Texture2D lighthouse_roof4 = Texture2D("./Lighthouse_Material/23_rusty_medal.jpg");  //
-        Texture2D lighthouse_roof5 = Texture2D("./Lighthouse_Material/25_concrete.png");  //
-        Texture2D lighthouse_roof6 = Texture2D("./Lighthouse_Material/30_stainless steel.jpeg");  //
-        Texture2D lighthouse_roof7 = Texture2D("./Lighthouse_Material/33_glavanized_medal.jpg");  //
-        Texture2D lighthouse_roof8 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");  //
+        Texture2D lighthouse_roof1 = Texture2D("./Lighthouse_Material/roof2.jpg");
+        Texture2D lighthouse_roof2 = Texture2D("./Lighthouse_Material/16_medal.jpg");
+        Texture2D lighthouse_roof3 = Texture2D("./Lighthouse_Material/18_marble.jpg");
+        Texture2D lighthouse_roof4 = Texture2D("./Lighthouse_Material/23_rusty_medal.jpg");
+        Texture2D lighthouse_roof5 = Texture2D("./Lighthouse_Material/25_concrete.png");
+        Texture2D lighthouse_roof6 = Texture2D("./Lighthouse_Material/30_stainless steel.jpeg");
+        Texture2D lighthouse_roof7 = Texture2D("./Lighthouse_Material/33_glavanized_medal.jpg");
+        Texture2D lighthouse_roof8 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");
 
-        Texture2D lighthouse_rock1 = Texture2D("./Lighthouse_Material/Floor.jpg");  //
-        Texture2D lighthouse_rock2 = Texture2D("./Lighthouse_Material/11_soil.jpg");  //
-        Texture2D lighthouse_rock3 = Texture2D("./Lighthouse_Material/17_sand.jpg");  //
-        Texture2D lighthouse_rock4 = Texture2D("./Lighthouse_Material/18_marble.jpg");  //
-        Texture2D lighthouse_rock5 = Texture2D("./Lighthouse_Material/19_black stone.jpg");  //
-        Texture2D lighthouse_rock6 = Texture2D("./Lighthouse_Material/21_cobblestone.png");  //
-        Texture2D lighthouse_rock7 = Texture2D("./Lighthouse_Material/22_medal.png");  //
-        Texture2D lighthouse_rock8 = Texture2D("./Lighthouse_Material/34_concrete.jpeg");  //
-        Texture2D lighthouse_rock9 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");  //
+        Texture2D lighthouse_rock1 = Texture2D("./Lighthouse_Material/Floor.jpg");
+        Texture2D lighthouse_rock2 = Texture2D("./Lighthouse_Material/11_soil.jpg");
+        Texture2D lighthouse_rock3 = Texture2D("./Lighthouse_Material/17_sand.jpg");
+        Texture2D lighthouse_rock4 = Texture2D("./Lighthouse_Material/18_marble.jpg");
+        Texture2D lighthouse_rock5 = Texture2D("./Lighthouse_Material/19_black stone.jpg");
+        Texture2D lighthouse_rock6 = Texture2D("./Lighthouse_Material/21_cobblestone.png");
+        Texture2D lighthouse_rock7 = Texture2D("./Lighthouse_Material/22_medal.png");
+        Texture2D lighthouse_rock8 = Texture2D("./Lighthouse_Material/34_concrete.jpeg");
+        Texture2D lighthouse_rock9 = Texture2D("./Lighthouse_Material/35_yellow_wood.jpg");
 
         lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
         lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
         lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
 
-        // 使用灯塔的着色器程序
+        // Use the lighthouse shader program
         lighthouse_shader_prog.use();
         glActiveTexture(GL_TEXTURE0);
 
-        // 绑定iron的纹理
+        // Bind iron's texture
         glActiveTexture(GL_TEXTURE0 + 5);
         lighthouse_iron.bind();
         lighthouse_shader_prog.setInt("texture1", 5);
-        //lighthouseMesh.renderPart("Bl_iron"); // 渲染灯塔的glass部分
 
-        // 绑定blglass的纹理
+        // Bind blglass's texture
         glActiveTexture(GL_TEXTURE0 + 6);
         lighthouse_blglass.bind();
         lighthouse_shader_prog.setInt("texture1", 6);
-        //lighthouseMesh.renderPart("bl_glass"); // 渲染灯塔的glass部分
 
-        // 绑定glass的纹理
+        // Bind glass's texture
         glActiveTexture(GL_TEXTURE0 + 7);
         lighthouse_glass.bind();
         lighthouse_shader_prog.setInt("texture1", 7);
-        //lighthouseMesh.renderPart("clglass"); // 渲染灯塔的glass部分
 
-        // 绑定iron的纹理
+        //  Bind lens's texture
         glActiveTexture(GL_TEXTURE0 + 8);
         lighthouse_lens.bind();
         lighthouse_shader_prog.setInt("texture1", 8);
-        //lighthouseMesh.renderPart("lens"); // 渲染灯塔的glass部分
 
-        // 绑定iron的纹理
+        //  Bind mirror's texture
         glActiveTexture(GL_TEXTURE0 + 9);
-        lighthouse_lens.bind();
+        lighthouse_mirror.bind();
         lighthouse_shader_prog.setInt("texture1", 9);
-        //lighthouseMesh.renderPart("mirror"); // 渲染灯塔的glass部分
 
-        // 绑定iron的纹理
+        // Bind rediron's texture
         glActiveTexture(GL_TEXTURE0 + 10);
         lighthouse_rediron.bind();
         lighthouse_shader_prog.setInt("texture1", 10);
-        //lighthouseMesh.renderPart("red_iron"); // 渲染灯塔的glass部分
 
-        // 绑定rock的纹理
+        // Bind rock's texture
         glActiveTexture(GL_TEXTURE0 + 11);
         lighthouse_rock.bind();
         lighthouse_shader_prog.setInt("texture1", 11);
-        //lighthouseMesh.renderPart("rock"); // 渲染灯塔的rock部分
 
-        // 绑定walls的纹理
+        // Bind wall's texture
         glActiveTexture(GL_TEXTURE0 + 12);
         lighthouse_wall.bind();
         lighthouse_shader_prog.setInt("texture1", 12);
-        //lighthouseMesh.renderPart("walls"); // 渲染灯塔的walls部分
 
-        // 绑定wood的纹理
+        // Bind wood's texture
         glActiveTexture(GL_TEXTURE0 + 13);
         lighthouse_wood.bind();
         lighthouse_shader_prog.setInt("texture1", 13);
-        //lighthouseMesh.renderPart("wood"); // 渲染灯塔的wood部分
         //*/
 
-
         //-----------------------//
-        // 加载树的模型
-        // 加载 tree.obj 文件
+        // Load the tree model
         ObjMesh treeMesh = load_wavefront_obj(BASE_PATH + "tree.obj");
 
         std::vector<Shader> trunk_shaders;
@@ -513,39 +500,37 @@ namespace CGRA350
         leaf_shaders.emplace_back("tree_leaf.frag");
         ShaderProgram leaf_shader_prog(leaf_shaders);
 
-        Texture2D tree_trunk = Texture2D("./tree/bark_0021.jpg");  //
-        Texture2D tree_leaf = Texture2D("./tree/DB2X2_L01.png");   //
-        Texture2D tree_leaf_normal_map = Texture2D("./tree/DB2X2_L01_Nor.png");   //
-        Texture2D tree_leaf_specular_map = Texture2D("./tree/DB2X2_L01_Spec.png");   //
+        Texture2D tree_trunk = Texture2D("./tree/bark_0021.jpg");
+        Texture2D tree_leaf = Texture2D("./tree/DB2X2_L01.png");
+        Texture2D tree_leaf_normal_map = Texture2D("./tree/DB2X2_L01_Nor.png");
+        Texture2D tree_leaf_specular_map = Texture2D("./tree/DB2X2_L01_Spec.png");
 
-        // 使用树干的着色器程序
+        // Shader program using trunk
         trunk_shader_prog.use();
-        // 绑定树干的纹理
+        // Bind the texture of the trunk
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
         tree_trunk.bind();
         trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
         
-        // 使用树叶的着色器程序  
+        // Shader program using leaves 
         leaf_shader_prog.use();
-        //树叶贴图
-        // 绑定树叶的基本颜色贴图        
+
+        // Bind the basic color map of the leaves      
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
         tree_leaf.bind();
         leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
-        // 绑定树叶的法线贴图
+        // Bind the normal map of the leaves
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-        tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+        tree_leaf_normal_map.bind();  
         leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-        // 绑定树叶的特定光照贴图
+        // Bind specific light maps to leaves
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
-        tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+        tree_leaf_specular_map.bind(); 
         leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
 
-        
         //*/
         //-----------------------//
-        // 加载树2的模型
-        // 加载 tree8.obj 文件
+        // Load the tree2 model
         ObjMesh tree2Mesh = load_wavefront_obj(BASE_PATH + "tree8.obj");
 
         Texture2D tree2_bark = Texture2D("./tree2/bark.png");  //
@@ -553,32 +538,30 @@ namespace CGRA350
         Texture2D tree2_leaf_normal_map = Texture2D("./tree2/leaf_normal.png");   //
         Texture2D tree2_leaf_specular_map = Texture2D("./tree2/leaf_specular.png");   //
 
-        // 使用树干的着色器程序
+        // Shader program using trunk
         trunk_shader_prog.use();
-        // 绑定树干的纹理
+        // Bind the texture of the trunk
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
         tree2_bark.bind();
         trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
 
-        // 使用树叶的着色程序
+        // Shader program using leaf
         leaf_shader_prog.use();
-        // 绑定树叶的纹理
+        // Bind the texture of the leaves
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
         tree2_leaf.bind();
         leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
-        // 绑定树叶的法线贴图
+        // Bind the normal map of the leaves
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-        tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+        tree2_leaf_normal_map.bind();
         leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-        // 绑定树叶的特定光照贴图
+        // Bind specific light maps to leaves
         glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
-        tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+        tree2_leaf_specular_map.bind();
         leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
 
-
         //*/
-        // 加载一群石头模型
-        // 加载 rocks.obj 文件
+        // Load a bunch of stone models
         ObjMesh rocksMesh = load_wavefront_obj(BASE_PATH + "rocks.obj");
 
         std::vector<Shader> rocks_shaders;
@@ -588,17 +571,16 @@ namespace CGRA350
 
         Texture2D rocks_texture = Texture2D("./rocks/Handle0.jpg");  //
 
-        //使用岩石的着色器程序
+        // Use rock shader program
         rocks_shader_prog.use();
 
-        // 绑定岩石的纹理
+        // Bind the texture of the rock
         glActiveTexture(GL_TEXTURE0 + 21);
         rocks_texture.bind();
-        rocksMesh.renderPart("AssortedRocks"); // 渲染灯塔的glass部分
+        rocksMesh.renderPart("AssortedRocks");
         //*/
 
-        // 加载大石头模型
-        // 加载 caverock.obj 文件
+        // Load the large stone model
         ObjMesh caverockMesh = load_wavefront_obj(BASE_PATH + "caverock.obj");
 
         std::vector<Shader> caverock_shaders;
@@ -608,18 +590,16 @@ namespace CGRA350
 
         Texture2D caverock_texture = Texture2D("./rocks/Ground.jpg");  //
 
-        //使用大石头的着色器程序
+        // Shader program using big stones
         caverock_shader_prog.use();
 
-        // 绑定大石头的纹理
+        // Bind the texture of large stones
         glActiveTexture(GL_TEXTURE0 + 23);
         caverock_texture.bind();
-        caverockMesh.renderPart("CavePlatform4"); // 渲染灯塔的glass部分
+        caverockMesh.renderPart("CavePlatform4");
         //*/
 
-
-        // 加载普通石头模型
-        // 加载 SmallArch_Obj.obj 文件
+        // Load the normal stone model
         ObjMesh stoneMesh = load_wavefront_obj(BASE_PATH + "SmallArch_Obj.obj");
         //ObjMesh stoneMesh = load_wavefront_obj(BASE_PATH + "CaveWalls4_B.obj");
 
@@ -630,17 +610,16 @@ namespace CGRA350
 
         Texture2D stone_texture = Texture2D("./stone/DSC_4736.jpg");  //
 
-        //使用普通石头的着色器程序
+        //Shader program using ordinary stones
         stone_shader_prog.use();
 
-        // 绑定普通石头的纹理
+        // Bind the texture of ordinary stones
         glActiveTexture(GL_TEXTURE0 + 1);
         stone_texture.bind();
         stoneMesh.render();
         //*/
 
-        // 加载普通石头2模型
-        // 加载 CaveWalls4_B.obj 文件
+        // Load normal stone 2 model
         ObjMesh stone2Mesh = load_wavefront_obj(BASE_PATH + "CaveWalls4_B.obj");
 
         std::vector<Shader> stone2_shaders;
@@ -650,14 +629,13 @@ namespace CGRA350
 
         Texture2D stone2_texture = Texture2D("./Lighthouse_Material/13_stone2_iron.jpg");  //
 
-        //使用普通石头的着色器程序
+        // Shader program using ordinary stones
         stone2_shader_prog.use();
 
-        // 绑定普通石头的纹理
+        // Bind the texture of ordinary stones
         glActiveTexture(GL_TEXTURE0 + 25);
         stone2_texture.bind();
         stone2Mesh.render();
-
 
         // ------------------------------
         // Postprocessing
@@ -711,10 +689,6 @@ namespace CGRA350
             glm::vec3 dLightDirection = m_context.m_gui_param.GetDLight_Direction();
             glm::vec3 dLightColour(m_context.m_gui_param.dlight_color.x, m_context.m_gui_param.dlight_color.y, m_context.m_gui_param.dlight_color.z);
             float dLightStrength = m_context.m_gui_param.dlight_strength;
-
-            //// --- Point Light Parameters
-            //glm::vec3 pLightColour = m_context.m_gui_param.plight_color;
-            //float pLightStrength = m_context.m_gui_param.plight_strength;
 
             // --- update mesh data if changed in UI ---
 
@@ -852,7 +826,7 @@ namespace CGRA350
                 switch (m_context.m_illumin_model)
                 {
                 case 0: {
-                    // 渲染循环中设置 uniform 变量
+                    // The uniform variable is set in the render loop
                     ocean_shader_prog_fresnel.use();
                     ocean_shader_prog_fresnel.setVec3("light.direction", dLightDirection);
                     ocean_shader_prog_fresnel.setVec3("light.colour", dLightColour);
@@ -862,7 +836,7 @@ namespace CGRA350
                 }
                     break;
                 case 1: {
-                    // 渲染循环中设置 uniform 变量
+                    // The uniform variable is set in the render loop
                     ocean_shader_prog_refl.use();
                     ocean_shader_prog_refl.setVec3("light.direction", dLightDirection);
                     ocean_shader_prog_refl.setVec3("light.colour", dLightColour);
@@ -872,7 +846,7 @@ namespace CGRA350
                 }
                     break;
                 case 2: {
-                    // 渲染循环中设置 uniform 变量
+                    // The uniform variable is set in the render loop
                     ocean_shader_prog_refr.use();
                     ocean_shader_prog_refr.setVec3("light.direction", dLightDirection);
                     ocean_shader_prog_refr.setVec3("light.colour", dLightColour);
@@ -883,7 +857,7 @@ namespace CGRA350
                     break;
                 default:
                 {
-                    // 渲染循环中设置 uniform 变量
+                    // The uniform variable is set in the render loop
                     ocean_shader_prog_phong.use();
                     ocean_shader_prog_phong.setVec3("light.direction", dLightDirection);
                     ocean_shader_prog_phong.setVec3("light.colour", dLightColour);
@@ -896,7 +870,6 @@ namespace CGRA350
             }
 
             // --- render seabed ---
-            // 渲染循环中设置 uniform 变量
             seabed_shader_prog.use();
             seabed_shader_prog.setVec3("light.direction", dLightDirection);
             seabed_shader_prog.setVec3("light.colour", dLightColour);
@@ -931,20 +904,6 @@ namespace CGRA350
                 rain.renderSplashes(proj, view, cameraRight, cameraUp, ImGui::GetIO().DeltaTime);
             }
 
-            //——————————————————————————————————//
-            //渲染OBJ文件
-            //glm::vec3 light_pos(
-            //    m_context.m_gui_param.light_pos_x,
-            //    m_context.m_gui_param.light_pos_y,
-            //    m_context.m_gui_param.light_pos_z
-            //);
-
-            //glm::vec3 light_color(
-            //    m_context.m_gui_param.light_color_x,
-            //    m_context.m_gui_param.light_color_y,
-            //    m_context.m_gui_param.light_color_z
-            //);
-
             if (m_context.m_appear_lighthouse == true) {
                 //-----------------------------//
                 std::vector<Shader> lighthouse_shaders;
@@ -962,40 +921,34 @@ namespace CGRA350
                 }
                 ShaderProgram lighthouse_shader_prog(lighthouse_shaders);
 
-                // 渲染灯塔模型
-                lighthouse_shader_prog.use();  // 使用灯塔模型的着色器程序
+                // Render lighthouse model
+                lighthouse_shader_prog.use();  // Shader program using lighthouse model
 
                 lighthouse_shader_prog.setFloat("roughness", m_context.m_lighthouse_roughness);
                 lighthouse_shader_prog.setFloat("metalness", m_context.m_lighthouse_medalness);
                 lighthouse_shader_prog.setFloat("reflectivity", m_context.m_lighthouse_reflectivity);
 
-                //lighthouse_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-                //lighthouse_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
-
-                lighthouse_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                lighthouse_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                lighthouse_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                lighthouse_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 lighthouse_shader_prog.setFloat("light.strength", dLightStrength);
 
-                lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                lighthouse_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+                lighthouse_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                lighthouse_shader_prog.setInt("normalMap", 0); // 0 represents the texture unit to which it is bound
 
-                // 设定灰色材质颜色
+                // Set the gray material color
                 lighthouse_shader_prog.setVec3("object_color", glm::vec3(0.5f, 0.5f, 0.5f));
 
-                // 设置模型矩阵
-                glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.3f), glm::vec3(-80.0f, 15.0f, -420.0f)); // 平移变换
-                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
+                // Set model matrix
+                glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.3f), glm::vec3(-80.0f, 15.0f, -420.0f)); // Translation transformation
+                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate 90 degrees clockwise along the X axis
+                lighthouse_model_matrix = glm::rotate(lighthouse_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate 90 degrees clockwise along the Z axis
                 lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
 
-                //glm::mat4 lighthouse_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-20.0f, 0.0f, -160.0f));  // 模型变换
-                //lighthouse_shader_prog.setMat4("model", lighthouse_model_matrix);
-
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 lighthouse_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
                 lighthouse_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
-                // 修改Wall贴图
+                // Modify Wall map
                 if (m_context.m_wall_material == 0) {
                     lighthouse_wall = lighthouse_wall1;  //
                 }
@@ -1018,7 +971,7 @@ namespace CGRA350
                     lighthouse_wall = lighthouse_wall7;  //
                 }
 
-                // 修改Roof贴图
+                // Modify Roof map
                 if (m_context.m_roof_material == 0) {
                     lighthouse_rediron = lighthouse_roof1;  //
                 }
@@ -1044,7 +997,7 @@ namespace CGRA350
                     lighthouse_rediron = lighthouse_roof8;  //
                 }
 
-                // 修改Rock贴图
+                // Modify Rock map
                 if (m_context.m_bottom_material == 0) {
                     lighthouse_rock = lighthouse_rock1;  //
                 }
@@ -1073,52 +1026,54 @@ namespace CGRA350
                     lighthouse_rock = lighthouse_rock9;  //
                 }
 
-                // 渲染灯塔模型
-                //lighthouseMesh.render();
-                //lighthouse_shader_prog.setInt("texture1", 0);  // 设置贴图单元
-
                 glActiveTexture(GL_TEXTURE0 + 5);
                 lighthouse_iron.bind();
                 lighthouse_shader_prog.setInt("texture1", 5);
                 lighthouseMesh.renderPart("Bl_iron");
 
-                // 渲染 bl_glass 部分
+                // Render the bl_glass section
                 glActiveTexture(GL_TEXTURE0 + 6);
                 lighthouse_blglass.bind();
                 lighthouse_shader_prog.setInt("texture1", 6);
                 lighthouseMesh.renderPart("bl_glass");
 
-                // 渲染 clglass 部分
+                // Render the clglass section
                 glActiveTexture(GL_TEXTURE0 + 7);
                 lighthouse_glass.bind();
                 lighthouse_shader_prog.setInt("texture1", 7);
                 lighthouseMesh.renderPart("clglass");
 
-                // 渲染 lens 部分
+                // Render the lens section
                 glActiveTexture(GL_TEXTURE0 + 8);
                 lighthouse_lens.bind();
                 lighthouse_shader_prog.setInt("texture1", 8);
                 lighthouseMesh.renderPart("lens");
 
-                // 渲染 red_iron 部分
+                // Render the mirror section
+                glActiveTexture(GL_TEXTURE0 + 9);
+                lighthouse_mirror.bind();
+                lighthouse_shader_prog.setInt("texture1", 9);
+                lighthouseMesh.renderPart("mirror");
+
+                // Render the red_iron section
                 glActiveTexture(GL_TEXTURE0 + 10);
                 lighthouse_rediron.bind();
                 lighthouse_shader_prog.setInt("texture1", 10);
                 lighthouseMesh.renderPart("red_iron");
 
-                // 渲染 rock 部分
+                // Render the rock section
                 glActiveTexture(GL_TEXTURE0 + 11);
                 lighthouse_rock.bind();
                 lighthouse_shader_prog.setInt("texture1", 11);
                 lighthouseMesh.renderPart("rock");
 
-                // 渲染 walls 部分
+                // Render the wall section
                 glActiveTexture(GL_TEXTURE0 + 12);
                 lighthouse_wall.bind();
                 lighthouse_shader_prog.setInt("texture1", 12);
                 lighthouseMesh.renderPart("walls");
 
-                // 渲染 wood 部分
+                // Render the wood section
                 glActiveTexture(GL_TEXTURE0 + 13);
                 lighthouse_wood.bind();
                 lighthouse_shader_prog.setInt("texture1", 13);
@@ -1127,52 +1082,50 @@ namespace CGRA350
 
             //-----------------------------//
             if (m_context.m_appear_tree == true) {
-                // 渲染树1模型
+                // Render tree 1 model
                 trunk_shader_prog.use();
 
-                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                trunk_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 trunk_shader_prog.setFloat("light.strength", dLightStrength);
 
-                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                // 设置模型矩阵
-                glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));  // 模型变换
+                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                // Set model matrix
+                glm::mat4 tree_model_matrix = glm::translate(glm::mat4(5.0f), glm::vec3(-5.0f, -1.1f, -12.0f));
                 tree_model_matrix = glm::scale(tree_model_matrix, glm::vec3(0.6f, 0.6f, 0.6f));
                 trunk_shader_prog.setMat4("model", tree_model_matrix);
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 trunk_shader_prog.setMat4("view", view);
                 trunk_shader_prog.setMat4("projection", proj);
-                // 渲染 树干 部分
+                // Render the trunk section
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
                 tree_trunk.bind();
                 trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE);
                 treeMesh.renderPart("bark");
 
-                // 渲染 树叶 部分
+                // Render the leaf section
                 leaf_shader_prog.use();
 
-                //leaf_shader_prog.setVec3("light_dir", dLightDirection);    // 设置光照位置
-                //leaf_shader_prog.setVec3("light_color", dLightColour);  // 设置光源颜色
-                leaf_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                leaf_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                leaf_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                leaf_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 leaf_shader_prog.setFloat("light.strength", dLightStrength);
 
-                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                // 设置模型矩阵
+                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                // Set model matrix
                 leaf_shader_prog.setMat4("model", tree_model_matrix);
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 leaf_shader_prog.setMat4("view", view);
                 leaf_shader_prog.setMat4("projection", proj);
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
                 tree_leaf.bind();
                 leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE);
-                // 绑定树叶的法线贴图
+                // Bind the normal map of the leaves
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-                tree_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+                tree_leaf_normal_map.bind();
                 leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_NORMAL);
-                // 绑定树叶的特定光照贴图
+                // Bind specific light maps to leaves
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
-                tree_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+                tree_leaf_specular_map.bind();
                 leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE1_LEAF_SPECULAR);
                 treeMesh.renderPart("leaf");
                 //*/
@@ -1180,46 +1133,46 @@ namespace CGRA350
 
             if (m_context.m_appear_tree == true) {
                 //-----------------------------//
-                // 渲染树2模型
+                // Render tree 2 model
                 trunk_shader_prog.use();
 
-                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                trunk_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                trunk_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                trunk_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 trunk_shader_prog.setFloat("light.strength", dLightStrength);
 
-                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                // 设置模型矩阵
-                glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-18.0f, -3.5f, -25.0f));  // 模型变换
+                trunk_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                // Set model matrix
+                glm::mat4 tree2_model_matrix = glm::translate(glm::mat4(1.5f), glm::vec3(-18.0f, -3.5f, -25.0f));
                 trunk_shader_prog.setMat4("model", tree2_model_matrix);
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 trunk_shader_prog.setMat4("view", view);
                 trunk_shader_prog.setMat4("projection", proj);
-                // 渲染 树干 部分
+                // Render the trunk section
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
                 tree2_bark.bind();
                 trunk_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_TRUNK_DIFFUSE);
                 tree2Mesh.renderPart("bark");
 
-                // 使用树叶着色程序
+                // Render the leaf section
                 leaf_shader_prog.use();
-                leaf_shader_prog.setVec3("light_dir", dLightDirection);     // 设置光照位置
-                leaf_shader_prog.setVec3("light_color", dLightColour);      // 设置光源颜色
-                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                // 设置视图和投影矩阵
+                leaf_shader_prog.setVec3("light_dir", dLightDirection); // Set light position
+                leaf_shader_prog.setVec3("light_color", dLightColour); // Set light color
+                leaf_shader_prog.setVec3("camera_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                // Set the view and projection matrix
                 leaf_shader_prog.setMat4("model", tree2_model_matrix);
                 leaf_shader_prog.setMat4("view", view);
                 leaf_shader_prog.setMat4("projection", proj);
-                // 绑定树叶的纹理
+                // Bind the texture of the leaves
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
                 tree2_leaf.bind();
                 leaf_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE);
-                // 绑定树叶的法线贴图
+                // Bind the normal map of the leaves
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-                tree2_leaf_normal_map.bind();  // 假设已加载为 tree_normal_map
+                tree2_leaf_normal_map.bind();
                 leaf_shader_prog.setInt("normalMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_NORMAL);
-                // 绑定树叶的特定光照贴图
+                // Bind specific light maps to leaves
                 glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
-                tree2_leaf_specular_map.bind();  // 假设已加载为 tree_specular_map
+                tree2_leaf_specular_map.bind();
                 leaf_shader_prog.setInt("specularMap", CGRA350Constants::TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR);
                 tree2Mesh.renderPart("leaf");
                 //*/
@@ -1227,31 +1180,29 @@ namespace CGRA350
 
             if (m_context.m_appear_stone == true) {
                 //-----------------------------//
-                // 渲染石头模型
-                rocks_shader_prog.use();  // 使用灯塔模型的着色器程序
-                //rocks_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-                //rocks_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+                // Render rock model
+                rocks_shader_prog.use();  // Shader program using lighthouse model
 
-                rocks_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                rocks_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                rocks_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                rocks_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 rocks_shader_prog.setFloat("light.strength", dLightStrength);
 
-                rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                rocks_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+                rocks_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                rocks_shader_prog.setInt("normalMap", 0); // 0 represents the texture unit to which it is bound
 
-                // 设定石头材质颜色
+                // Set the stone material color
                 rocks_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
 
-                // 设置模型矩阵
-                glm::mat4 rocks_model_matrix = glm::translate(glm::mat4(0.9f), glm::vec3(-280.0f, -37.0f, -180.0f));  // 模型变换
-                rocks_model_matrix = glm::rotate(rocks_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                // Set model matrix
+                glm::mat4 rocks_model_matrix = glm::translate(glm::mat4(0.9f), glm::vec3(-280.0f, -37.0f, -180.0f));
+                rocks_model_matrix = glm::rotate(rocks_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate 90 degrees clockwise along the Y axis
                 rocks_shader_prog.setMat4("model", rocks_model_matrix);
 
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 rocks_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
                 rocks_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
-                // 渲染 石头 部分
+                // Render stone section
                 glActiveTexture(GL_TEXTURE0 + 21);
                 rocks_texture.bind();
                 rocks_shader_prog.setInt("texture1", 21);
@@ -1261,31 +1212,29 @@ namespace CGRA350
 
             if (m_context.m_appear_stone == true) {
                 //-----------------------------//
-                // 渲染大石头模型
-                caverock_shader_prog.use();  // 使用大石头模型的着色器程序
-                //caverock_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-                //caverock_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+                // Render large stone models
+                caverock_shader_prog.use();  // Shader program using large stone models
 
-                caverock_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                caverock_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                caverock_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                caverock_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 caverock_shader_prog.setFloat("light.strength", dLightStrength);
 
-                caverock_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                caverock_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+                caverock_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                caverock_shader_prog.setInt("normalMap", 0); // 0 represents the texture unit to which it is bound
 
-                // 设定大石头材质颜色
+                // Set the big stone material color
                 caverock_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
 
-                // 设置模型矩阵
-                glm::mat4 caverock_model_matrix = glm::translate(glm::mat4(0.1f), glm::vec3(-120.0f, -42.0f, -150.0f));  // 模型变换
-                caverock_model_matrix = glm::rotate(caverock_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                // Set model matrix
+                glm::mat4 caverock_model_matrix = glm::translate(glm::mat4(0.1f), glm::vec3(-120.0f, -42.0f, -150.0f));
+                caverock_model_matrix = glm::rotate(caverock_model_matrix, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate 90 degrees clockwise along the Y axis
                 caverock_shader_prog.setMat4("model", caverock_model_matrix);
 
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 caverock_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
                 caverock_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
-                // 渲染 大石头 部分
+                // Render large stone parts
                 glActiveTexture(GL_TEXTURE0 + 23);
                 caverock_texture.bind();
                 caverock_shader_prog.setInt("texture1", 23);
@@ -1295,31 +1244,29 @@ namespace CGRA350
 
             if (m_context.m_appear_stone == true) {
                 //-----------------------------//
-                // 渲染普通石头模型
-                stone_shader_prog.use();  // 使用普通石头模型的着色器程序
-                //stone_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-                //stone_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+                // Render normal stone models
+                stone_shader_prog.use();  // Shader program using ordinary stone models
 
-                stone_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                stone_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                stone_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                stone_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 stone_shader_prog.setFloat("light.strength", dLightStrength);
 
-                stone_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                stone_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+                stone_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                stone_shader_prog.setInt("normalMap", 0); // 0 represents the texture unit to which it is bound
 
-                // 设定普通石头材质颜色
+                // Set the normal stone material color
                 stone_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
 
-                // 设置模型矩阵
-                glm::mat4 stone_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-340.0f, -25.0f, -180.0f));  // 模型变换
-                stone_model_matrix = glm::rotate(stone_model_matrix, glm::radians(-100.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                // Set model matrix
+                glm::mat4 stone_model_matrix = glm::translate(glm::mat4(0.2f), glm::vec3(-340.0f, -25.0f, -180.0f));
+                stone_model_matrix = glm::rotate(stone_model_matrix, glm::radians(-100.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate 90 degrees clockwise along the Y axis
                 stone_shader_prog.setMat4("model", stone_model_matrix);
 
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 stone_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
                 stone_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
-                // 渲染 普通石头 部分
+                // Render normal stone parts
                 glActiveTexture(GL_TEXTURE0 + 1);
                 stone_texture.bind();
                 stone_shader_prog.setInt("texture1", 1);
@@ -1329,33 +1276,31 @@ namespace CGRA350
 
             if (m_context.m_appear_stone == true) {
                 //-----------------------------//
-                // 渲染普通石头2模型
-                stone2_shader_prog.use();  // 使用普通石头模型的着色器程序
-                //stone2_shader_prog.setVec3("light_pos", light_pos);    // 设置光照位置
-                //stone2_shader_prog.setVec3("light_color", light_color);  // 设置光源颜色
+                // Render normal stone 2 models
+                stone2_shader_prog.use();  // Shader program using ordinary stone models
 
-                stone2_shader_prog.setVec3("light.direction", dLightDirection);    // 设置光照位置
-                stone2_shader_prog.setVec3("light.colour", dLightColour);  // 设置光源颜色
+                stone2_shader_prog.setVec3("light.direction", dLightDirection);    // Set light position
+                stone2_shader_prog.setVec3("light.colour", dLightColour);  // Set light color
                 stone2_shader_prog.setFloat("light.strength", dLightStrength);
 
-                stone2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // 设置摄像机位置
-                stone2_shader_prog.setInt("normalMap", 0); // 0表示绑定到的纹理单元
+                stone2_shader_prog.setVec3("view_pos", m_context.m_render_camera.getPosition()); // Set camera position
+                stone2_shader_prog.setInt("normalMap", 0); // 0 represents the texture unit to which it is bound
 
-                // 设定普通石头材质颜色
+                // Set the normal stone material color
                 stone2_shader_prog.setVec3("object_color", glm::vec3(0.5f, 2.5f, 0.5f));
 
-                // 设置模型矩阵
-                glm::mat4 stone2_model_matrix = glm::translate(glm::mat4(0.6f), glm::vec3(-24.0f, -7.0f, -380.0f));  // 模型变换
-                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // 沿Z轴顺时针旋转90度
-                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // 沿Z轴顺时针旋转90度
-                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // 沿Z轴顺时针旋转90度
+                // Set model matrix
+                glm::mat4 stone2_model_matrix = glm::translate(glm::mat4(0.6f), glm::vec3(-24.0f, -7.0f, -380.0f));
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate 90 degrees clockwise along the X axis
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate 90 degrees clockwise along the Z axis
+                stone2_model_matrix = glm::rotate(stone2_model_matrix, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate 90 degrees clockwise along the Y axis
                 stone2_shader_prog.setMat4("model", stone2_model_matrix);
 
-                // 设置视图和投影矩阵
+                // Set the view and projection matrix
                 stone2_shader_prog.setMat4("view", m_context.m_render_camera.getViewMatrix());
                 stone2_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
-                // 渲染 普通石头 部分
+                // Render normal stone parts
                 glActiveTexture(GL_TEXTURE0 + 25);
                 stone2_texture.bind();
                 stone2_shader_prog.setInt("texture1", 25);

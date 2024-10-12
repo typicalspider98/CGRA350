@@ -576,35 +576,34 @@ void ScreenQuadRenderer::render(const Camera &render_cam)
 
 void LighthouseRenderer::render(const Camera& render_cam)
 {
-    // 使用 shader 程序
+    // Use the shader program
     m_shader_prog.use();
 
-    // 设置光源和摄像机位置
+    // Set the light source and camera position
     glm::vec3 lightPos = glm::vec3(15.0f, -25.0f, 15.0f);
     glm::vec3 viewPos = render_cam.getPosition();
-    glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);  // 白色光源
-    glm::vec3 objectColor = glm::vec3(1.0f, 1.0f, 1.0f);  // 灯塔颜色
+    glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);  // White light source
+    glm::vec3 objectColor = glm::vec3(1.0f, 1.0f, 1.0f);  //Lighthouse color
 
     m_shader_prog.setVec3("lightPos", lightPos);
     m_shader_prog.setVec3("viewPos", viewPos);
     m_shader_prog.setVec3("lightColor", lightColor);
     m_shader_prog.setVec3("objectColor", objectColor);
 
-    // 设置模型矩阵，确定灯塔在场景中的位置
-    //glm::mat4 lighthouseModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, -10.0f, 0.0f));
-    glm::mat4 lighthouseModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, -100.0f));  // 修改位置
-    lighthouseModelMatrix = glm::scale(lighthouseModelMatrix, glm::vec3(10.0f));  // 设置适当比例
+    // Set the model matrix to determine the position of the lighthouse in the scene
+    glm::mat4 lighthouseModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, -100.0f));  // Modify location
+    lighthouseModelMatrix = glm::scale(lighthouseModelMatrix, glm::vec3(10.0f));  // Set the appropriate scale
 
     glm::mat4 vp_matrix = render_cam.getProjMatrix() * render_cam.getViewMatrix();
 
-    // 计算法线矩阵（模型矩阵的逆转置），确保法线在变换下正确
+    // Calculate the normal matrix (inversion of the model matrix) to ensure that the normal is correct under the transformation
     glm::mat3 normal_matrix = glm::mat3(glm::transpose(glm::inverse(lighthouseModelMatrix)));
 
-    // 传递矩阵给 shader
+    // Pass the matrix to shader
     m_shader_prog.setMat4("model", lighthouseModelMatrix);
     m_shader_prog.setMat4("vp_matrix", vp_matrix);
-    m_shader_prog.setMat3("normal_matrix", normal_matrix);  // 传递法线矩阵
+    m_shader_prog.setMat3("normal_matrix", normal_matrix);  //Transfer normal matrix
 
-    // 渲染灯塔模型
+    // Render lighthouse model
     m_lighthouse_mesh_ptr->render();
 }

@@ -344,32 +344,32 @@ void ObjMesh::loadMtl(const std::string& filepath) {
 
 		if (prefix == "newmtl") {
 			if (!currentMaterialName.empty()) {
-				materials[currentMaterialName] = currentMaterial;  // 保存前一个材质
+				materials[currentMaterialName] = currentMaterial;  // Save the previous material
 			}
 			iss >> currentMaterialName;
-			currentMaterial = Material();  // 创建一个新的材质
+			currentMaterial = Material();  // Create a new material
 		}
-		else if (prefix == "Ka") {  // 环境光
+		else if (prefix == "Ka") {  // Ambient light
 			iss >> currentMaterial.ambient.r >> currentMaterial.ambient.g >> currentMaterial.ambient.b;
 		}
-		else if (prefix == "Kd") {  // 漫反射
+		else if (prefix == "Kd") {  // Bloom
 			iss >> currentMaterial.diffuse.r >> currentMaterial.diffuse.g >> currentMaterial.diffuse.b;
 		}
-		else if (prefix == "Ks") {  // 镜面反射
+		else if (prefix == "Ks") {  // Specular reflection
 			iss >> currentMaterial.specular.r >> currentMaterial.specular.g >> currentMaterial.specular.b;
 		}
-		else if (prefix == "Ns") {  // 光泽度
+		else if (prefix == "Ns") {  // Glossiness
 			iss >> currentMaterial.shininess;
 		}
-		else if (prefix == "map_Kd") {  // 漫反射纹理
+		else if (prefix == "map_Kd") {  // Diffuse texture
 			iss >> currentMaterial.diffuseMap;
 		}
-		else if (prefix == "map_Ks") {  // 镜面反射纹理
+		else if (prefix == "map_Ks") {  // Specular texture
 			iss >> currentMaterial.specularMap;
 		}
 	}
 
-	// 保存最后一个材质
+	// Save the last material
 	if (!currentMaterialName.empty()) {
 		materials[currentMaterialName] = currentMaterial;
 	}
