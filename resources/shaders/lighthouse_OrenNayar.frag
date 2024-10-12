@@ -6,62 +6,62 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D texture1;         // 纹理采样器
-uniform vec3 object_color;          // 物体颜色
-uniform vec3 view_pos;              // 摄像机位置
-uniform float roughness;            // 粗糙度
+uniform sampler2D texture1;         // Texture sampler
+uniform vec3 object_color;          // Object color
+uniform vec3 view_pos;              // Camera position
+uniform float roughness;            
 
-// 定义 DirectionalLight 结构体
+// Define DirectionalLight struct
 struct DirectionalLight {
     vec3 colour;
     vec3 direction;
     float strength;
 };
 
-// 将 light 定义为 uniform
+// Define light as uniform
 uniform DirectionalLight light;
 
-// 固定的环境光参数
-const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // 白色环境光
-const float ambient_strength = 0.2;                    // 环境光强度
+// Fixed ambient light parameters
+const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // White ambient light
+const float ambient_strength = 0.2;                    // Ambient light intensity
 
 void main()
 {
-    // 法线、光源方向和视线方向的单位化
+    // Normalization of normal, light source direction and line of sight direction
     vec3 N = normalize(Normal);
-    vec3 L = normalize(-light.direction);  // 使用 DirectionalLight 中的方向
+    vec3 L = normalize(-light.direction);  // Use directions in DirectionalLight
     vec3 V = normalize(view_pos - FragPos);
 
-    // 计算表面法线与视线和光源的夹角
+    // Calculate the Angle between the surface normal and the line of sight and the light source
     float NdotL = max(dot(N, L), 0.0);
     float NdotV = max(dot(N, V), 0.0);
 
-    // 计算角度 theta_r 和 theta_i
+    // Calculate the angles theta_r and theta_i
     float theta_i = acos(NdotL);
     float theta_r = acos(NdotV);
 
-    // 计算 alpha 和 beta
+    // Calculate alpha and beta
     float alpha = max(theta_i, theta_r);
     float beta = min(theta_i, theta_r);
 
-    // 根据粗糙度计算 Oren-Nayar 模型的参数 A 和 B
+    // Parameters A and B of the Oren-Nayar model are calculated based on roughness
     float sigma2 = roughness * roughness;
     float A = 1.0 - (sigma2 / (2.0 * (sigma2 + 0.33)));
     float B = 0.45 * sigma2 / (sigma2 + 0.09);
 
-    // 计算视线和光源在表面法线方向的投影
+    // Calculate the projection of the line of sight and light source in the normal direction of the surface
     vec3 V_perp = V - N * NdotV;
     vec3 L_perp = L - N * NdotL;
     float cosPhiDiff = dot(normalize(V_perp), normalize(L_perp));
 
-    // Oren-Nayar 漫反射公式
+    // Oren-Nayar diffuse reflection formula
     float rough_diffuse = A + B * max(0.0, cosPhiDiff) * sin(alpha) * tan(beta);
     vec3 diffuse = rough_diffuse * light.colour * light.strength * NdotL * object_color;
 
-    // 环境光分量，不受 DirectionalLight 的影响
+    // The ambient light component is not affected by DirectionalLight
     vec3 ambient = ambient_light_color * ambient_strength;
 
-    // 纹理采样和最终颜色
+    // Texture sampling and final color
     vec3 textureColor = texture(texture1, TexCoord).rgb;
     vec3 final_color = (ambient + diffuse) * textureColor;
 

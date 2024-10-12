@@ -6,9 +6,9 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D texture1;   // 纹理采样器
-uniform vec3 object_color;    // 物体颜色
-uniform vec3 view_pos;        // 摄像机位置
+uniform sampler2D texture1;   // Texture sampler
+uniform vec3 object_color;    // Object color
+uniform vec3 view_pos;        // Camera position
 
 // Main (directional) light in the scene
 struct DirectionalLight 
@@ -18,30 +18,30 @@ struct DirectionalLight
     float strength;
 };
 
-// 将 light 定义为 uniform
+// Define light as uniform
 uniform DirectionalLight light;
 
-// 固定的环境光参数
-const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // 白色环境光
-const float ambient_strength = 0.5;                    // 环境光强度
+// Fixed ambient light parameters
+const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // White ambient light
+const float ambient_strength = 0.5;                    // Ambient light intensity
 
 void main()
 {
-    // 计算法向量和光照方向
+    // Calculate normal vector and illumination direction
     vec3 normal = normalize(Normal);
-    vec3 lightDir = normalize(-light.direction);  // 方向光方向
+    vec3 lightDir = normalize(-light.direction);  // Direction of light
     
-    // 计算环境光分量
+    // Calculate the ambient light component
     vec3 ambient = ambient_light_color * ambient_strength;
 
-    // 计算漫反射分量
+    // Calculate the diffuse reflection component
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diff * light.colour * light.strength;
 
-    // 采样纹理颜色
+    // Sample texture color
     vec3 textureColor = texture(texture1, TexCoord).rgb;
 
-    // 计算最终颜色，将环境光和方向光相加
+    // Calculate the final color, adding the ambient light and the directional light
     vec3 final_color = (ambient + diffuse) * textureColor;
     FragColor = vec4(final_color, 1.0);
 }

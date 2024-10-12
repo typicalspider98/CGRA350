@@ -6,26 +6,26 @@ in vec2 TexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D texture1;         // 纹理采样器
-uniform vec3 object_color;          // 物体颜色
-uniform vec3 view_pos;              // 摄像机位置
-uniform float roughness;            // 粗糙度
-uniform float metalness;            // 金属度
-uniform float reflectivity;         // 反射率
+uniform sampler2D texture1;         // Texture sampler
+uniform vec3 object_color;          // Object color
+uniform vec3 view_pos;              // Camera position
+uniform float roughness;            
+uniform float metalness;            
+uniform float reflectivity;         
 
-// 定义 DirectionalLight 结构体
+// Define DirectionalLight struct
 struct DirectionalLight {
     vec3 colour;
     vec3 direction;
     float strength;
 };
 
-// 将 light 定义为 uniform
+// Define light as uniform
 uniform DirectionalLight light;
 
-// 固定的环境光参数
-const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // 白色环境光
-const float ambient_strength = 0.2;                    // 环境光强度
+// Fixed ambient light parameters
+const vec3 ambient_light_color = vec3(1.0, 1.0, 1.0);  // White ambient light
+const float ambient_strength = 0.2;                    // Ambient light intensity
 
 float DistributionGGX(vec3 N, vec3 H, float roughness) {
     float a = roughness * roughness;
@@ -65,20 +65,20 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0) {
 
 void main()
 {
-    // 法线、光源方向和视线方向的单位化
+    // Normalization of normal, light source direction and line of sight direction
     vec3 N = normalize(Normal);
-    vec3 L = normalize(-light.direction); // 使用 DirectionalLight 中的方向
+    vec3 L = normalize(-light.direction); // Use directions in DirectionalLight
     vec3 V = normalize(view_pos - FragPos);
     vec3 H = normalize(V + L);
 
-    // 计算菲涅尔反射率
-    vec3 F0 = mix(vec3(0.04), object_color, metalness);  // 使用基于金属度的基础反射率
+    // Calculate Fresnel reflectance
+    vec3 F0 = mix(vec3(0.04), object_color, metalness);  // Use base reflectance based on metallicity
     vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
 
-    // 计算法线分布函数（NDF）
+    // Calculate Normal Distribution Function (NDF)
     float NDF = DistributionGGX(N, H, roughness);
 
-    // 计算几何遮蔽函数
+    // Calculate the geometric masking function
     float G = GeometrySmith(N, V, L, roughness);
 
     // Cook-Torrance BRDF
@@ -86,14 +86,14 @@ void main()
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001;
     vec3 specular = numerator / denominator;
 
-    // 使用 DirectionalLight 计算的漫反射分量
+    // Diffuse reflection component calculated using DirectionalLight
     float NdotL = max(dot(N, L), 0.0);
     vec3 diffuse = (1.0 - F) * object_color * light.colour * light.strength * NdotL;
 
-    // 环境光分量，不受 DirectionalLight 的影响
+    // The ambient light component is not affected by DirectionalLight
     vec3 ambient = ambient_light_color * ambient_strength;
 
-    // 纹理采样和最终颜色
+    // Texture sampling and final color
     vec3 textureColor = texture(texture1, TexCoord).rgb;
     vec3 final_color = (ambient + diffuse + specular) * textureColor;
 
