@@ -48,6 +48,17 @@ namespace CGRA350Constants
 	const std::string TEXTURES_FOLDER_PATH = PROJECT_SOURCE_DIR "/resources/textures/";
 
 	// ---- Texture Sample ID
+	// Lighthouse
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_IRON = 5;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_BLGLASS = 6;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_GLASS = 7;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_LENS = 8;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_MIRROR = 9;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_REDIRON = 10;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_ROCK = 11;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_WALL = 12;
+	const int TEX_SAMPLE_ID_LIGHTHOUSE_WOOD = 13;
+	
 	// Tree1
 	const int TEX_SAMPLE_ID_TREE1_TRUNK_DIFFUSE = 15;
 	const int TEX_SAMPLE_ID_TREE1_LEAF_DIFFUSE = 16;
@@ -58,6 +69,12 @@ namespace CGRA350Constants
 	const int TEX_SAMPLE_ID_TREE2_LEAF_DIFFUSE = 19;
 	const int TEX_SAMPLE_ID_TREE2_LEAF_NORMAL = 32;
 	const int TEX_SAMPLE_ID_TREE2_LEAF_SPECULAR = 33;
+
+	// Stones
+	const int TEX_SAMPLE_ID_ROCKS = 21;
+	const int TEX_SAMPLE_ID_CAVEROCK = 23;
+	const int TEX_SAMPLE_ID_STONE = 1;
+	const int TEX_SAMPLE_ID_STONE2 = 25;
 
 	// Cloud and Rain
 	const int TEX_SAMPLE_ID_CLOUD = 30;
