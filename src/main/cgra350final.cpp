@@ -441,49 +441,49 @@ namespace CGRA350
         glActiveTexture(GL_TEXTURE0);
 
         // Bind iron's texture
-        glActiveTexture(GL_TEXTURE0 + 5);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_IRON);
         lighthouse_iron.bind();
-        lighthouse_shader_prog.setInt("texture1", 5);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_IRON);
 
         // Bind blglass's texture
-        glActiveTexture(GL_TEXTURE0 + 6);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_BLGLASS);
         lighthouse_blglass.bind();
-        lighthouse_shader_prog.setInt("texture1", 6);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_BLGLASS);
 
         // Bind glass's texture
-        glActiveTexture(GL_TEXTURE0 + 7);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_GLASS);
         lighthouse_glass.bind();
-        lighthouse_shader_prog.setInt("texture1", 7);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_GLASS);
 
         //  Bind lens's texture
-        glActiveTexture(GL_TEXTURE0 + 8);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_LENS);
         lighthouse_lens.bind();
-        lighthouse_shader_prog.setInt("texture1", 8);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_LENS);
 
         //  Bind mirror's texture
-        glActiveTexture(GL_TEXTURE0 + 9);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_MIRROR);
         lighthouse_mirror.bind();
-        lighthouse_shader_prog.setInt("texture1", 9);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_MIRROR);
 
         // Bind rediron's texture
-        glActiveTexture(GL_TEXTURE0 + 10);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_REDIRON);
         lighthouse_rediron.bind();
-        lighthouse_shader_prog.setInt("texture1", 10);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_REDIRON);
 
         // Bind rock's texture
-        glActiveTexture(GL_TEXTURE0 + 11);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_ROCK);
         lighthouse_rock.bind();
-        lighthouse_shader_prog.setInt("texture1", 11);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_ROCK);
 
         // Bind wall's texture
-        glActiveTexture(GL_TEXTURE0 + 12);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WALL);
         lighthouse_wall.bind();
-        lighthouse_shader_prog.setInt("texture1", 12);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WALL);
 
         // Bind wood's texture
-        glActiveTexture(GL_TEXTURE0 + 13);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WOOD);
         lighthouse_wood.bind();
-        lighthouse_shader_prog.setInt("texture1", 13);
+        lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WOOD);
         //*/
 
         //-----------------------//
@@ -575,7 +575,7 @@ namespace CGRA350
         rocks_shader_prog.use();
 
         // Bind the texture of the rock
-        glActiveTexture(GL_TEXTURE0 + 21);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_ROCKS);
         rocks_texture.bind();
         rocksMesh.renderPart("AssortedRocks");
         //*/
@@ -594,7 +594,7 @@ namespace CGRA350
         caverock_shader_prog.use();
 
         // Bind the texture of large stones
-        glActiveTexture(GL_TEXTURE0 + 23);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_CAVEROCK);
         caverock_texture.bind();
         caverockMesh.renderPart("CavePlatform4");
         //*/
@@ -633,7 +633,7 @@ namespace CGRA350
         stone2_shader_prog.use();
 
         // Bind the texture of ordinary stones
-        glActiveTexture(GL_TEXTURE0 + 25);
+        glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_STONE2);
         stone2_texture.bind();
         stone2Mesh.render();
 
@@ -1026,57 +1026,57 @@ namespace CGRA350
                     lighthouse_rock = lighthouse_rock9;  //
                 }
 
-                glActiveTexture(GL_TEXTURE0 + 5);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_IRON);
                 lighthouse_iron.bind();
-                lighthouse_shader_prog.setInt("texture1", 5);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_IRON);
                 lighthouseMesh.renderPart("Bl_iron");
 
                 // Render the bl_glass section
-                glActiveTexture(GL_TEXTURE0 + 6);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_BLGLASS);
                 lighthouse_blglass.bind();
-                lighthouse_shader_prog.setInt("texture1", 6);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_BLGLASS);
                 lighthouseMesh.renderPart("bl_glass");
 
                 // Render the clglass section
-                glActiveTexture(GL_TEXTURE0 + 7);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_GLASS);
                 lighthouse_glass.bind();
-                lighthouse_shader_prog.setInt("texture1", 7);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_GLASS);
                 lighthouseMesh.renderPart("clglass");
 
                 // Render the lens section
-                glActiveTexture(GL_TEXTURE0 + 8);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_LENS);
                 lighthouse_lens.bind();
-                lighthouse_shader_prog.setInt("texture1", 8);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_LENS);
                 lighthouseMesh.renderPart("lens");
 
                 // Render the mirror section
-                glActiveTexture(GL_TEXTURE0 + 9);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_MIRROR);
                 lighthouse_mirror.bind();
-                lighthouse_shader_prog.setInt("texture1", 9);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_MIRROR);
                 lighthouseMesh.renderPart("mirror");
 
                 // Render the red_iron section
-                glActiveTexture(GL_TEXTURE0 + 10);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_REDIRON);
                 lighthouse_rediron.bind();
-                lighthouse_shader_prog.setInt("texture1", 10);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_REDIRON);
                 lighthouseMesh.renderPart("red_iron");
 
                 // Render the rock section
-                glActiveTexture(GL_TEXTURE0 + 11);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_ROCK);
                 lighthouse_rock.bind();
-                lighthouse_shader_prog.setInt("texture1", 11);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_ROCK);
                 lighthouseMesh.renderPart("rock");
 
                 // Render the wall section
-                glActiveTexture(GL_TEXTURE0 + 12);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WALL);
                 lighthouse_wall.bind();
-                lighthouse_shader_prog.setInt("texture1", 12);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WALL);
                 lighthouseMesh.renderPart("walls");
 
                 // Render the wood section
-                glActiveTexture(GL_TEXTURE0 + 13);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WOOD);
                 lighthouse_wood.bind();
-                lighthouse_shader_prog.setInt("texture1", 13);
+                lighthouse_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_LIGHTHOUSE_WOOD);
                 lighthouseMesh.renderPart("wood");
             }
 
@@ -1203,9 +1203,9 @@ namespace CGRA350
                 rocks_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
                 // Render stone section
-                glActiveTexture(GL_TEXTURE0 + 21);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_ROCKS);
                 rocks_texture.bind();
-                rocks_shader_prog.setInt("texture1", 21);
+                rocks_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_ROCKS);
                 rocksMesh.renderPart("AssortedRocks");
                 //*/
             }
@@ -1235,9 +1235,9 @@ namespace CGRA350
                 caverock_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
                 // Render large stone parts
-                glActiveTexture(GL_TEXTURE0 + 23);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_CAVEROCK);
                 caverock_texture.bind();
-                caverock_shader_prog.setInt("texture1", 23);
+                caverock_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_CAVEROCK);
                 caverockMesh.renderPart("CavePlatform4");
                 //*/
             }
@@ -1267,9 +1267,9 @@ namespace CGRA350
                 stone_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
                 // Render normal stone parts
-                glActiveTexture(GL_TEXTURE0 + 1);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_STONE);
                 stone_texture.bind();
-                stone_shader_prog.setInt("texture1", 1);
+                stone_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_STONE);
                 stoneMesh.render();
                 //*/
             }
@@ -1301,9 +1301,9 @@ namespace CGRA350
                 stone2_shader_prog.setMat4("projection", m_context.m_render_camera.getProjMatrix());
 
                 // Render normal stone parts
-                glActiveTexture(GL_TEXTURE0 + 25);
+                glActiveTexture(GL_TEXTURE0 + CGRA350Constants::TEX_SAMPLE_ID_STONE2);
                 stone2_texture.bind();
-                stone2_shader_prog.setInt("texture1", 25);
+                stone2_shader_prog.setInt("texture1", CGRA350Constants::TEX_SAMPLE_ID_STONE2);
                 stone2Mesh.render();
                 //*/
             }
