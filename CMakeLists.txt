@@ -25,17 +25,7 @@ else()
     endif()
 endif()
 
-Option(GUI OFF)
 Option(RTX30XX OFF)
-Option(CompileRPNN OFF)
-
-if (GUI)
-	add_definitions(-DGUI)
-endif()
-
-#if (CompileRPNN)
-#    add_definitions(-DCRPNN)
-#endif()
 
 include_directories(libs/vendor/glad/include/
         libs/vendor/glfw/include/

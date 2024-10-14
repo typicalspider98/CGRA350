@@ -18,10 +18,6 @@
 #include <vector>
 #include <iostream>
 
-const std::string BASE_PATH = "../resources/assets/";
-const std::string BASE_PATH_TEXTURE = "../resources/textures/";
-const std::string LIGHTHOUSE_TEXTURE = "../resources/textures/lighthouse/";
-
 int main()
 {
     CGRA350::CGRA350App::initGLFW();
@@ -69,7 +65,7 @@ namespace CGRA350
         {
             CheckCuda(m_context.m_gui_param.device_name);
 
-            string cloud_path = "./../data/CLOUD0";
+            string cloud_path = CGRA350Constants::CLOUD_FOLDER_PATH + "CLOUD0";
             m_volumerender = new VolumeRender(cloud_path);
             InitCloud(m_context.m_render_camera, *m_volumerender, m_context.m_gui_param);
         }
@@ -374,7 +370,7 @@ namespace CGRA350
 
         //-----------------------//
         // Loaded lighthouse model
-        ObjMesh lighthouseMesh = load_wavefront_obj(BASE_PATH + "lighthouse9.obj");
+        ObjMesh lighthouseMesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "lighthouse9.obj");
 
         std::vector<Shader> lighthouse_shaders;
 
@@ -488,7 +484,7 @@ namespace CGRA350
 
         //-----------------------//
         // Load the tree model
-        ObjMesh treeMesh = load_wavefront_obj(BASE_PATH + "tree.obj");
+        ObjMesh treeMesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "tree.obj");
 
         std::vector<Shader> trunk_shaders;
         trunk_shaders.emplace_back("tree.vert");
@@ -531,7 +527,7 @@ namespace CGRA350
         //*/
         //-----------------------//
         // Load the tree2 model
-        ObjMesh tree2Mesh = load_wavefront_obj(BASE_PATH + "tree8.obj");
+        ObjMesh tree2Mesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "tree8.obj");
 
         Texture2D tree2_bark = Texture2D("./tree2/bark.png");  //
         Texture2D tree2_leaf = Texture2D("./tree2/leaf.png");   //
@@ -562,7 +558,7 @@ namespace CGRA350
 
         //*/
         // Load a bunch of stone models
-        ObjMesh rocksMesh = load_wavefront_obj(BASE_PATH + "rocks.obj");
+        ObjMesh rocksMesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "rocks.obj");
 
         std::vector<Shader> rocks_shaders;
         rocks_shaders.emplace_back("rocks.vert");
@@ -581,7 +577,7 @@ namespace CGRA350
         //*/
 
         // Load the large stone model
-        ObjMesh caverockMesh = load_wavefront_obj(BASE_PATH + "caverock.obj");
+        ObjMesh caverockMesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "caverock.obj");
 
         std::vector<Shader> caverock_shaders;
         caverock_shaders.emplace_back("caverock.vert");
@@ -600,7 +596,7 @@ namespace CGRA350
         //*/
 
         // Load the normal stone model
-        ObjMesh stoneMesh = load_wavefront_obj(BASE_PATH + "SmallArch_Obj.obj");
+        ObjMesh stoneMesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "SmallArch_Obj.obj");
         //ObjMesh stoneMesh = load_wavefront_obj(BASE_PATH + "CaveWalls4_B.obj");
 
         std::vector<Shader> stone_shaders;
@@ -620,7 +616,7 @@ namespace CGRA350
         //*/
 
         // Load normal stone 2 model
-        ObjMesh stone2Mesh = load_wavefront_obj(BASE_PATH + "CaveWalls4_B.obj");
+        ObjMesh stone2Mesh = load_wavefront_obj(CGRA350Constants::MODEL_FOLDER_PATH + "CaveWalls4_B.obj");
 
         std::vector<Shader> stone2_shaders;
         stone2_shaders.emplace_back("stone.vert");

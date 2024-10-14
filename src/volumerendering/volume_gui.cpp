@@ -148,7 +148,6 @@ static void resize_buffers(float4** accum_buffer_cuda, Histogram** histo_buffer_
 
 #pragma region Render
 void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
-#ifdef GUI
     gui = &param;
     volume.SetScatterRate(param.scatter_rate);
     volume.UpdateHGLut(param.G);
@@ -184,7 +183,6 @@ void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param) {
     glUseProgram(0);
 
     init_cuda();
-#endif
 }
 
 void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
