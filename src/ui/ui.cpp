@@ -128,10 +128,10 @@ void UI::render()
 	ImGui::SameLine();
 	if (ImGui::Button("Rain"))
 	{
-		glm::vec3 camera_pos = glm::vec3(-0.04156, 0.00043, -0.99914);
+		glm::vec3 camera_pos = glm::vec3(-36.596, 0.000, -10.735);
 		m_app_context->m_render_camera.setPosition(camera_pos);
-		m_app_context->m_render_camera.setPolarAngle(3.1);
-		m_app_context->m_render_camera.setAzimuthalAngle(-97.4);
+		m_app_context->m_render_camera.setPolarAngle(2.6);
+		m_app_context->m_render_camera.setAzimuthalAngle(-106.8);
 	}
 	ImGui::Separator();
 
@@ -182,7 +182,7 @@ void UI::render()
 	changed |= ImGui::SliderInt("Multi Scatter", &m_app_context->m_gui_param.ms, 1, 1000);
 	changed |= ImGui::SliderFloat("Tr scale", &m_app_context->m_gui_param.tr, 1, 10);
 	changed |= ImGui::SliderFloat3("Scatter rate", (float*)&m_app_context->m_gui_param.scatter_rate, 0, 1);
-	changed |= ImGui::SliderFloat("Scale (Experimental)", &m_app_context->m_gui_param.cloud_scale, 0.1, 15);
+	changed |= ImGui::SliderFloat("Scale (Experimental)", &m_app_context->m_gui_param.cloud_scale, 0.1, 3);
 	if (changed)
 		UI::SetIsChanging(true);
 	ImGui::Separator();
