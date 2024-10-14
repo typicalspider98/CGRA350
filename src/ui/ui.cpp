@@ -35,16 +35,11 @@ void UI::render()
 	ImGui::NewFrame();
 
 	// --- set up window  & location to top-left corner---
-	//ImGui::SetNextWindowPos(ImVec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH - CGRA350Constants::DEFAULT_IMGUI_WIDTH, 0));
-	//ImGui::SetNextWindowSize(ImVec2(CGRA350Constants::DEFAULT_IMGUI_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT));
-	
-	// This is only called during initial setup.
-	ImGui::SetNextWindowPos(ImVec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH - CGRA350Constants::DEFAULT_IMGUI_WIDTH, 0), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(CGRA350Constants::DEFAULT_IMGUI_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowPos(ImVec2(CGRA350Constants::DEFAULT_WINDOW_WIDTH - CGRA350Constants::DEFAULT_IMGUI_WIDTH, 0));
+	ImGui::SetNextWindowSize(ImVec2(CGRA350Constants::DEFAULT_IMGUI_WIDTH, CGRA350Constants::DEFAULT_WINDOW_HEIGHT));
 
-	//ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove;
-	//ImGui::Begin("CGRA350", nullptr, window_flags);
-	ImGui::Begin("CGRA350");
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar;
+	ImGui::Begin("CGRA350", nullptr, window_flags);
 
 	// --- set up widgets ---
 		
