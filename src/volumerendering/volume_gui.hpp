@@ -1,12 +1,5 @@
 #pragma once
 
-
-#ifdef LINUX
-#undef GUI
-#endif
-
-#ifdef GUI
-
 #include "../graphics/camera.h"
 #include "../ui/ui.h"
 #include "volume.hpp"
@@ -41,8 +34,6 @@ static GLuint create_quad(GLuint program, GLuint* vertex_buffer);
 
 static void resize_buffers(float3** accum_buffer_cuda, Histogram** histo_buffer_cuda, cudaGraphicsResource_t* display_buffer_cuda, GLuint tempFB, GLuint* tempTex, int width, int width2, GLuint display_buffer);
 #pragma endregion
-
-#endif
 
 void InitCloud(Camera& cam, VolumeRender& volume, GUIParam& param);
 
