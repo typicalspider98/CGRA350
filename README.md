@@ -163,7 +163,7 @@ This system incorporates:
 ## Demo Scenario
 In the final demo, we showcase:
 - Real-time environmental interactions including lighting changes based on time of day.
-- Dynamic weather effects such as rain, clouds, and ground wetness.
+- Dynamic weather effects such as rain, clouds, and post-processing.
 - Seamless transitions between beach and water environments with detailed water and seabed simulations.
 - An interactive scene with user controls for toggling between weather effects, water simulations, and material adjustments.
 
