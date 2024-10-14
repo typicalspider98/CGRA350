@@ -45,6 +45,10 @@ To compile and run this project, ensure that the following tools and dependencie
 - **CUDA 11.8**: This project requires CUDA 11.8 for GPU-based volumetric rendering. We recommend using this specific version due to stability concerns with newer versions. You can download CUDA 11.8 from the official NVIDIA website: [CUDA 11.8 Download Archive](https://developer.nvidia.com/cuda-11-8-0-download-archive?target_os=Windows&target_arch=x86_64&target_version=11&target_type=exe_local).
 - **Visual Studio**: This project is configured for Visual Studio 2019, but it can be adapted for Visual Studio 2022. Ensure that the appropriate C++ development tools and CUDA toolkit integrations are installed in Visual Studio.
 - **CMake**: Ensure you have CMake installed to configure and generate the project build files.
+- x64 Windows
+- Nvidia GPU that supports sm_75 or sm_86
+
+Test with Geforce RTX3000 series, and RTX4000 series.
 
 ### Setup Steps
 
@@ -65,7 +69,13 @@ git clone https://github.com/typicalspider98/CGRA350.git
 cd CGRA350
 ```
 
-#### 3. Create the Build Directory
+#### 3. Unzip the cloud data
+
+The cloud data is located at the path: **CGRA350\data\CLOUD0.rar**. 
+
+Extract it locally and ensure that before running the project, the cloud data is present at the path: **CGRA350\data\CLOUD0.bin**.
+
+#### 4. Create the Build Directory
 
 In the root directory of the project, create a `build` folder:
 
@@ -74,7 +84,7 @@ mkdir build
 cd build
 ```
 
-#### 4. Run CMake
+#### 5. Run CMake
 
 Use CMake to configure the project. The example below is for Visual Studio 2019 with CUDA 11.8. If you are using a different version of Visual Studio, modify the `-G` option accordingly:
 
@@ -103,15 +113,17 @@ CGRA350.vcxproj            INSTALL.vcxproj.filters
 CGRA350.vcxproj.filters    ZERO_CHECK.vcxproj
 ```
 
-#### 5. Open the Solution
+#### 6. Open the Solution
 
 Navigate to the `build` directory and double-click on the `CGRA350.sln` file to open the project in Visual Studio.
 
-#### 6. Select Build Configuration
+#### 7. Select Build Configuration
 
 In Visual Studio, choose the appropriate build configuration such as `Release` or `Debug` from the toolbar.
 
-#### 7. Compile the Project
+It is recommended to use the **`Release`** configuration to build the project, as it can reduce the data loading time when starting the project.
+
+#### 8. Compile the Project
 
 After selecting the configuration, proceed to build the project by clicking on the **Build** menu and selecting **Build Solution**. This will compile the project and generate the necessary executable files.
 
