@@ -67,7 +67,7 @@ namespace CGRA350
     {
         if (m_context.m_enable_cloud_func)
         {
-            CheckCuda();
+            CheckCuda(m_context.m_gui_param.device_name);
 
             string cloud_path = "./../data/CLOUD0";
             m_volumerender = new VolumeRender(cloud_path);
