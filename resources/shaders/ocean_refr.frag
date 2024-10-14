@@ -13,7 +13,7 @@ out vec4 frag_colour;
 
 uniform vec3 wc_camera_pos;
 uniform sampler2D tex_S;
-uniform sampler2D normalMap;  // ²¨ÎÆ·¨ÏßÌùÍ¼
+uniform sampler2D normalMap;  // Ripple Normal Map
 uniform vec2 viewport_dimensions;
 
 uniform vec3 water_base_colour;
