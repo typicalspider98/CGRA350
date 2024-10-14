@@ -164,7 +164,7 @@ void UI::render()
 	ImGui::Combo("Wall Material", &(m_app_context->m_wall_material), "white stone\0wood\0concrete\0grey_new_brick\0marble\0stainless_steel\0brushed_medal");
 	ImGui::Combo("Roof Material", &(m_app_context->m_roof_material), "tiles\0medal\0marble\0rusty_medal\0concrete\0stainless_steel\0glavanized_medal\0wood");
 	ImGui::Combo("Bottom Material", &(m_app_context->m_bottom_material), "brick\0soil\0sand\0marble\0block_stone\0cobblestone\0medal\0concrete\0wood");
-	ImGui::Combo("Light Model", &(m_app_context->m_light_model), "None\0Cook-Torrance\0Oren-Nayar");
+	ImGui::Combo("Light Model", &(m_app_context->m_light_model), "Phong\0Cook-Torrance\0Oren-Nayar");
 
 	ImGui::SliderFloat("Roughness", &m_app_context->m_lighthouse_roughness, 0.0f, 3.0f);
 	ImGui::SliderFloat("Metalness", &m_app_context->m_lighthouse_medalness, 0.0f, 3.0f);
