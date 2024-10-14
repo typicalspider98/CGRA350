@@ -131,9 +131,8 @@ This feature includes:
 ### Real-Time Weather System
 Implemented features include:
 - Volumetric rendering for cloud simulation.
-- Particle system to simulate rain.
-- Real-time dynamic shaders for wet ground after rain.
-- Weather-based scene adjustments, including color grading and light scattering.
+- Instanced rendering to simulate raindrops and splashes.
+- Weather-based post-processing adjustments, including color grading, dynamic filter, gaussian blur, and bloom.
 
 ### Real-Time Water and Seabed Simulation
 This system incorporates:
@@ -145,7 +144,7 @@ This system incorporates:
 ## Individual Contributions
 
 - **Hao Peng**: Lighting and material modeling for environmental objects. Focus on realistic light interactions with water surfaces and object modeling.
-- **Jun Zheng**: Real-time weather system implementation, including volumetric rendering for clouds and particle systems for precipitation.
+- **Jun Zheng**: Real-time weather system implementation, including volumetric rendering for clouds, instanced rendering for rain, and post-processing.
 - **Ye Li**: Real-time water surface and seabed simulation, including dynamic water waves using Gerstner Waves and enhanced detail with Perlin Noise.
 
 ## Integration Plan
