@@ -11,7 +11,7 @@ out vec4 frag_colour;
 
 uniform vec3 wc_camera_pos;
 uniform samplerCube env_map;
-uniform sampler2D normalMap;  // ²¨ÎÆ·¨ÏßÌùÍ¼
+uniform sampler2D normalMap;  // Ripple Normal Map
 
 uniform vec3 water_base_colour;
 uniform float water_base_colour_amt;
