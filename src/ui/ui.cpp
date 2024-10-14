@@ -243,7 +243,7 @@ void UI::render()
 	// --- rain
 	ImGui::Text("Rain:");
 	ImGui::SliderFloat("Rain Radius", &m_app_context->m_gui_param.rain_radius, 0.0f, 100.0f, "%.1f");
-	ImGui::InputInt("Rain Drop Number", &m_app_context->m_gui_param.raindrop_num);
+	ImGui::SliderInt("Rain Drop Number", &m_app_context->m_gui_param.raindrop_num, 0, 100000);
 	ImGui::SliderFloat("Rain Min Speed", &m_app_context->m_gui_param.raindrop_min_speed, 0.0f, 100.0f, "%.1f");
 	ImGui::SliderFloat("Rain Max Speed", &m_app_context->m_gui_param.raindrop_max_speed, 0.0f, 100.0f, "%.1f");
 	ImGui::SliderFloat("Sea Level", &m_app_context->m_gui_param.rain_sea_level, -150.0f, 50.0f, "%.1f");

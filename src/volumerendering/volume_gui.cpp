@@ -211,7 +211,7 @@ void RenderCloud(Camera& cam, VolumeRender& volume, GLFWwindow* window)
     if (gui->fsr) {
         nwidth /= 2; nheight /= 2;
     }
-    if (nwidth != gui->width || nheight != gui->height)
+    if (glfwGetWindowAttrib(window, GLFW_FOCUSED) && (nwidth != gui->width || nheight != gui->height))
     {
         gui->width = nwidth;
         gui->height = nheight;
