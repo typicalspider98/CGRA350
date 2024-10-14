@@ -89,14 +89,14 @@ cd build
 Use CMake to configure the project. The example below is for Visual Studio 2019 with CUDA 11.8. If you are using a different version of Visual Studio, modify the `-G` option accordingly:
 
 ```bash
-cmake -G "Visual Studio 16 2019" -A x64 .. -T cuda="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" -D RTX30XX=ON -D GUI=ON
+cmake -G "Visual Studio 16 2019" -A x64 .. -T cuda="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" -D RTX30XX=ON
 ```
 
 - **Note**: The CUDA path is the default installation path. If you installed CUDA in a different location, update the path accordingly.
 - **Visual Studio Version**: If you are using Visual Studio 2022, modify the command as follows:
 
 ```bash
-cmake -G "Visual Studio 17 2022" -A x64 .. -T cuda="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" -D RTX30XX=ON -D GUI=ON
+cmake -G "Visual Studio 17 2022" -A x64 .. -T cuda="C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8" -D RTX30XX=ON
 ```
 
 ### Build the Project
