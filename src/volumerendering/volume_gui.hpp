@@ -30,7 +30,7 @@
 
 
 static void init_cuda();
-void CheckCuda();
+void CheckCuda(std::string &device_name);
 
 #pragma region OpenGL
 static GLint add_shader(GLenum shader_type, const char* source_code, GLuint program);

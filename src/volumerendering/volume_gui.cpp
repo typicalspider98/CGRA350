@@ -40,7 +40,7 @@ static void init_cuda()
     cudaSetDevice(cuda_devices[0]);
 }
 
-void CheckCuda()
+void CheckCuda(std::string& device_name)
 {
     cudaError_t err;
     int deviceCount = 0;
@@ -65,7 +65,7 @@ void CheckCuda()
         std::cerr << "CUDA Error: Unable to get device properties: " << cudaGetErrorString(err) << std::endl;
         return;
     }
-
+    device_name = deviceProp.name;
     std::cout << "Using device: " << deviceProp.name << std::endl;
 
     err = cudaSetDevice(device);

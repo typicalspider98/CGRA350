@@ -49,6 +49,7 @@ void UI::render()
 	// --- set up widgets ---
 		
 	// display fps
+	ImGui::Text("GPU: %s", m_app_context->m_gui_param.device_name.c_str());
 	ImGui::Text("Average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 	// display number of primitives rendered

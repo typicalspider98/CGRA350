@@ -36,6 +36,8 @@ public:
     glm::vec3 GetDLight_Direction() const;
 
 public:
+    std::string device_name;
+
     int width = -1;
     int height = -1;
 
